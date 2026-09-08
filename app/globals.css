@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   IMPÉRIO CONSTRUTORA — Design Tokens
+   Base: DESIGN.md ("Creative Giants" — pôster editorial em papel creme)
+   Paleta: substituída integralmente pela paleta da Império (creme + dourado).
+   ========================================================================== */
+
+@theme {
+  /* ---------------------------------------------------------------------
+     CORES
+     Regra de contraste (não violar):
+       #B79653 sobre #FAF8F2 = 2,7:1  -> REPROVA. Sobre creme use #8A6D2F.
+       #B79653 sobre #0A0A0A = 7,0:1  -> uso principal do dourado.
+     --------------------------------------------------------------------- */
+  --color-bone: #faf8f2; /* canvas creme — fundo padrão da página */
+  --color-ink: #0a0a0a; /* texto principal e fundo das seções invertidas */
+  --color-graphite: #5c5a55; /* texto secundário, legendas, metadados */
+  --color-ash: #c4c0b6; /* hairlines, bordas de input, divisores */
+  --color-gold: #b79653; /* dourado da marca — SOMENTE sobre fundo escuro */
+  --color-gold-lt: #d4b872; /* hover e detalhes finos sobre fundo escuro */
+  --color-gold-dk: #8a6d2f; /* único dourado permitido sobre o creme */
+
+  /* ---------------------------------------------------------------------
+     TIPOGRAFIA — família
+     Switzer via Fontshare (não auto-hospedar: licença ITF não permite).
+     --------------------------------------------------------------------- */
+  --font-switzer: "Switzer", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-switzer);
+
+  /* Pesos: 300 para todo display/headline, 400 para corpo, meta e UI. */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+
+  /* ---------------------------------------------------------------------
+     TIPOGRAFIA — escala
+     O tracking fecha conforme o corpo cresce (-0.018em -> -0.04em).
+     Peso 300 embutido nos tamanhos de display: headline nunca é bold.
+     --------------------------------------------------------------------- */
+  --text-caption: 12px;
+  --text-caption--line-height: 1.43;
+  --text-caption--letter-spacing: -0.018em;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.43;
+  --text-body-sm--letter-spacing: -0.018em;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.4;
+  --text-body--letter-spacing: -0.018em;
+
+  --text-subheading: 20px;
+  --text-subheading--line-height: 1.4;
+  --text-subheading--letter-spacing: -0.018em;
+
+  --text-heading-sm: 34px;
+  --text-heading-sm--line-height: 1.25;
+  --text-heading-sm--letter-spacing: -0.02em;
+  --text-heading-sm--font-weight: 300;
+
+  --text-heading: 54px;
+  --text-heading--line-height: 1;
+  --text-heading--letter-spacing: -0.023em;
+  --text-heading--font-weight: 300;
+
+  --text-display: 84px;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 300;
+
+  /* Tracking avulso, para quando o tamanho vier de outro utilitário */
+  --tracking-display: -0.04em;
+  --tracking-heading: -0.023em;
+  --tracking-heading-sm: -0.02em;
+  --tracking-tight-ui: -0.018em;
+
+  /* ---------------------------------------------------------------------
+     ESPAÇAMENTO
+     Unidade base 8px. A escala numérica do Tailwind (4px) segue intacta:
+       8=p-2  16=p-4  24=p-6  32=p-8  48=p-12  64=p-16  80=p-20  112=p-28
+     Abaixo ficam apenas os tokens semânticos de layout (py-section etc).
+     --------------------------------------------------------------------- */
+  --spacing-element: 8px; /* gap interno entre elementos */
+  --spacing-card: 24px; /* padding de card */
+  --spacing-gutter: 32px; /* margem lateral da página (desktop) */
+  --spacing-gutter-sm: 16px; /* margem lateral da página (mobile) */
+  --spacing-section: 64px; /* respiro entre seções (48–64px) */
+  --spacing-section-sm: 48px;
+  --spacing-section-lg: 112px;
+
+  /* ---------------------------------------------------------------------
+     RAIOS
+     1440px só em botão / pill / tag. Card e imagem sempre canto reto.
+     --------------------------------------------------------------------- */
+  --radius-pill: 1440px;
+  --radius-card: 0px;
+  --radius-image: 0px;
+
+  /* ---------------------------------------------------------------------
+     ELEVAÇÃO
+     O sistema não tem elevação: separação vem do creme, do respiro e do
+     campo escuro invertido. Nada de box-shadow.
+     --------------------------------------------------------------------- */
+  --shadow-none: none;
+}
+
+/* =============================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+    font-family: var(--font-switzer);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--text-body);
+    line-height: 1.4;
+    letter-spacing: -0.018em;
+  }
+
+  /* Headline nunca é bold — peso 300 é a marca. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: var(--font-weight-light);
+  }
+
+  /* Link nunca herda o azul do navegador. */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background-color: var(--color-gold-dk);
+    color: var(--color-bone);
+  }
+}
