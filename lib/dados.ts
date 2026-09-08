@@ -16,10 +16,11 @@ export const display = {
 } as const;
 
 export const hero = {
-  imagem: "/obra/petz-radial-leste.jpg",
-  alt: "Fachada da loja Petz na Radial Leste, em São Paulo, com o estacionamento em primeiro plano.",
-  meta: "PETZ // RADIAL LESTE, SÃO PAULO",
-  headline: "Sessenta dias, equipes rotativas em turno de vinte e quatro horas.",
+  imagem: "/obras/artwalk-tambore.jpg",
+  alt: "Fachada da loja Artwalk no Shopping Tamboré, com letreiro luminoso e vitrines de tênis iluminadas.",
+  meta: "ARTWALK // SHOPPING TAMBORÉ, SÃO PAULO",
+  headline:
+    "Quarenta e cinco dias, equipes rotativas em turno de vinte e quatro horas.",
 } as const;
 
 export const secaoObras = {
@@ -38,17 +39,17 @@ export type Obra = {
 
 export const obras: Obra[] = [
   {
-    titulo: "Artwalk, Shopping Tamboré",
+    titulo: "PETZ, Radial Leste",
     descricao:
-      "Reforma completa da loja em modelo turnkey, entregue em quarenta e cinco dias com equipes rotativas em turno de vinte e quatro horas.",
-    imagem: "/obra/artwalk-tambore.jpg",
-    alt: "Fachada da loja Artwalk no Shopping Tamboré, com letreiro luminoso e vitrines de tênis iluminadas.",
+      "Execução de todo o gesso liso e drywall, pintura total, instalação de broquete e concregrama. Sessenta dias de obra.",
+    imagem: "/obras/petz-radial-leste.jpg",
+    alt: "Fachada da loja Petz na Radial Leste, em São Paulo, com o estacionamento em primeiro plano.",
   },
   {
     titulo: "Restaurante Boali",
     descricao:
       "Reforma completa da loja em modelo turnkey, com noventa dias de execução e foco em acabamento e conformidade normativa.",
-    imagem: "/obra/boali-restaurante.jpg",
+    imagem: "/obras/boali-restaurante.jpg",
     alt: "Fachada do restaurante Boali, com letreiro laranja, balcão de atendimento e painel decorativo em giz.",
   },
   {

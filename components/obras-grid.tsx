@@ -48,7 +48,7 @@ function CardObra({ obra }: { obra: Obra }) {
  */
 function CardAcento({ obra }: { obra: Obra }) {
   return (
-    <article className="bg-ink p-card">
+    <article className="flex h-full flex-col justify-end bg-ink p-card">
       <h3 className="text-subheading font-light text-gold">{obra.titulo}</h3>
       <p className="mt-element line-clamp-3 text-body-sm text-gold">
         {obra.descricao}
