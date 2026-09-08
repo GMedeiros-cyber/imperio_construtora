@@ -51,44 +51,65 @@ export const quemSomos = {
   ],
 } as const;
 
-/* ── 5b. Faixa de rolagem ────────────────────────────────────────────── */
+/* ── 5b. Faixa de paralaxe ──────────────────────────────────────────── */
 
-export const faixaRolagem = {
-  rotulo: "ROLAR",
+export const faixaParalaxe = {
   eyebrow: "DOZE ANOS DE CANTEIRO",
   /* Duas linhas fixas: a quebra é da copy, não do acaso da largura. */
   statement: ["Cada obra entregue é", "um cliente que abriu as portas."],
 } as const;
 
-export type Ladrilho = {
+export type ColunaParalaxe = {
   imagem: string;
-  /** Lado em que o ladrilho se ancora. O vão central fica sempre livre. */
-  lado: "esquerda" | "direita";
-  /** Topo dentro da seção, em porcentagem da altura dela. */
-  topo: string;
-  largura: number;
-  /** Deslocamento vertical, em px, ao longo da rolagem da seção. */
-  desloca: number;
+  /* As classes ficam aqui como strings literais para o Tailwind escaneá-las;
+     montadas por concatenação em tempo de execução elas não seriam geradas. */
+  classeColuna: string;
+  classeWrap: string;
+  /** Velocidade do deslocamento; vira yPercent = velocidade * -50. */
+  velocidade: number;
+  /** Colunas 5 e 6 somem no breakpoint de 479px. */
+  escondeMobile?: boolean;
 };
 
-/* A coluna da esquerda evita a faixa central: é onde fica o rótulo vertical,
-   e ele também é texto — não pode cair sobre foto. A coluna da direita é
-   livre, porque o rótulo não chega lá. */
-export const ladrilhosDesktop: Ladrilho[] = [
-  { imagem: "/obras/magicfeet-interlagos.jpg", lado: "esquerda", topo: "3%", largura: 300, desloca: -220 },
-  { imagem: "/obras/incorporacao-propria.jpg", lado: "direita", topo: "13%", largura: 260, desloca: -110 },
-  { imagem: "/obras/morumbi-fachada.jpg", lado: "esquerda", topo: "12%", largura: 220, desloca: -110 },
-  { imagem: "/obras/morumbi-piscina.jpg", lado: "direita", topo: "45%", largura: 320, desloca: -80 },
-  { imagem: "/obras/sao-marinho.jpg", lado: "esquerda", topo: "80%", largura: 240, desloca: -150 },
-  { imagem: "/obras/alfa-realty-guarulhos.jpg", lado: "direita", topo: "74%", largura: 280, desloca: -200 },
-];
-
-/* No mobile não há vão lateral: os três ladrilhos ficam em coluna única e a
-   separação do texto passa a ser vertical, com folga maior que o percurso. */
-export const ladrilhosMobile: Ladrilho[] = [
-  { imagem: "/obras/magicfeet-interlagos.jpg", lado: "esquerda", topo: "2%", largura: 200, desloca: -90 },
-  { imagem: "/obras/morumbi-piscina.jpg", lado: "esquerda", topo: "66%", largura: 200, desloca: -60 },
-  { imagem: "/obras/alfa-realty-guarulhos.jpg", lado: "esquerda", topo: "88%", largura: 200, desloca: -40 },
+export const colunasParalaxe: ColunaParalaxe[] = [
+  {
+    imagem: "/placeholder/coluna-1.svg",
+    classeColuna: "mt-[100vh] max-[480px]:mt-[50rem]",
+    classeWrap: "aspect-[213/352]",
+    velocidade: 10,
+  },
+  {
+    imagem: "/placeholder/coluna-2.svg",
+    classeColuna: "mt-[50vh] max-[480px]:mt-[25rem]",
+    classeWrap: "aspect-[213/435]",
+    velocidade: 7,
+  },
+  {
+    imagem: "/placeholder/coluna-3.svg",
+    classeColuna: "mt-[130vh] max-[480px]:mt-[25rem]",
+    classeWrap: "aspect-[213/261]",
+    velocidade: 12,
+  },
+  {
+    imagem: "/placeholder/coluna-4.svg",
+    classeColuna: "mt-[80vh] max-[480px]:mt-[60rem]",
+    classeWrap: "aspect-[213/132]",
+    velocidade: 5,
+  },
+  {
+    imagem: "/placeholder/coluna-5.svg",
+    classeColuna: "mt-[110vh] max-[480px]:mt-[100rem]",
+    classeWrap: "aspect-[213/266]",
+    velocidade: 9,
+    escondeMobile: true,
+  },
+  {
+    imagem: "/placeholder/coluna-6.svg",
+    classeColuna: "mt-[80vh] max-[480px]:mt-[25rem]",
+    classeWrap: "aspect-[213/287]",
+    velocidade: 6.5,
+    escondeMobile: true,
+  },
 ];
 
 /* ── 6 e 7. Cards de obra ────────────────────────────────────────────── */

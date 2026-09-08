@@ -2,7 +2,7 @@ import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { Contato } from "@/components/contato";
 import { DisplayPoster } from "@/components/display-poster";
-import { FaixaRolagem } from "@/components/faixa-rolagem";
+import { FaixaParalaxe } from "@/components/faixa-paralaxe";
 import { HeaderLockup } from "@/components/header-lockup";
 import { HeroImageBand } from "@/components/hero-image-band";
 import { Numeros } from "@/components/numeros";
@@ -20,7 +20,7 @@ export default function Home() {
       <HeroImageBand />
       <Numeros />
       <QuemSomos />
-      <FaixaRolagem />
+      <FaixaParalaxe />
       <ObrasEntregues />
       <ParticipacaoTecnica />
       <ComoTrabalhamos />
