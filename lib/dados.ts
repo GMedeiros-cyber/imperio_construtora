@@ -51,6 +51,46 @@ export const quemSomos = {
   ],
 } as const;
 
+/* ── 5b. Faixa de rolagem ────────────────────────────────────────────── */
+
+export const faixaRolagem = {
+  rotulo: "ROLAR",
+  eyebrow: "DOZE ANOS DE CANTEIRO",
+  /* Duas linhas fixas: a quebra é da copy, não do acaso da largura. */
+  statement: ["Cada obra entregue é", "um cliente que abriu as portas."],
+} as const;
+
+export type Ladrilho = {
+  imagem: string;
+  /** Lado em que o ladrilho se ancora. O vão central fica sempre livre. */
+  lado: "esquerda" | "direita";
+  /** Topo dentro da seção, em porcentagem da altura dela. */
+  topo: string;
+  largura: number;
+  /** Deslocamento vertical, em px, ao longo da rolagem da seção. */
+  desloca: number;
+};
+
+/* A coluna da esquerda evita a faixa central: é onde fica o rótulo vertical,
+   e ele também é texto — não pode cair sobre foto. A coluna da direita é
+   livre, porque o rótulo não chega lá. */
+export const ladrilhosDesktop: Ladrilho[] = [
+  { imagem: "/obras/magicfeet-interlagos.jpg", lado: "esquerda", topo: "3%", largura: 300, desloca: -220 },
+  { imagem: "/obras/incorporacao-propria.jpg", lado: "direita", topo: "13%", largura: 260, desloca: -110 },
+  { imagem: "/obras/morumbi-fachada.jpg", lado: "esquerda", topo: "12%", largura: 220, desloca: -110 },
+  { imagem: "/obras/morumbi-piscina.jpg", lado: "direita", topo: "45%", largura: 320, desloca: -80 },
+  { imagem: "/obras/sao-marinho.jpg", lado: "esquerda", topo: "80%", largura: 240, desloca: -150 },
+  { imagem: "/obras/alfa-realty-guarulhos.jpg", lado: "direita", topo: "74%", largura: 280, desloca: -200 },
+];
+
+/* No mobile não há vão lateral: os três ladrilhos ficam em coluna única e a
+   separação do texto passa a ser vertical, com folga maior que o percurso. */
+export const ladrilhosMobile: Ladrilho[] = [
+  { imagem: "/obras/magicfeet-interlagos.jpg", lado: "esquerda", topo: "2%", largura: 200, desloca: -90 },
+  { imagem: "/obras/morumbi-piscina.jpg", lado: "esquerda", topo: "66%", largura: 200, desloca: -60 },
+  { imagem: "/obras/alfa-realty-guarulhos.jpg", lado: "esquerda", topo: "88%", largura: 200, desloca: -40 },
+];
+
 /* ── 6 e 7. Cards de obra ────────────────────────────────────────────── */
 
 export type Obra = {
