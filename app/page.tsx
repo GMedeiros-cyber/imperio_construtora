@@ -1,10 +1,9 @@
 import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { Contato } from "@/components/contato";
-import { DisplayPoster } from "@/components/display-poster";
 import { FaixaParalaxe } from "@/components/faixa-paralaxe";
+import { HeroComposicao } from "@/components/hero-composicao";
 import { HeaderLockup } from "@/components/header-lockup";
-import { HeroImageBand } from "@/components/hero-image-band";
 import { Numeros } from "@/components/numeros";
 import { ObrasEntregues } from "@/components/obras-entregues";
 import { ParticipacaoTecnica } from "@/components/participacao-tecnica";
@@ -16,8 +15,7 @@ export default function Home() {
   return (
     <>
       <HeaderLockup />
-      <DisplayPoster />
-      <HeroImageBand />
+      <HeroComposicao />
       <Numeros />
       <QuemSomos />
       <FaixaParalaxe />

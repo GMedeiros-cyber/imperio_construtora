@@ -3,26 +3,11 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 import { colunasParalaxe, faixaParalaxe } from "@/lib/dados";
+import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 import { cn } from "@/lib/utils";
-
-/** Hook: o prefixo "use" é exigência da regra de hooks do React.
- *  Lê a preferência e reage a mudanças dela em tempo de execução. */
-function useMovimentoReduzido() {
-  const [reduzido, setReduzido] = useState(false);
-
-  useEffect(() => {
-    const consulta = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const aplicar = () => setReduzido(consulta.matches);
-    aplicar();
-    consulta.addEventListener("change", aplicar);
-    return () => consulta.removeEventListener("change", aplicar);
-  }, []);
-
-  return reduzido;
-}
 
 /**
  * BLOCO 5b — Faixa de paralaxe

@@ -11,23 +11,57 @@ export const cabecalho = {
   /* Marca circular — a coroa entra depois em SVG */
   marca: "I",
   menu: "Menu",
+  menuFechar: "Fechar",
 } as const;
 
-/* ── 2. Display poster ───────────────────────────────────────────────── */
+/* ── 2 e 3. Hero em composição ───────────────────────────────────────── */
 
-export const display = {
-  linhas: ["Do plano ao detalhe.", "Do detalhe à excelência."],
-} as const;
+export type SlotHero = {
+  /** Pedaço do headline que abre a linha. */
+  texto: string;
+  /** Imagem de baixo, visível desde o início. */
+  base: string;
+  baseAlt: string;
+  /** Imagem de cima, revelada pela cortina de clip-path. */
+  topo: string;
+  topoAlt: string;
+};
 
-/* ── 3. Hero image band ──────────────────────────────────────────────── */
-
-export const hero = {
-  imagem: "/obras/artwalk-tambore.jpg",
-  alt: "Fachada da loja Artwalk no Shopping Tamboré, com letreiro luminoso e vitrines de tênis iluminadas.",
-  meta: "ARTWALK // SHOPPING TAMBORÉ, SÃO PAULO",
-  headline:
-    "Quarenta e cinco dias, equipes rotativas em turno de vinte e quatro horas.",
-} as const;
+/**
+ * Quatro linhas: cada uma abre com um pedaço do headline e o slot de imagem
+ * ocupa o que sobrar da linha. Como cada pedaço tem uma largura diferente,
+ * cada imagem sai com uma proporção diferente, e tudo se rearranja sozinho.
+ */
+export const slotsHero: SlotHero[] = [
+  {
+    texto: "Do plano",
+    base: "/obras/artwalk-tambore.jpg",
+    baseAlt: "Loja Artwalk no Shopping Tamboré.",
+    topo: "/obras/videira-transportadora.jpg",
+    topoAlt: "Galpão da Transportadora Videira em obra.",
+  },
+  {
+    texto: "ao detalhe.",
+    base: "/obras/magicfeet-interlagos.jpg",
+    baseAlt: "Loja Magicfeet em Interlagos.",
+    topo: "/obras/morumbi-fachada.jpg",
+    topoAlt: "Fachada da obra no Morumbi.",
+  },
+  {
+    texto: "Do detalhe",
+    base: "/obras/incorporacao-propria.jpg",
+    baseAlt: "Obra de incorporação própria da Império.",
+    topo: "/obras/morumbi-piscina.jpg",
+    topoAlt: "Área de piscina da obra no Morumbi.",
+  },
+  {
+    texto: "à excelência.",
+    base: "/obras/sao-marinho.jpg",
+    baseAlt: "Obra São Marinho.",
+    topo: "/obras/alfa-realty-guarulhos.jpg",
+    topoAlt: "Edifício da Alfa Realty em Guarulhos.",
+  },
+];
 
 /* ── 4. Números ──────────────────────────────────────────────────────── */
 

@@ -24,11 +24,23 @@ export function HeaderLockup() {
         {cabecalho.marca}
       </span>
 
+      {/* Dois textos empilhados que deslizam juntos no hover. A altura de
+          1.4em é exatamente uma linha do text-body, e o deslocamento de 50%
+          da pilha de duas linhas move exatamente uma. O rótulo acessível fica
+          em "Menu": "Menu Fechar" seria confuso no leitor de tela. */}
       <button
         type="button"
-        className="ml-auto shrink-0 rounded-pill bg-ink px-6 py-3 text-body text-bone"
+        aria-label={cabecalho.menu}
+        className="group ml-auto shrink-0 rounded-pill bg-ink px-6 py-3 text-body text-bone"
       >
-        {cabecalho.menu}
+        <span className="block h-[1.4em] overflow-hidden">
+          <span className="block transition-transform duration-300 ease-out group-hover:-translate-y-1/2 motion-reduce:transition-none">
+            <span className="block">{cabecalho.menu}</span>
+            <span aria-hidden className="block">
+              {cabecalho.menuFechar}
+            </span>
+          </span>
+        </span>
       </button>
     </header>
   );

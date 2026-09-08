@@ -401,77 +401,14 @@ do Tailwind v4.
 Desvios conscientes do sistema acima, com o motivo e o escopo. Nada entra aqui
 sem medição — e nada sai daqui sem medição nova.
 
-### 1. Gradiente sobre a foto do Hero Image Band, em todas as larguras
+**Resolvido e removido:** o gradiente sobre a foto do Hero Image Band, que
+existia porque texto creme sobre foto reprovava no contraste WCAG. Os blocos 2
+e 3 foram substituídos por uma hero em composição, onde texto e foto ficam lado
+a lado e nunca se sobrepõem — medido em 360, 390, 768, 1440 e 1920px, com zero
+intersecção entre os pedaços do headline e os slots de imagem. Sem sobreposição
+não há o que medir de contraste, e o overlay saiu junto.
 
-**Estado final do bloco.** Não reabrir sem trocar a foto.
-
-**A regra:** a seção *Imagery* determina que a fotografia é full-bleed, de canto
-reto, **sem overlay**. O bloco Hero Image Band pede meta e headline em Bone
-White sobre a foto, sem nenhum tratamento entre os dois.
-
-**O desvio:** um gradiente de `--color-ink` (90% na base, 80% até 70% da altura,
-transparente no topo) cobre a banda inteira, sem breakpoint. Implementado em
-[`components/hero-image-band.tsx`](components/hero-image-band.tsx).
-
-**O motivo:** a foto do hero (`/obras/artwalk-tambore.jpg`) é uma loja de
-vitrine iluminada, e a área clara cai justamente onde o DESIGN.md posiciona o
-texto. O WCAG AA exige 4,5:1 para texto normal; 3:1 só vale para texto grande, a
-partir de 24px. O meta de 12px é sempre texto normal; o headline é texto normal
-no mobile (20px) e texto grande no desktop (34px).
-
-**Método de medição.** Pixels compostos da região renderizada, com as caixas de
-linha reais obtidas por `Range.getClientRects()`, amostradas em 12 fatias
-horizontais por linha. Redesenhar a foto num canvas com matemática própria de
-`object-fit: cover` **não reproduz** o que o browser desenha e produz números
-errados — esse atalho já custou uma tabela inteira refeita. Não use.
-
-**Tudo que foi medido e reprovou, antes de aceitar o overlay:**
-
-1. *Recorte da banda.* 3:4 e quadrado, a 360, 390 e 768px. Pior caso 1,40:1;
-   o 3:4 a 768px reprova nas 12 fatias do meta.
-2. *Caixa de texto fixa.* 576px fecha a 1440px (headline 3,73:1) e reprova a
-   768px (meta 1,78:1, headline 2,58:1), porque a caixa passa a ocupar 76% da
-   banda em vez de 40%.
-3. *Caixa de texto proporcional.* 40%, 36% e 32% da largura da banda, a 768,
-   1024, 1280, 1440 e 1920px. A melhor é 40%, e mesmo ela só fecha 1280 e
-   1440px. Estreitar piora: 32% reprova em todas as cinco.
-4. *Trocar a foto.* As catorze imagens de `/public/obras` foram testadas como
-   hero, sem gradiente, no estado aplicado. **Nenhuma passa sequer a 1024px** —
-   a largura mais dura, onde a banda 21:9 é baixa e o bloco de texto sobe para a
-   parte clara. Melhores casos isolados: `morumbi-terraco` tem meta em 13,59:1
-   mas headline em 1,35:1; `videira-transportadora` tem meta em 9,79:1 e
-   headline em 1,38:1. Nenhuma imagem tem a faixa do texto escura por inteiro.
-
-Esgotados os três eixos de geometria e as catorze imagens, o overlay é a única
-saída que fecha o critério.
-
-**O estado aplicado, medido nas sete larguras:**
-
-| largura | meta 12px | headline | veredito |
-|---|---|---|---|
-| 360px | 13,20:1 | 14,69:1 (20px, 3 linhas) | passa |
-| 390px | 14,05:1 | 14,61:1 (20px, 3 linhas) | passa |
-| 768px | 15,17:1 | 15,45:1 (34px, 2 linhas) | passa |
-| 1024px | 16,84:1 | 16,26:1 (34px, 2 linhas) | passa |
-| 1280px | 17,07:1 | 15,58:1 (34px, 2 linhas) | passa |
-| 1440px | 17,10:1 | 15,61:1 (34px, 2 linhas) | passa |
-| 1920px | 17,13:1 | 16,21:1 (34px, 2 linhas) | passa |
-
-Zero fatias abaixo do critério em qualquer largura. A foto continua legível,
-apenas escurecida.
-
-**Armadilha registrada:** a caixa do texto voltou para os 672px (`max-w-2xl`) do
-DESIGN.md. Não a estreite achando que ajuda no contraste — com o gradiente
-presente ela não tem mais esse papel, e o cap de 40% que existiu aqui espremia o
-headline em cinco linhas a 768px, empurrando o meta para 91% da altura da banda,
-onde o gradiente é transparente. Era a causa da única reprovação que restava.
-
-**Como sair do desvio:** só com uma foto nova, que não está entre as catorze
-atuais — precisa ter a faixa inferior escura de ponta a ponta ao longo de 672px,
-tanto no recorte 4:3 quanto no 21:9. Com ela, o gradiente sai e o bloco volta a
-ser literal ao DESIGN.md.
-
-### 2. Escala tipográfica responsiva
+### 1. Escala tipográfica responsiva
 
 **A regra:** o DESIGN.md fixa os tamanhos (84px no display, 34–54px nos
 statements) sem prever variação por largura de tela.
@@ -484,7 +421,7 @@ horizontal, quebrando a regra de página full-bleed com padding lateral de
 16–32px. Os valores usados são todos da escala existente, e a faixa 34–54px dos
 statements é a que o próprio DESIGN.md especifica.
 
-### 3. Token `--text-body-lg` (18px)
+### 2. Token `--text-body-lg` (18px)
 
 O DESIGN.md lista 18px entre os tamanhos da Switzer e pede 18–20px no título do
 card, mas a tabela da escala pula de 16px para 20px. O token foi acrescentado
