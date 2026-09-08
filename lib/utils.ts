@@ -1,5 +1,32 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+/**
+ * O tailwind-merge não conhece a escala de tipo do nosso @theme. Sem isto ele
+ * classifica `text-caption` como cor de texto e, ao encontrar `text-gold` na
+ * mesma chamada de cn(), descarta o tamanho — o elemento cai para 16px.
+ * Registrar os tamanhos como font-size mantém tamanho e cor convivendo.
+ */
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [
+        {
+          text: [
+            "caption",
+            "body-sm",
+            "body",
+            "body-lg",
+            "subheading",
+            "heading-sm",
+            "heading",
+            "display",
+          ],
+        },
+      ],
+    },
+  },
+});
 
 /**
  * Junta classes condicionais (clsx) e resolve conflitos do Tailwind (tailwind-merge).

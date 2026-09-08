@@ -1,15 +1,15 @@
 import Image from "next/image";
 
-import { obras, type Obra } from "@/lib/dados";
+import { type Obra } from "@/lib/dados";
 
 /**
- * BLOCO 5 — Grid de 3 cards
+ * Project / News Card (DESIGN.md)
  * 3 colunas, gap de coluna 48px, sem borda, sem sombra, raio 0.
  */
-export function ObrasGrid() {
+export function ObrasGrid({ itens }: { itens: Obra[] }) {
   return (
-    <div className="grid grid-cols-1 gap-12 px-gutter-sm md:grid-cols-3 md:px-gutter">
-      {obras.map((obra) =>
+    <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+      {itens.map((obra) =>
         obra.acento ? (
           <CardAcento key={obra.titulo} obra={obra} />
         ) : (
@@ -43,8 +43,9 @@ function CardObra({ obra }: { obra: Obra }) {
 }
 
 /**
- * Card de acento — o único ponto de cor da página. Superfície ink, texto gold
- * (#B79653 só existe sobre fundo escuro). Nunca mais de um por linha.
+ * Chromatic Accent Card (DESIGN.md)
+ * O único ponto de cor da página. Superfície ink, texto gold — o dourado só
+ * existe sobre fundo escuro. Esticado na linha, conteúdo ancorado embaixo.
  */
 function CardAcento({ obra }: { obra: Obra }) {
   return (

@@ -49,6 +49,12 @@
   --text-body--line-height: 1.4;
   --text-body--letter-spacing: -0.018em;
 
+  /* 18px consta na lista de tamanhos do DESIGN.md mas ficou fora da tabela
+     da escala; entra aqui com o mesmo tracking dos tamanhos de corpo. */
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.4;
+  --text-body-lg--letter-spacing: -0.018em;
+
   --text-subheading: 20px;
   --text-subheading--line-height: 1.4;
   --text-subheading--letter-spacing: -0.018em;

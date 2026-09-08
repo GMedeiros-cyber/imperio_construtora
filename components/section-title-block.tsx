@@ -1,37 +1,67 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { secaoObras } from "@/lib/dados";
+import { cn } from "@/lib/utils";
 
 /**
- * BLOCO 4 — Section Title Block
- * Eyebrow, headline 48px abaixo e o cluster de setas à direita da linha do
- * título. Sem fundo, sem régua: separação só por respiro.
+ * Section Title Block (DESIGN.md)
+ * Eyebrow, statement 48px abaixo e, quando a seção é um carrossel de cards,
+ * o cluster de setas à direita. Sem fundo, sem régua: separação só por respiro.
  *
- * As setas ainda não navegam nada — o bloco 5 é grid, não carrossel.
+ * `tom="escuro"` inverte as cores para a única seção escura da página.
  */
-export function SectionTitleBlock() {
+export function SectionTitleBlock({
+  eyebrow,
+  statement,
+  setas = false,
+  tom = "claro",
+}: {
+  eyebrow: string;
+  statement: string;
+  setas?: boolean;
+  tom?: "claro" | "escuro";
+}) {
+  const escuro = tom === "escuro";
+
   return (
-    <div className="flex items-start justify-between gap-8 px-gutter-sm md:px-gutter">
+    <div className="flex items-start justify-between gap-8">
       <div>
-        <p className="text-caption uppercase text-graphite">{secaoObras.eyebrow}</p>
-        {/* 34px no mobile, 54px no desktop — ambos dentro da faixa do DESIGN.md */}
-        <h2 className="mt-12 max-w-4xl text-heading-sm text-ink md:text-heading">
-          {secaoObras.headline}
+        <p
+          className={cn(
+            "text-caption uppercase",
+            escuro ? "text-gold" : "text-graphite",
+          )}
+        >
+          {eyebrow}
+        </p>
+        {/* 34px no mobile, 54px no desktop — a faixa que o DESIGN.md define */}
+        <h2
+          className={cn(
+            "mt-12 max-w-4xl text-heading-sm md:text-heading",
+            escuro ? "text-bone" : "text-ink",
+          )}
+        >
+          {statement}
         </h2>
       </div>
 
-      <div className="hidden shrink-0 gap-element md:flex">
-        <SetaCarrossel rotulo="Obras anteriores">
-          <ChevronLeft size={16} strokeWidth={1} />
-        </SetaCarrossel>
-        <SetaCarrossel rotulo="Próximas obras">
-          <ChevronRight size={16} strokeWidth={1} />
-        </SetaCarrossel>
-      </div>
+      {setas ? (
+        <div className="hidden shrink-0 gap-element md:flex">
+          <SetaCarrossel rotulo="Obras anteriores">
+            <ChevronLeft size={16} strokeWidth={1} />
+          </SetaCarrossel>
+          <SetaCarrossel rotulo="Próximas obras">
+            <ChevronRight size={16} strokeWidth={1} />
+          </SetaCarrossel>
+        </div>
+      ) : null}
     </div>
   );
 }
 
+/**
+ * Carousel Arrow Control (DESIGN.md)
+ * As setas ainda não navegam nada — o grid não é carrossel.
+ */
 function SetaCarrossel({
   rotulo,
   children,

@@ -1,16 +1,13 @@
 import { rodape } from "@/lib/dados";
 
 /**
- * BLOCO 6 — Full-Bleed Footer
+ * BLOCO 11 — Full-Bleed Footer
  * Mesmo canvas creme, sem fundo próprio. Hairline 1px ash no topo — o único
- * divisor da página.
+ * divisor da página. O id #contato é da seção escura do bloco 10, não daqui.
  */
 export function SiteFooter() {
   return (
-    <footer
-      id="contato"
-      className="border-t border-ash px-gutter-sm py-section md:px-gutter"
-    >
+    <footer className="border-t border-ash px-gutter-sm py-section md:px-gutter">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         {rodape.map((coluna) => (
           <div key={coluna.titulo}>
