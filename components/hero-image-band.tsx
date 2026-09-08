@@ -5,12 +5,7 @@ import { hero } from "@/lib/dados";
 /**
  * BLOCO 3 — Hero Image Band
  * Foto full-bleed, sem raio, sem sombra. Meta e headline em bone no canto
- * inferior esquerdo, 32px das bordas.
- *
- * A caixa do headline é limitada a 40% da largura da banda, e não a um valor
- * fixo: a proporção entre texto e foto precisa se manter em qualquer largura,
- * senão o texto invade a vitrine iluminada em telas menores. O cap só vale de
- * md para cima — no mobile quem limita a caixa é a viewport.
+ * inferior esquerdo, 32px das bordas, com a medida de 672px do DESIGN.md.
  */
 export function HeroImageBand() {
   return (
@@ -25,20 +20,26 @@ export function HeroImageBand() {
       />
 
       {/* DESVIO CONHECIDO do DESIGN.md, que proíbe overlay sobre a foto.
-          Escopo: tudo abaixo de 1024px (lg:hidden). A foto é uma loja de
-          vitrine iluminada, e a área clara cai justamente onde o DESIGN.md
-          posiciona o texto. Medido sobre os pixels compostos: no recorte 4:3
-          do mobile o meta ficava em 2,02:1 e o headline em 1,55:1, contra os
-          4,5:1 exigidos para texto normal. Recortes 3:4 e quadrado foram
-          medidos a 360, 390 e 768px e reprovam igual. A caixa proporcional
-          foi medida em 40%, 36% e 32% a 768, 1024, 1280, 1440 e 1920px, e
-          nenhuma fecha 768px — por isso o gradiente vai até lg, e não md.
+          Vale em todas as larguras, sem breakpoint. É o estado final do bloco.
+
+          A foto é uma loja de vitrine iluminada e a área clara cai justamente
+          onde o DESIGN.md posiciona o texto. Foram medidos, sobre os pixels
+          compostos da região renderizada, três eixos de geometria (recorte,
+          caixa fixa e caixa proporcional) e as catorze imagens de
+          /public/obras como hero alternativo. Nada fecha o critério WCAG sem
+          overlay: nenhuma das catorze passa sequer a 1024px.
+
+          Não estreite a caixa do texto para "ajudar": o cap de 40% que existiu
+          aqui espremia o headline em cinco linhas a 768px e empurrava o meta
+          para 91% da altura da banda, onde o gradiente é transparente — era a
+          causa da única reprovação que restava.
+
           Registrado na seção "Desvios" do DESIGN.md. */}
-      <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-ink/90 via-ink/80 via-70% to-transparent lg:hidden" />
+      <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-ink/90 via-ink/80 via-70% to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 p-8">
         <p className="text-caption uppercase text-bone">{hero.meta}</p>
-        <p className="mt-8 text-subheading text-bone sm:text-heading-sm md:max-w-[40%]">
+        <p className="mt-8 max-w-2xl text-subheading text-bone sm:text-heading-sm">
           {hero.headline}
         </p>
       </div>
