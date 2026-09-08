@@ -393,3 +393,76 @@ foram substituídos integralmente pela paleta da Império.
 
 Os tokens vivem em [`app/globals.css`](app/globals.css) dentro do bloco `@theme`
 do Tailwind v4.
+
+---
+
+## Desvios
+
+Desvios conscientes do sistema acima, com o motivo e o escopo. Nada entra aqui
+sem medição — e nada sai daqui sem medição nova.
+
+### 1. Gradiente sobre a foto do Hero Image Band, apenas no mobile
+
+**A regra:** a seção *Imagery* determina que a fotografia é full-bleed, de canto
+reto, **sem overlay**. O bloco Hero Image Band pede meta e headline em Bone
+White sobre a foto, sem nenhum tratamento entre os dois.
+
+**O desvio:** abaixo de 768px existe um gradiente de `--color-ink` (85% na base,
+50% no meio, transparente no topo) cobrindo a metade inferior da banda.
+Implementado em [`components/hero-image-band.tsx`](components/hero-image-band.tsx)
+com `md:hidden` — no desktop não existe gradiente nenhum, e o bloco é literal
+ao DESIGN.md.
+
+**O motivo:** a foto do hero (`/obras/artwalk-tambore.jpg`) é uma loja com
+vitrine iluminada. No recorte 4:3 do mobile a área clara ocupa a faixa inferior
+inteira, justamente onde o DESIGN.md posiciona o texto. Medido no navegador,
+sobre os pixels compostos da região renderizada, amostrando as caixas de linha
+reais em 12 fatias horizontais cada:
+
+| viewport | recorte | meta 12px | headline 20px |
+|---|---|---|---|
+| 390px | 4:3 (o do projeto) | 2,02:1 — 8/12 fatias abaixo de 3:1 | 1,55:1 — 7/36 abaixo de 3:1 |
+| 390px | 3:4 | 1,63:1 — 8/12 abaixo de 4,5:1 | 1,46:1 — 27/36 abaixo de 4,5:1 |
+| 390px | quadrado | 2,77:1 — 3/12 abaixo de 4,5:1 | 1,40:1 — 27/36 abaixo de 4,5:1 |
+| 360px | 3:4 | 2,02:1 — 5/12 | 1,62:1 — 24/36 |
+| 360px | quadrado | 2,76:1 — 3/12 | 1,45:1 — 30/36 |
+| 768px | 3:4 | 1,48:1 — 12/12 | 2,11:1 — 7/24 |
+| 768px | quadrado | 1,50:1 — 6/12 | 2,00:1 — 10/24 |
+
+O WCAG AA exige 4,5:1 para texto normal. Aos 12px do meta e aos 20px do
+headline no mobile, os dois são texto normal — o limite de 3:1 vale só para
+texto grande, a partir de 24px (ou 18,66px em negrito), o que não é o caso.
+
+**As alternativas descartadas, todas medidas:**
+- *Estreitar a caixa do texto*, que resolve o desktop, não muda nada no mobile:
+  a caixa já está limitada pela viewport em 326px, e estreitar mais piora.
+- *Trocar o recorte* para 3:4 ou quadrado reprova nas três larguras testadas.
+
+**O resultado do desvio, medido:** com o gradiente aplicado, o meta vai de
+2,02:1 para 14,05:1 e o headline de 1,55:1 para 14,61:1 a 390px; a 360px, de
+2,64:1 para 13,20:1 e de 1,62:1 para 14,69:1. Zero fatias abaixo de 4,5:1 nas
+duas larguras. A foto continua legível, apenas escurecida.
+
+**Como sair do desvio:** trocar a foto do hero por uma cuja faixa inferior seja
+escura de ponta a ponta na largura do texto, nas duas proporções. Aí o gradiente
+sai e o bloco volta a ser literal ao DESIGN.md nas duas pontas.
+
+### 2. Escala tipográfica responsiva
+
+**A regra:** o DESIGN.md fixa os tamanhos (84px no display, 34–54px nos
+statements) sem prever variação por largura de tela.
+
+**O desvio:** os headlines descem na própria escala de tokens em telas
+pequenas — display em 34 → 54 → 84px, statements em 34 → 54px.
+
+**O motivo:** a 390px os tamanhos fixos estouram a viewport e produzem scroll
+horizontal, quebrando a regra de página full-bleed com padding lateral de
+16–32px. Os valores usados são todos da escala existente, e a faixa 34–54px dos
+statements é a que o próprio DESIGN.md especifica.
+
+### 3. Token `--text-body-lg` (18px)
+
+O DESIGN.md lista 18px entre os tamanhos da Switzer e pede 18–20px no título do
+card, mas a tabela da escala pula de 16px para 20px. O token foi acrescentado
+com o tracking dos demais tamanhos de corpo, para as três linhas do bloco de
+contato.
