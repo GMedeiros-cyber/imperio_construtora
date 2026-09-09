@@ -19,12 +19,17 @@ import { hero } from "@/lib/dados";
 export function Hero() {
   return (
     <section id="inicio" className="relative h-screen w-full overflow-hidden">
+      {/* A foto já vem com o tratamento embutido — escurecimento na base e véu
+          no topo. NÃO acrescentar gradiente, overlay ou filter por CSS.
+          O otimizador do next/image faz a negociação de formato: entrega
+          webp/avif a quem aceita e jpeg como fallback, com srcset por
+          largura. O arquivo tem 1440px de largura, então o otimizador nunca
+          gera a variante de 3840px — ele não faz upscale. */}
       <Image
         src={hero.fundo}
         alt={hero.fundoAlt}
         fill
         priority
-        unoptimized
         sizes="100vw"
         className="object-cover"
       />

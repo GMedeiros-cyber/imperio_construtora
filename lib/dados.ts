@@ -6,10 +6,12 @@
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {
-  /* Placeholder. A foto real entra como /hero/fundo.jpg — trocar só esta
-     string. Requisito da foto documentado no componente. */
-  fundo: "/hero/fundo.svg",
-  fundoAlt: "",
+  /* A foto já vem tratada: escurecimento na base e véu no topo. Não somar
+     gradiente nem filtro por CSS. O .webp fica no repositório ao lado do
+     .jpg, mas quem faz a negociação é o otimizador do next/image. */
+  fundo: "/hero/hero-fundo.jpg",
+  fundoAlt:
+    "Fachada de residência entregue pela Império, com garagem coberta e jardim.",
   marca: ["IMPÉRIO", "CONSTRUTORA"],
   links: [
     { texto: "OBRAS", href: "#obras" },
