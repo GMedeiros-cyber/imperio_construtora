@@ -67,7 +67,11 @@ export function Hero() {
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
         {/* Uma instância de DiaText por linha. A varredura acontece uma vez,
             na entrada: triggerOnView com once e sem repeat — nada de loop na
-            hero. As cores são o dourado da marca; o texto em repouso é bone. */}
+            hero. As cores são o dourado da marca; o texto em repouso é bone.
+
+            Ritmo: 3,4s por linha em vez do padrão de 1,5s, e 0,35s de defasagem
+            entre linhas em vez de 0,12s. A varredura estava rápida demais para
+            ser lida como gesto. */}
         <h1 className="text-heading-sm leading-none text-bone md:text-heading xl:text-display">
           {hero.manchete.map((linha, indice) => (
             <span key={linha} className="block">
@@ -78,7 +82,8 @@ export function Hero() {
                 triggerOnView
                 once
                 repeat={false}
-                delay={indice * 0.12}
+                duration={3.4}
+                delay={indice * 0.35}
               />
             </span>
           ))}
