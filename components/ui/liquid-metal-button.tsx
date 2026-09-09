@@ -11,9 +11,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
  *   regra de zero sombra vale para a página inteira, sem exceção.
  * - O texto estava fixo em #666666: agora é bone (#FAF8F2), e o text-shadow
  *   saiu junto com as sombras.
- * - Os uniforms do shader foram retunados do cinza metálico para o dourado da
- *   marca: u_shiftRed subiu de 0,3 para 0,72 e u_shiftBlue caiu de 0,3 para
- *   0,04, o que empurra a dispersão para o quente. u_softness e u_repetition
+ * - O shader foi tingido de dourado por u_colorTint, que o componente original
+ *   nem passava. Sem ele o uniform fica zerado, u_colorTint.a = 0 e a tintura
+ *   é desligada no GLSL — daí o anel prateado. u_softness e u_repetition
  *   também foram ajustados para um brilho mais contínuo, menos listrado.
  * - As dimensões eram fixas em 142x46 e agora são props.
  * - Aceita href: quando presente vira <a>, que é o certo para um destino de
@@ -24,10 +24,32 @@ import { useEffect, useMemo, useRef, useState } from "react";
  *   recarregamento, porque o shader só monta depois da hidratação.
  */
 
+/*
+ * A paleta do shader e FIXA no GLSL: color1 = vec3(.98,.98,1.) e
+ * color2 = vec3(.1,.1,.1), ou seja, branco contra cinza — e por isso ele nasce
+ * prateado. Quem tinge e u_colorTint, aplicado por color burn canal a canal:
+ *
+ *   ch = mix(ch, 1. - min(1., (1. - ch) / max(tint, .0001)), u_colorTint.a)
+ *
+ * Sem u_colorTint o uniform fica zerado, u_colorTint.a = 0 e a tintura inteira
+ * e desligada. Era esse o motivo do anel prateado.
+ *
+ * u_shiftRed e u_shiftBlue NAO tingem: deslocam a fase das listras de R e de B
+ * (aberracao cromatica nas bordas da listra) e ainda sao divididos por 20 no
+ * shader. Servem para a franja, nao para a cor de base.
+ */
 const UNIFORMS_OURO = {
   u_repetition: 3,
   u_softness: 0.72,
-  /* O par que define a temperatura: vermelho alto e azul quase nulo. */
+  /* Ambar da marca. Nao e o #B79653 literal: o color burn e multiplicativo,
+     entao um tint mais saturado que o alvo e o que faz o anel MEDIR como
+     #B79653. Com o #B79653 cru o anel dava R-B=45; com este, R-B=85, contra
+     os 100 do dourado chapado. Medido no anel visivel, media de 5 quadros. */
+  u_colorTint: [0.75, 0.52, 0.12, 1],
+  u_colorBack: [0, 0, 0, 0],
+  /* Franja cromatica. Medido: no anel de 1px estes dois praticamente nao
+     mudam nada — R-B vai de 82 a 85 em toda a faixa legal, e da 82 ate com
+     ambos em zero. Ficam no valor mais quente por margem, nao por efeito. */
   u_shiftRed: 0.72,
   u_shiftBlue: 0.04,
   u_distortion: 0,
@@ -37,7 +59,7 @@ const UNIFORMS_OURO = {
   u_shape: 1,
   u_offsetX: 0.1,
   u_offsetY: -0.1,
-} as const;
+};
 
 interface LiquidMetalButtonProps {
   label?: string;
