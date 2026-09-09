@@ -16,7 +16,16 @@ export function SiteFooter() {
               {/* Índice na key: os dois "(em definição)" têm o mesmo texto. */}
               {coluna.itens.map((item, indice) => (
                 <li key={indice} className="text-body-sm text-ink">
-                  {item.href ? <a href={item.href}>{item.texto}</a> : item.texto}
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className="transition-colors hover:text-gold-dk"
+                    >
+                      {item.texto}
+                    </a>
+                  ) : (
+                    item.texto
+                  )}
                 </li>
               ))}
             </ul>

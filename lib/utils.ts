@@ -10,6 +10,9 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
+      /* Sem isto o tailwind-merge trata "font-display" como peso de fonte e
+         descarta a família quando cn() recebe as duas coisas. */
+      "font-family": [{ font: ["display", "sans", "switzer", "zodiak"] }],
       "font-size": [
         {
           text: [

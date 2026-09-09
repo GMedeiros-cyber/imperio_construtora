@@ -1,4 +1,5 @@
-import fundoHero from "@/public/hero/hero-fundo.jpg";
+import fundoLargo from "@/public/hero/hero-wide.jpg";
+import fundoAlto from "@/public/hero/hero-tall.jpg";
 import logoNav from "@/public/hero/logo-imperio-nav.png";
 
 /**
@@ -9,17 +10,18 @@ import logoNav from "@/public/hero/logo-imperio-nav.png";
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {
-  /* Import estático, e não string de caminho: assim o Next gera a URL com
-     hash do conteúdo. Trocar o arquivo passa a invalidar o cache sozinho —
-     com caminho fixo, o otimizador servia a imagem velha por até 4 horas.
+  /* Duas fotos por direção de arte: a larga no desktop, a alta no mobile.
+     Import estático para o Next gerar a URL com hash do conteúdo — com
+     caminho fixo em string, o otimizador servia a imagem velha por até 4h.
 
-     O tratamento (véu no topo e escurecimento na base) está gravado NO
-     ARQUIVO, não em CSS. Foi calculado a partir da luminância medida da foto
+     As duas já vêm tratadas, com o escurecimento da base gravado NO ARQUIVO.
+     Não há véu no topo: o céu de crepúsculo já dá contraste. Foi calculado a partir da luminância medida da foto
      original — ver o comentário do componente. Trocar a foto exige refazer o
      tratamento e remedir. */
-  fundo: fundoHero,
+  fundoLargo,
+  fundoAlto,
   fundoAlt:
-    "Fachada de residência de alto padrão ao entardecer, com iluminação acesa nas varandas.",
+    "Fachada de residência contemporânea ao entardecer, com iluminação acesa e jardim frontal.",
   /* Logo da navbar: 160x128 no arquivo, servida a 56px de altura. */
   logo: logoNav,
   logoAlt: "Império Construtora",
@@ -29,20 +31,48 @@ export const hero = {
   cta: "Falar com a Império",
 } as const;
 
+/* ── 1c. Ícones sociais da hero ──────────────────────────────────────── */
+
+export const sociaisHero = [
+  {
+    tipo: "instagram" as const,
+    rotulo: "Instagram da Império Construtora",
+    href: "https://www.instagram.com/_construtoraimperio",
+  },
+  {
+    tipo: "email" as const,
+    rotulo: "Enviar e-mail para a Império Construtora",
+    href: "mailto:contato@imperioconstrutora.com.br",
+  },
+  /* Sem link por enquanto: é só a marcação de praça. */
+  { tipo: "local" as const, rotulo: "Guarulhos, São Paulo" },
+];
+
 /* ── 1b. Menu da hero ────────────────────────────────────────────────── */
 
 export const menuHero = {
   abrir: "MENU",
   fechar: "FECHAR",
-  eyebrow: "CONSTRUÇÃO, REFORMA E GESTÃO DE OBRAS",
   itens: [
-    { numero: "01", texto: "Obras", href: "#obras" },
-    { numero: "02", texto: "Sobre", href: "#sobre" },
-    { numero: "03", texto: "Como trabalhamos", href: "#como-trabalhamos" },
+    { texto: "Obras", href: "#obras" },
+    { texto: "Sobre", href: "#sobre" },
+    { texto: "Como trabalhamos", href: "#como-trabalhamos" },
+    { texto: "Contato", href: "#contato" },
   ],
   contatoRotulo: "CONTATO",
-  /* Telefone e e-mail seguem sem definição — texto literal, não inventar. */
-  contatoLinhas: ["(em definição)", "(em definição)", "São Paulo, SP"],
+  contatoLinhas: [
+    {
+      tipo: "email" as const,
+      texto: "contato@imperioconstrutora.com.br",
+      href: "mailto:contato@imperioconstrutora.com.br",
+    },
+    {
+      tipo: "instagram" as const,
+      texto: "@_construtoraimperio",
+      href: "https://www.instagram.com/_construtoraimperio",
+    },
+    { tipo: "local" as const, texto: "Guarulhos, SP" },
+  ] as { tipo: "email" | "instagram" | "local"; texto: string; href?: string }[],
   cta: "Falar com a Império",
 } as const;
 
@@ -334,9 +364,10 @@ export const rodape: ColunaRodape[] = [
   {
     titulo: "CONTATO",
     itens: [
+      /* Telefone ainda sem definição — literal, não inventar. */
       { texto: "(em definição)" },
-      { texto: "(em definição)" },
-      { texto: "São Paulo, SP" },
+      { texto: "contato@imperioconstrutora.com.br", href: "mailto:contato@imperioconstrutora.com.br" },
+      { texto: "Guarulhos, SP" },
     ],
   },
 ];

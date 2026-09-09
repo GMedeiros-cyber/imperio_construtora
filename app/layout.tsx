@@ -13,10 +13,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="" />
-        {/* Switzer 300/400 via Fontshare — a licença ITF não permite auto-hospedar. */}
+        {/* Switzer e Zodiak, 300/400, via Fontshare — a licença ITF não permite
+            auto-hospedar nenhuma das duas. */}
         <link
           rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=switzer@300,400&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=switzer@300,400&f[]=zodiak@300,400&display=swap"
         />
       </head>
       <body className="min-h-full bg-bone text-ink">{children}</body>

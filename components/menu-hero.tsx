@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { hero, menuHero } from "@/lib/dados";
+import { IconeContato } from "@/components/icones-contato";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 
 const FOCAVEIS = [
@@ -106,7 +107,14 @@ export function MenuHero() {
          visibility:hidden não recebe foco, e o set da timeline com autoAlpha
          só valeria no primeiro tick do gsap. */
       gsap.set(raiz, { display: "block", visibility: "visible" });
-      linhaDoTempo.current.play();
+
+      /* invalidate ANTES de tocar, e este é o ponto: a timeline é montada com
+         o overlay em display:none, quando todo elemento mede zero. yPercent
+         110 vira 110% de zero, ou seja, deslocamento nenhum — e os itens
+         apareciam já posicionados, sem animar. Invalidar força o gsap a
+         remedir agora que o overlay tem altura. */
+      linhaDoTempo.current.invalidate();
+      linhaDoTempo.current.play(0);
     } else {
       linhaDoTempo.current.reverse();
     }
@@ -171,7 +179,13 @@ export function MenuHero() {
     let quadro = 0;
     quadro = requestAnimationFrame(() => {
       quadro = requestAnimationFrame(() => {
-        nav.current?.querySelector<HTMLElement>(FOCAVEIS)?.focus();
+        /* preventScroll é o ponto: o li tem overflow:hidden, o que faz dele
+           um contêiner rolável. Sem isso, focar o link de dentro fazia o
+           navegador rolar o conteúdo para trazê-lo à vista, desfazendo o
+           deslocamento e deixando o primeiro item visível antes de animar. */
+        nav.current
+          ?.querySelector<HTMLElement>(FOCAVEIS)
+          ?.focus({ preventScroll: true });
       });
     });
 
@@ -240,13 +254,8 @@ export function MenuHero() {
               misturar "md:" com "min-[992px]:" faz a de 768px vencer em
               1440px. Iguais, elas se ordenam entre si pela largura. */}
           <div className="flex h-full w-full flex-col gap-3 min-[768px]:grid min-[768px]:grid-cols-[1fr_auto] min-[992px]:grid-cols-[1fr_2fr_1fr]">
-            <div data-coluna className="flex flex-col items-start justify-end gap-6">
+            <div data-coluna className="flex flex-col items-start justify-end">
               <Image src={hero.logo} alt={hero.logoAlt} className="h-20 w-auto" />
-              {/* Ash, e nao graphite: graphite e token de fundo claro e sobre
-                  o ink do overlay dava 2,87:1. */}
-              <p className="text-caption uppercase tracking-[0.1em] text-ash">
-                {menuHero.eyebrow}
-              </p>
             </div>
 
             <ul className="flex w-full list-none flex-col [&:hover_[data-item]]:opacity-40">
@@ -265,12 +274,9 @@ export function MenuHero() {
                     <a
                       href={item.href}
                       onClick={fechar}
-                      className="flex w-full gap-3 pb-[1.15em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
+                      className="flex w-full gap-3 pb-[.62em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
                     >
-                      <span className="block text-caption text-gold" aria-hidden>
-                        {item.numero}
-                      </span>
-                      <span className="block font-light leading-none text-bone">
+                      <span className="block font-display font-light leading-none text-bone">
                         {item.texto}
                       </span>
                     </a>
@@ -283,11 +289,32 @@ export function MenuHero() {
               <p className="text-caption uppercase tracking-[0.1em] text-gold">
                 {menuHero.contatoRotulo}
               </p>
-              {menuHero.contatoLinhas.map((linha, indice) => (
-                <p key={indice} className="text-body text-bone">
-                  {linha}
-                </p>
-              ))}
+              {menuHero.contatoLinhas.map((linha) => {
+                const conteudo = (
+                  <>
+                    <IconeContato tipo={linha.tipo} />
+                    <span>{linha.texto}</span>
+                  </>
+                );
+
+                return (
+                  <p key={linha.texto} className="text-body text-bone">
+                    {linha.href ? (
+                      <a
+                        href={linha.href}
+                        onClick={fechar}
+                        target={linha.href.startsWith("http") ? "_blank" : undefined}
+                        rel={linha.href.startsWith("http") ? "noreferrer" : undefined}
+                        className="flex items-center gap-3 transition-colors hover:text-gold-lt"
+                      >
+                        {conteudo}
+                      </a>
+                    ) : (
+                      <span className="flex items-center gap-3">{conteudo}</span>
+                    )}
+                  </p>
+                );
+              })}
               <a
                 href="#contato"
                 onClick={fechar}

@@ -1,8 +1,10 @@
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 
 import { hero } from "@/lib/dados";
 import { MenuHero } from "@/components/menu-hero";
+import { SociaisHero } from "@/components/sociais-hero";
+import { BotaoContatoHero } from "@/components/botao-contato-hero";
+import { DiaText } from "@/components/ui/dia-text";
 
 /**
  * BLOCO 1 — Hero
@@ -18,30 +20,34 @@ import { MenuHero } from "@/components/menu-hero";
  * 16px e 3:1 para a manchete, que é texto grande.
  */
 export function Hero() {
+  const comum = { alt: hero.fundoAlt, sizes: "100vw", priority: true, quality: 80 };
+  const {
+    props: { srcSet: larga },
+  } = getImageProps({ ...comum, src: hero.fundoLargo, width: 1920, height: 1080 });
+  const {
+    props: { srcSet: alta, ...restoDaFoto },
+  } = getImageProps({ ...comum, src: hero.fundoAlto, width: 1200, height: 1500 });
+  void alta;
+
   return (
     <section id="inicio" className="relative h-screen w-full overflow-hidden">
-      {/* O tratamento está GRAVADO NO ARQUIVO, não em CSS: véu de 0,76 de alpha
-          nos 26% do topo, com rampa até 48%, e escurecimento na base subindo
-          de 0 em 48% até 0,70 na borda inferior. Os valores saíram da
-          luminância medida da foto original — o céu chegava a 0,77 e a parede
-          iluminada da faixa de 55–85% a 0,50.
-          Quem dita o alpha do topo é a LOGO DOURADA, não o texto: o bone
-          passaria com 0,55, mas o ouro tem luminância própria (~0,31) e
-          precisa de fundo bem mais escuro para os 3:1 de gráfico não textual.
-          NÃO acrescentar gradiente, overlay ou filter por CSS: se a foto for
-          trocada, refaça o tratamento no arquivo e remeça.
-          O otimizador do next/image faz a negociação de formato: entrega
-          webp/avif a quem aceita e jpeg como fallback, com srcset por
-          largura. O arquivo tem 1440px de largura, então o otimizador nunca
-          gera a variante de 3840px — ele não faz upscale. */}
-      <Image
-        src={hero.fundo}
-        alt={hero.fundoAlt}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
-      />
+      {/* Direção de arte por <picture>, o padrão que o guia da versão indica:
+          getImageProps mantém a otimização e o srcset por largura, e o
+          <source media> escolhe o enquadramento. A larga (16:9) entra de
+          768px para cima; a alta (4:5) é o padrão do mobile.
+
+          O tratamento está GRAVADO NOS ARQUIVOS, não em CSS: escurecimento na
+          base, sem véu no topo porque o céu de crepúsculo já dá contraste.
+          NÃO acrescentar gradiente, overlay ou filter por CSS. Se a foto for
+          trocada, refaça o tratamento no arquivo e remeça o contraste. */}
+      <picture>
+        <source media="(min-width: 768px)" srcSet={larga} />
+        <img
+          {...restoDaFoto}
+          alt={hero.fundoAlt}
+          className="absolute inset-0 size-full object-cover"
+        />
+      </picture>
 
       {/* Navegação, dentro da imagem */}
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-8 p-8">
@@ -52,14 +58,28 @@ export function Hero() {
           className="h-14 w-auto"
         />
 
-        <MenuHero />
+        <div className="flex flex-col items-end gap-5">
+          <MenuHero />
+          <SociaisHero />
+        </div>
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
+        {/* Uma instância de DiaText por linha. A varredura acontece uma vez,
+            na entrada: triggerOnView com once e sem repeat — nada de loop na
+            hero. As cores são o dourado da marca; o texto em repouso é bone. */}
         <h1 className="text-heading-sm leading-none text-bone md:text-heading xl:text-display">
-          {hero.manchete.map((linha) => (
+          {hero.manchete.map((linha, indice) => (
             <span key={linha} className="block">
-              {linha}
+              <DiaText
+                text={linha}
+                colors={["#B79653", "#D4B872", "#8A6D2F", "#B79653"]}
+                textColor="#FAF8F2"
+                triggerOnView
+                once
+                repeat={false}
+                delay={indice * 0.12}
+              />
             </span>
           ))}
         </h1>
@@ -67,12 +87,12 @@ export function Hero() {
         <div className="lg:max-w-md lg:shrink-0">
           <p className="text-body text-bone">{hero.paragrafo}</p>
 
-          <a href="#contato" className="mt-8 flex items-center gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-pill border border-bone text-bone">
-              <ArrowRight size={16} strokeWidth={1} aria-hidden />
-            </span>
-            <span className="text-body-sm text-bone underline">{hero.cta}</span>
-          </a>
+          {/* isolate cria contexto de empilhamento: o botão tem camadas em
+              z-30 e z-40 por dentro, e sem isso elas disputavam na raiz e
+              apareciam POR CIMA do overlay do menu, que está em z-9. */}
+          <div className="isolate mt-8">
+            <BotaoContatoHero />
+          </div>
         </div>
       </div>
     </section>

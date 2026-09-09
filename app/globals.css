@@ -26,6 +26,12 @@
      Switzer via Fontshare (não auto-hospedar: licença ITF não permite).
      --------------------------------------------------------------------- */
   --font-switzer: "Switzer", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-zodiak: "Zodiak", Georgia, "Times New Roman", serif;
+
+  /* Duas famílias: a serifada nas manchetes, ecoando o logotipo IMPÉRIO, e a
+     Switzer em todo o resto — corpo, eyebrow, botão e tag. Peso 300 nas duas;
+     a regra de nunca usar bold continua valendo. */
+  --font-display: var(--font-zodiak);
   --font-sans: var(--font-switzer);
 
   /* Pesos: 300 para todo display/headline, 400 para corpo, meta e UI. */
@@ -137,6 +143,13 @@
   h3,
   h4 {
     font-weight: var(--font-weight-light);
+  }
+
+  /* Manchetes na serifada; h3 e h4 seguem na Switzer, por serem títulos de
+     card e não manchete. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
   }
 
   /* Link nunca herda o azul do navegador. */
