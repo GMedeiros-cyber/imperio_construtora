@@ -1,7 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 
+import logoRodape from "@/public/hero/logo-imperio-rodape.png";
 import { menuHero, sociaisHero } from "@/lib/dados";
 import { paraRotaDeContato } from "@/lib/rotas";
+import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
 /* BLOCO 11 — Full-Bleed Footer
    Estrutura copiada do rodapé do projeto LDF: bloco de identificação à
@@ -18,14 +21,19 @@ import { paraRotaDeContato } from "@/lib/rotas";
    contato DO documento, e não um endereço postal qualquer — é o elemento certo
    para o e-mail e a praça da empresa, e errado para o endereço de uma obra.
 
-   ══ A MARCA AQUI É TEXTO, E NÃO O PNG DO LOGOTIPO ══
+   ══ A MARCA É O LOGOTIPO, MAS NÃO O ARQUIVO DA HERO ══
 
-   ⚠ NÃO troque por <Image src={hero.logo}>. O arquivo é dourado sobre
-   transparente, desenhado para fundo escuro: medido contra o bone ele dá de
-   1,71 a 2,66:1, abaixo dos 3:1 que gráfico não textual exige, e cai direto na
-   regra do AGENTS.md de que #B79653 só existe sobre fundo escuro. Contra o ink
-   o mesmo arquivo dá de 7,0 a 10,9:1 — é por isso que ele serve na hero e em
-   /contato, e não aqui.
+   ⚠ NÃO troque por `hero.logo` (logo-imperio-nav.png). Aquele arquivo é
+   dourado #B79653 sobre transparente, desenhado para fundo escuro: medido
+   sobre o bone dá 2,20:1 de média, com 99,9% dos pixels opacos abaixo dos 3:1
+   que gráfico não textual exige — e cai na regra do AGENTS.md de que #B79653
+   só existe sobre fundo escuro. Sobre o ink o mesmo arquivo dá 8,84:1, que é
+   por que ele serve na hero e em /contato.
+
+   Daí `logo-imperio-rodape.png`: o MESMO desenho reescalado para o gold-dk
+   #8A6D2F, o único dourado que o AGENTS.md admite sobre o creme. Medido sobre
+   o bone: 4,68:1 de média, faixa de 3,05 a 6,54:1, nenhum pixel abaixo de 3:1.
+   Os dois arquivos coexistem de propósito — cada fundo tem o seu.
 
    ══ A FRASE SOBRE A EMPRESA É CONDENSAÇÃO, NÃO AFIRMAÇÃO NOVA ══
 
@@ -79,12 +87,13 @@ export function SiteFooter() {
       <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,26rem)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
         <div>
-          <p className="font-display text-subheading font-light tracking-[0.12em] text-ink">
-            IMPÉRIO
-          </p>
-          <p className="mt-1 text-caption uppercase tracking-[0.24em] text-graphite">
-            Construtora
-          </p>
+          {/* h-16 = 64px de altura, largura automática: o import estático
+              carrega as dimensões reais e o Next mantém a proporção. */}
+          <Image
+            src={logoRodape}
+            alt="Império Construtora"
+            className="h-16 w-auto"
+          />
 
           <p className="mt-6 max-w-[46ch] text-body-sm text-graphite">{SOBRE}</p>
 
@@ -138,6 +147,21 @@ export function SiteFooter() {
                   Instagram
                 </a>
               </li>
+              <li>
+                <a href={`mailto:${EMAIL}`} className={LINK}>
+                  E-mail
+                </a>
+              </li>
+              <li>
+                {/* ⚠ PENDENTE: a página de Facebook da Império não existe no
+                    projeto. O "#" é literal e provisório — inventar uma URL
+                    mandaria o visitante para o perfil de outra pessoa. Quando
+                    o endereço chegar, ele entra aqui com target="_blank" e
+                    rel="noopener", como o Instagram. */}
+                <a href="#" className={LINK}>
+                  Facebook
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -155,6 +179,9 @@ export function SiteFooter() {
           </div>
         </nav>
       </div>
+
+      {/* ── Assinatura em partículas ───────────────────────────────────── */}
+      <AssinaturaParticulas />
 
       {/* ── Barra de base ──────────────────────────────────────────────── */}
       <div className="mt-16 border-t border-ash pt-8">
