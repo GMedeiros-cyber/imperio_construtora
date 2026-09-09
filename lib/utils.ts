@@ -31,6 +31,10 @@ const twMerge = extendTailwindMerge({
             "numeral-lg",
             "numeral-md",
             "numeral-sm",
+            /* Título da obra no scroll horizontal — três degraus. */
+            "obra-lg",
+            "obra-md",
+            "obra-sm",
             "eyebrow",
           ],
         },
