@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 import { hero } from "@/lib/dados";
+import { MenuHero } from "@/components/menu-hero";
 
 /**
  * BLOCO 1 — Hero
@@ -51,25 +52,7 @@ export function Hero() {
           className="h-14 w-auto"
         />
 
-        <nav className="hidden items-center gap-12 md:flex">
-          {hero.links.map((link) => (
-            <a
-              key={link.texto}
-              href={link.href}
-              className="text-caption uppercase tracking-[0.1em] text-bone"
-            >
-              {link.texto}
-            </a>
-          ))}
-        </nav>
-
-        {/* Abaixo de 768px a navegação vira este botão, que ainda não abre nada. */}
-        <button
-          type="button"
-          className="rounded-pill border border-bone px-6 py-3 text-caption uppercase tracking-[0.1em] text-bone md:hidden"
-        >
-          {hero.menu}
-        </button>
+        <MenuHero />
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">

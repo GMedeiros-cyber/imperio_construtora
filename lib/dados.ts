@@ -23,16 +23,26 @@ export const hero = {
   /* Logo da navbar: 160x128 no arquivo, servida a 56px de altura. */
   logo: logoNav,
   logoAlt: "Império Construtora",
-  links: [
-    { texto: "OBRAS", href: "#obras" },
-    { texto: "COMO TRABALHAMOS", href: "#como-trabalhamos" },
-    { texto: "SOBRE", href: "#sobre" },
-    { texto: "CONTATO", href: "#contato" },
-  ],
-  menu: "Menu",
   manchete: ["Do plano ao detalhe.", "Do detalhe à", "excelência."],
   paragrafo:
     "Construção, reforma e gestão de obras com equipe própria, prazo fechado em contrato e orçamento blindado do início ao fim.",
+  cta: "Falar com a Império",
+} as const;
+
+/* ── 1b. Menu da hero ────────────────────────────────────────────────── */
+
+export const menuHero = {
+  abrir: "MENU",
+  fechar: "FECHAR",
+  eyebrow: "CONSTRUÇÃO, REFORMA E GESTÃO DE OBRAS",
+  itens: [
+    { numero: "01", texto: "Obras", href: "#obras" },
+    { numero: "02", texto: "Sobre", href: "#sobre" },
+    { numero: "03", texto: "Como trabalhamos", href: "#como-trabalhamos" },
+  ],
+  contatoRotulo: "CONTATO",
+  /* Telefone e e-mail seguem sem definição — texto literal, não inventar. */
+  contatoLinhas: ["(em definição)", "(em definição)", "São Paulo, SP"],
   cta: "Falar com a Império",
 } as const;
 
