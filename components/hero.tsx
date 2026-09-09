@@ -47,8 +47,6 @@ export function Hero() {
         <Image
           src={hero.logo}
           alt={hero.logoAlt}
-          width={hero.logoLargura}
-          height={hero.logoAltura}
           priority
           className="h-14 w-auto"
         />

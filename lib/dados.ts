@@ -1,3 +1,6 @@
+import fundoHero from "@/public/hero/hero-fundo.jpg";
+import logoNav from "@/public/hero/logo-imperio-nav.png";
+
 /**
  * Conteúdo da home da Império Construtora.
  * A estrutura dos blocos segue o DESIGN.md — aqui vive só o texto.
@@ -6,18 +9,20 @@
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {
-  /* O tratamento (véu no topo e escurecimento na base) está gravado NO
+  /* Import estático, e não string de caminho: assim o Next gera a URL com
+     hash do conteúdo. Trocar o arquivo passa a invalidar o cache sozinho —
+     com caminho fixo, o otimizador servia a imagem velha por até 4 horas.
+
+     O tratamento (véu no topo e escurecimento na base) está gravado NO
      ARQUIVO, não em CSS. Foi calculado a partir da luminância medida da foto
      original — ver o comentário do componente. Trocar a foto exige refazer o
      tratamento e remedir. */
-  fundo: "/hero/hero-fundo.jpg",
+  fundo: fundoHero,
   fundoAlt:
     "Fachada de residência de alto padrão ao entardecer, com iluminação acesa nas varandas.",
   /* Logo da navbar: 160x128 no arquivo, servida a 56px de altura. */
-  logo: "/hero/logo-imperio-nav.png",
+  logo: logoNav,
   logoAlt: "Império Construtora",
-  logoLargura: 160,
-  logoAltura: 128,
   links: [
     { texto: "OBRAS", href: "#obras" },
     { texto: "COMO TRABALHAMOS", href: "#como-trabalhamos" },
