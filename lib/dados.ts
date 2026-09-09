@@ -99,7 +99,13 @@ export type ObraPainel = {
   rotulo: string;
   titulo: string;
   descricao: string;
+  /* Caminho solto de propósito: as fotos das obras 02 e 03 ainda não vieram e
+     entram aqui trocando só esta linha. Enquanto isso apontam para um
+     placeholder graphite numerado, quadrado como a foto real. */
   imagem: string;
+  /* Vazio quando a imagem é placeholder: o alt de um espaço reservado é ruído
+     para o leitor de tela, e a legenda ao lado já nomeia a obra. */
+  imagemAlt: string;
   tags: string[];
 };
 
@@ -109,7 +115,9 @@ export const obrasPaineis: ObraPainel[] = [
     titulo: "Artwalk, Shopping Tamboré",
     descricao:
       "Reforma completa da loja em modelo turnkey, com equipes rotativas em turno de vinte e quatro horas.",
-    imagem: "/placeholder/obra-01.svg",
+    imagem: "/obras/artwalk-tambore.jpg",
+    imagemAlt:
+      "Fachada da loja Artwalk no Shopping Tamboré, recém-entregue, com letreiro em neon e parede de cimento queimado.",
     tags: ["Reforma", "Shopping Tamboré", "Turnkey", "45 dias"],
   },
   {
@@ -117,7 +125,8 @@ export const obrasPaineis: ObraPainel[] = [
     titulo: "PETZ, Radial Leste",
     descricao:
       "Gesso liso e drywall, pintura total, instalação de broquete e concregrama.",
-    imagem: "/placeholder/obra-02.svg",
+    imagem: "/obras/placeholder-02.svg",
+    imagemAlt: "",
     tags: ["Reforma", "Radial Leste", "Gesso e pintura", "60 dias"],
   },
   {
@@ -125,10 +134,20 @@ export const obrasPaineis: ObraPainel[] = [
     titulo: "Transportadora Videira",
     descricao:
       "Baldrame, alvenaria perimetral, blocos e sapatas da estrutura do galpão.",
-    imagem: "/placeholder/obra-03.svg",
+    imagem: "/obras/placeholder-03.svg",
+    imagemAlt: "",
     tags: ["Obra nova", "Galpão", "Estrutura", "120 dias"],
   },
 ];
+
+/* Rodapé da seção: trilho de progresso, contador e a saída para a lista
+   completa. O total sai do tamanho do array, não de um número escrito à mão. */
+export const obrasScroll = {
+  verTodas: "Ver todas as obras",
+  verTodasHref: "#obras",
+  /* Rótulo do link de cada foto, lido pelo cursor customizado. */
+  cursor: "Ver obra",
+} as const;
 
 /* ── 5b. Faixa de paralaxe ──────────────────────────────────────────── */
 
