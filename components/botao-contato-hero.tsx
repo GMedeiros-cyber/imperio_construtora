@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 
 import { hero } from "@/lib/dados";
+import { ROTA_CONTATO } from "@/lib/rotas";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 
 /*
@@ -20,7 +21,7 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 function PillEstatico() {
   return (
     <a
-      href="#contato"
+      href={ROTA_CONTATO}
       style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%)" }}
       className="inline-flex h-14 w-[232px] items-center justify-center rounded-pill border border-gold text-[14px] font-normal uppercase tracking-[0.1em] text-bone transition-colors hover:border-gold-lt"
     >
@@ -46,5 +47,5 @@ export function BotaoContatoHero() {
   /* Com movimento reduzido não há shader nem canvas: só o pill. */
   if (reduzido) return <PillEstatico />;
 
-  return <LiquidMetalButton href="#contato" label={hero.cta} />;
+  return <LiquidMetalButton href={ROTA_CONTATO} label={hero.cta} />;
 }

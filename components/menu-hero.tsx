@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { hero, menuHero } from "@/lib/dados";
 import { IconeContato } from "@/components/icones-contato";
+import { paraRotaDeContato, ROTA_CONTATO } from "@/lib/rotas";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 
 const FOCAVEIS = [
@@ -272,7 +273,7 @@ export function MenuHero() {
                       o desenho da letra. */}
                   <div data-titulo>
                     <a
-                      href={item.href}
+                      href={paraRotaDeContato(item.href)}
                       onClick={fechar}
                       className="flex w-full gap-3 pb-[.62em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
                     >
@@ -316,7 +317,7 @@ export function MenuHero() {
                 );
               })}
               <a
-                href="#contato"
+                href={ROTA_CONTATO}
                 onClick={fechar}
                 className="mt-6 rounded-pill bg-gold px-6 py-3 text-center text-body text-ink transition-colors hover:bg-gold-lt"
               >
