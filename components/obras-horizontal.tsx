@@ -4,7 +4,9 @@ import { ArrowUpRight } from "lucide-react";
 import {
   motion,
   useMotionValueEvent,
+  useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
@@ -39,11 +41,32 @@ import { useMediaQuery } from "@/lib/use-media-query";
    -20%, a composição já chegaria torta ao centro. */
 const DESLOCAMENTO = { esquerda: 20, meio: 50, direita: 80 } as const;
 
+/* A mola que faz as vezes do scrub: 3 do GSAP. Sobreamortecida de propósito
+   — o amortecimento crítico aqui seria 2*raiz(20) ≈ 8,9 e usamos 30, então a
+   camada nunca passa do ponto, só demora a chegar. A constante de tempo é
+   amortecimento/rigidez ≈ 1,5 s: parou de rolar, as camadas ainda escorregam
+   por mais um segundo e meio até assentar. É esse atraso, e não a amplitude,
+   que faz a foto parecer perseguir a manchete.
+
+   A mola entra no PROGRESSO do painel, uma por painel, e não no x de cada
+   camada. Assim as três atrasam a mesma fração e o escorregamento entre elas
+   cresce proporcional à amplitude — a foto atrasa duas vezes e meia mais que
+   o título, que é a leitura que se quer. Três molas independentes dariam
+   fases diferentes e a composição chegaria torta ao centro. */
+const MOLA = { stiffness: 20, damping: 30, mass: 1, restDelta: 0.0005 } as const;
+
 export function ObrasHorizontal() {
   const secao = useRef<HTMLElement>(null);
   const trilha = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: secao });
   const ehDesktop = useMediaQuery("(min-width: 768px)");
+  /* Null no primeiro render e no servidor; só depois vira true/false. Tratado
+     como "não reduzir" enquanto for null, que é o caso da maioria. */
+  const reduzirMovimento = useReducedMotion();
+  /* O scroll horizontal em si continua: ele É a navegação da seção, e desligá-lo
+     deixaria dois painéis inalcançáveis. O que sai com prefers-reduced-motion é
+     só o paralaxe interno, que é enfeite. */
+  const anima = ehDesktop && !reduzirMovimento;
 
   /* Curso horizontal em pixels. Medido, não calculado: as margens negativas
      dos painéis fazem o total não bater com nenhuma conta de 100vw por
@@ -122,9 +145,8 @@ export function ObrasHorizontal() {
               key={obra.rotulo}
               obra={obra}
               indice={indice}
-              total={obrasPaineis.length}
               x={x}
-              ehDesktop={ehDesktop}
+              anima={anima}
             />
           ))}
         </motion.div>
@@ -144,15 +166,15 @@ export function ObrasHorizontal() {
 function Painel({
   obra,
   indice,
-  total,
   x,
-  ehDesktop,
+  anima,
 }: {
   obra: ObraPainel;
   indice: number;
-  total: number;
   x: MotionValue<number>;
-  ehDesktop: boolean;
+  /* Falso no mobile, onde o painel não anda na horizontal, e falso com
+     prefers-reduced-motion. Nos dois casos nenhuma camada recebe transform. */
+  anima: boolean;
 }) {
   const painel = useRef<HTMLElement>(null);
 
@@ -163,7 +185,7 @@ function Painel({
      partes não são iguais. */
   const progresso = useTransform(x, (valor) => {
     const alvo = painel.current;
-    if (!alvo || !ehDesktop) return 0.5;
+    if (!alvo || !anima) return 0.5;
     const largura = window.innerWidth;
     const entra = largura - alvo.offsetLeft;
     const sai = -(alvo.offsetLeft + alvo.offsetWidth);
@@ -172,13 +194,15 @@ function Painel({
     return Math.min(1, Math.max(0, bruto));
   });
 
-  const xEsquerda = useCamada(progresso, DESLOCAMENTO.esquerda);
-  const xMeio = useCamada(progresso, DESLOCAMENTO.meio);
-  const xDireita = useCamada(progresso, DESLOCAMENTO.direita);
+  /* O progresso amortecido, não o cru: é daqui que sai o atraso das camadas.
+     Ver o comentário da MOLA. */
+  const progressoSuave = useSpring(progresso, MOLA);
 
-  const ehPlaceholder = obra.imagem.endsWith(".svg");
+  const xEsquerda = useCamada(progressoSuave, DESLOCAMENTO.esquerda);
+  const xMeio = useCamada(progressoSuave, DESLOCAMENTO.meio);
+  const xDireita = useCamada(progressoSuave, DESLOCAMENTO.direita);
+
   const primeiro = indice === 0;
-  const ultimo = indice === total - 1;
 
   return (
     <article
@@ -193,12 +217,11 @@ function Painel({
            que fazem os painéis se sobreporem. */
         "min-[768px]:grid min-[768px]:w-full min-[768px]:flex-none min-[768px]:grid-cols-12 min-[768px]:gap-3 min-[768px]:px-8 min-[768px]:pb-28 min-[768px]:pt-0",
         primeiro ? "min-[768px]:ml-[12%]" : "min-[768px]:ml-[-20%]",
-        ultimo ? "min-[768px]:pr-[50vw]" : "",
       ].join(" ")}
     >
       {/* ── ESQUERDA: eyebrow + título ────────────────────────────────── */}
       <motion.div
-        style={ehDesktop ? { x: xEsquerda } : undefined}
+        style={anima ? { x: xEsquerda } : undefined}
         className="header-wrap flex flex-col gap-6 min-[768px]:relative min-[768px]:z-[3] min-[768px]:[grid-area:1/2/2/6] min-[768px]:[pointer-events:none] min-[768px]:[mix-blend-mode:difference]"
       >
         <p className="flex items-center gap-[.38rem] whitespace-nowrap text-eyebrow uppercase text-bone">
@@ -216,7 +239,7 @@ function Painel({
 
       {/* ── MEIO: a foto, quadrada ────────────────────────────────────── */}
       <motion.div
-        style={ehDesktop ? { x: xMeio } : undefined}
+        style={anima ? { x: xMeio } : undefined}
         className="flex flex-col items-center overflow-hidden min-[768px]:relative min-[768px]:[grid-area:1/5/2/9]"
       >
         <a
@@ -234,9 +257,6 @@ function Painel({
             alt={obra.imagemAlt}
             width={828}
             height={828}
-            /* O placeholder é SVG: passa longe do otimizador, que não
-               processa SVG. A foto real segue otimizada. */
-            unoptimized={ehPlaceholder}
             sizes="(min-width: 768px) 34vw, 100vw"
             className="aspect-square size-full object-cover"
           />
@@ -245,7 +265,7 @@ function Painel({
 
       {/* ── DIREITA: tags e descrição ─────────────────────────────────── */}
       <motion.div
-        style={ehDesktop ? { x: xDireita } : undefined}
+        style={anima ? { x: xDireita } : undefined}
         className="flex flex-col items-start gap-6 min-[768px]:justify-end min-[768px]:pl-16 min-[768px]:[grid-area:1/9/2/12]"
       >
         {/* Tags empilhadas e sublinhadas, não pills com borda: é o
