@@ -1,9 +1,15 @@
 import { rodape } from "@/lib/dados";
+import { paraRotaDeContato } from "@/lib/rotas";
 
 /**
  * BLOCO 11 — Full-Bleed Footer
  * Mesmo canvas creme, sem fundo próprio. Hairline 1px ash no topo — o único
- * divisor da página. O id #contato é da seção escura do bloco 10, não daqui.
+ * divisor da página.
+ *
+ * O item "Contato" da coluna de navegação ainda chega aqui com href "#contato",
+ * escrito em lib/dados.ts. `paraRotaDeContato` o traduz para /contato — ver o
+ * aviso em lib/rotas.ts, que explica por que a tradução é na view e quando ela
+ * deve sair.
  */
 export function SiteFooter() {
   return (
@@ -18,7 +24,7 @@ export function SiteFooter() {
                 <li key={indice} className="text-body-sm text-ink">
                   {item.href ? (
                     <a
-                      href={item.href}
+                      href={paraRotaDeContato(item.href)}
                       className="transition-colors hover:text-gold-dk"
                     >
                       {item.texto}
