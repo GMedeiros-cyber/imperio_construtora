@@ -118,6 +118,32 @@
   --text-numeral-sm--letter-spacing: -0.04em;
   --text-numeral-sm--font-weight: 300;
 
+  /* ---------------------------------------------------------------------
+     TIPOGRAFIA — título da obra no scroll horizontal
+     Valores do CSS oficial do Creative Giants. Zodiak, peso 300, line-height
+     1 e tracking -0.04em nos três degraus; muda só o corpo. Os sufixos
+     acompanham os breakpoints da seção: lg = 992px+, md = até 991px,
+     sm = até 767px.
+
+     O degrau lg tem o mesmo corpo do --text-display (84px) mas não é ele:
+     display fecha o tracking para o pôster da hero e pode mudar sem que a
+     seção de obras queira acompanhar. Token próprio, portanto.
+     --------------------------------------------------------------------- */
+  --text-obra-lg: 5.25rem; /* 84px */
+  --text-obra-lg--line-height: 1;
+  --text-obra-lg--letter-spacing: -0.04em;
+  --text-obra-lg--font-weight: 300;
+
+  --text-obra-md: 3.5rem; /* 56px */
+  --text-obra-md--line-height: 1;
+  --text-obra-md--letter-spacing: -0.04em;
+  --text-obra-md--font-weight: 300;
+
+  --text-obra-sm: 2.5rem; /* 40px */
+  --text-obra-sm--line-height: 1;
+  --text-obra-sm--letter-spacing: -0.04em;
+  --text-obra-sm--font-weight: 300;
+
   /* Eyebrow do Creative Giants: 16px caixa alta, peso 400, line-height 1 —
      o line-height cravado é o que alinha o ponto ao texto. */
   --text-eyebrow: 1rem; /* 16px */
