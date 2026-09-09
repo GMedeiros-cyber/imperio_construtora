@@ -19,6 +19,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
  * - Aceita href: quando presente vira <a>, que é o certo para um destino de
  *   âncora. Sem href continua <button>.
  * - O ripple do clique foi mantido, mas usa bone em vez de branco puro.
+ * - O contêiner do shader era preenchido de #B79653. Virou borda de 1px na
+ *   mesma cor: o preenchimento sólido piscava como pílula amarela cheia a cada
+ *   recarregamento, porque o shader só monta depois da hidratação.
  */
 
 const UNIFORMS_OURO = {
@@ -112,7 +115,8 @@ export function LiquidMetalButton({
           0.6,
         );
       } catch (erro) {
-        /* Sem WebGL o pill dourado de trás continua no lugar. */
+        /* Sem WebGL sobram a borda dourada e o miolo escuro, que já são
+           o estado de repouso do botão. */
         console.error("shader do botão não montou:", erro);
       }
     });
@@ -255,7 +259,13 @@ export function LiquidMetalButton({
           inset: 0,
           borderRadius: "1440px",
           overflow: "hidden",
-          background: "#B79653",
+          /* O dourado vem da BORDA, não de preenchimento. Era
+             background:"#B79653": uma pílula amarela cheia que aparecia a cada
+             recarregamento, no intervalo entre a hidratação e a montagem do
+             shader. Com a borda, o estado anterior à montagem já é o estado
+             final e não existe flash nenhum. */
+          background: "transparent",
+          border: "1px solid #B79653",
           zIndex: 10,
         }}
       />
