@@ -3,87 +3,80 @@
  * A estrutura dos blocos segue o DESIGN.md — aqui vive só o texto.
  */
 
-/* ── 1. Header lockup ────────────────────────────────────────────────── */
+/* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
-export const cabecalho = {
-  /* Eyebrow em duas linhas, caixa alta */
-  eyebrow: ["CONSTRUÇÃO, REFORMA E GESTÃO DE OBRAS", "SÃO PAULO // BRASIL"],
-  /* Marca circular — a coroa entra depois em SVG */
-  marca: "I",
+export const hero = {
+  /* Placeholder. A foto real entra como /hero/fundo.jpg — trocar só esta
+     string. Requisito da foto documentado no componente. */
+  fundo: "/hero/fundo.svg",
+  fundoAlt: "",
+  marca: ["IMPÉRIO", "CONSTRUTORA"],
+  links: [
+    { texto: "OBRAS", href: "#obras" },
+    { texto: "COMO TRABALHAMOS", href: "#como-trabalhamos" },
+    { texto: "SOBRE", href: "#sobre" },
+    { texto: "CONTATO", href: "#contato" },
+  ],
   menu: "Menu",
-  menuFechar: "Fechar",
+  manchete: ["Do plano ao detalhe.", "Do detalhe à", "excelência."],
+  paragrafo:
+    "Construção, reforma e gestão de obras com equipe própria, prazo fechado em contrato e orçamento blindado do início ao fim.",
+  cta: "Falar com a Império",
 } as const;
 
-/* ── 2 e 3. Hero em composição ───────────────────────────────────────── */
+/* ── 2. O que fazemos ────────────────────────────────────────────────── */
 
-export type SlotHero = {
-  /** Pedaço do headline que abre a linha. */
-  texto: string;
-  /** Imagem de baixo, visível desde o início. */
-  base: string;
-  baseAlt: string;
-  /** Imagem de cima, revelada pela cortina de clip-path. */
-  topo: string;
-  topoAlt: string;
+export type NumeroDestaque = { valor: string; descricao: string };
+
+export const oQueFazemos = {
+  eyebrow: "O QUE FAZEMOS",
+  manchete:
+    "Construção, reforma e gestão de obras para varejo, corporativo, residencial e industrial. Equipe própria e prazo fechado em contrato.",
+  paragrafo:
+    "A Império nasceu da parceria entre um engenheiro civil e um profissional que cresceu na obra ao lado do pai, mestre de obras. São mais de dez anos somados entre formação técnica e canteiro. Trabalhamos com orçamento blindado do início ao fim e controle direto sobre o ritmo de produção.",
+  numeros: [
+    { valor: "+100", descricao: "lojas e unidades comerciais entregues" },
+    { valor: "+10.000", descricao: "metros quadrados construídos e reformados" },
+    { valor: "12", descricao: "anos de construção civil" },
+  ] as NumeroDestaque[],
+} as const;
+
+/* ── 3. Scroll horizontal de obras ───────────────────────────────────── */
+
+export type ObraPainel = {
+  rotulo: string;
+  titulo: string;
+  descricao: string;
+  imagem: string;
+  tags: string[];
 };
 
-/**
- * Quatro linhas: cada uma abre com um pedaço do headline e o slot de imagem
- * ocupa o que sobrar da linha. Como cada pedaço tem uma largura diferente,
- * cada imagem sai com uma proporção diferente, e tudo se rearranja sozinho.
- */
-export const slotsHero: SlotHero[] = [
+export const obrasPaineis: ObraPainel[] = [
   {
-    texto: "Do plano",
-    base: "/obras/artwalk-tambore.jpg",
-    baseAlt: "Loja Artwalk no Shopping Tamboré.",
-    topo: "/obras/videira-transportadora.jpg",
-    topoAlt: "Galpão da Transportadora Videira em obra.",
+    rotulo: "OBRA 01",
+    titulo: "Artwalk, Shopping Tamboré",
+    descricao:
+      "Reforma completa da loja em modelo turnkey, com equipes rotativas em turno de vinte e quatro horas.",
+    imagem: "/placeholder/obra-01.svg",
+    tags: ["Reforma", "Shopping Tamboré", "Turnkey", "45 dias"],
   },
   {
-    texto: "ao detalhe.",
-    base: "/obras/magicfeet-interlagos.jpg",
-    baseAlt: "Loja Magicfeet em Interlagos.",
-    topo: "/obras/morumbi-fachada.jpg",
-    topoAlt: "Fachada da obra no Morumbi.",
+    rotulo: "OBRA 02",
+    titulo: "PETZ, Radial Leste",
+    descricao:
+      "Gesso liso e drywall, pintura total, instalação de broquete e concregrama.",
+    imagem: "/placeholder/obra-02.svg",
+    tags: ["Reforma", "Radial Leste", "Gesso e pintura", "60 dias"],
   },
   {
-    texto: "Do detalhe",
-    base: "/obras/incorporacao-propria.jpg",
-    baseAlt: "Obra de incorporação própria da Império.",
-    topo: "/obras/morumbi-piscina.jpg",
-    topoAlt: "Área de piscina da obra no Morumbi.",
-  },
-  {
-    texto: "à excelência.",
-    base: "/obras/sao-marinho.jpg",
-    baseAlt: "Obra São Marinho.",
-    topo: "/obras/alfa-realty-guarulhos.jpg",
-    topoAlt: "Edifício da Alfa Realty em Guarulhos.",
+    rotulo: "OBRA 03",
+    titulo: "Transportadora Videira",
+    descricao:
+      "Baldrame, alvenaria perimetral, blocos e sapatas da estrutura do galpão.",
+    imagem: "/placeholder/obra-03.svg",
+    tags: ["Obra nova", "Galpão", "Estrutura", "120 dias"],
   },
 ];
-
-/* ── 4. Números ──────────────────────────────────────────────────────── */
-
-export type Numero = { valor: string; rotulo: string };
-
-export const numeros: Numero[] = [
-  { valor: "+100", rotulo: "LOJAS E UNIDADES COMERCIAIS ENTREGUES" },
-  { valor: "+10.000", rotulo: "METROS QUADRADOS CONSTRUÍDOS E REFORMADOS" },
-  { valor: "12", rotulo: "ANOS DE CONSTRUÇÃO CIVIL" },
-  { valor: "100%", rotulo: "MÃO DE OBRA PRÓPRIA E QUALIFICADA" },
-];
-
-/* ── 5. Quem somos ───────────────────────────────────────────────────── */
-
-export const quemSomos = {
-  eyebrow: "QUEM SOMOS",
-  statement: "Engenharia de precisão e tradição construtiva, na mesma obra.",
-  colunas: [
-    "A Império nasceu da parceria entre um engenheiro civil e um profissional que cresceu na obra ao lado do pai, mestre de obras. São mais de dez anos somados entre formação técnica e canteiro.",
-    "Trabalhamos com equipe própria, cronograma fechado em contrato e controle direto sobre o ritmo de produção. Cada obra é conduzida com orçamento blindado do início ao fim.",
-  ],
-} as const;
 
 /* ── 5b. Faixa de paralaxe ──────────────────────────────────────────── */
 

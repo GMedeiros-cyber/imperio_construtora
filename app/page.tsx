@@ -2,22 +2,20 @@ import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { Contato } from "@/components/contato";
 import { FaixaParalaxe } from "@/components/faixa-paralaxe";
-import { HeroComposicao } from "@/components/hero-composicao";
-import { HeaderLockup } from "@/components/header-lockup";
-import { Numeros } from "@/components/numeros";
+import { Hero } from "@/components/hero";
 import { ObrasEntregues } from "@/components/obras-entregues";
+import { ObrasHorizontal } from "@/components/obras-horizontal";
+import { OQueFazemos } from "@/components/o-que-fazemos";
 import { ParticipacaoTecnica } from "@/components/participacao-tecnica";
-import { QuemSomos } from "@/components/quem-somos";
 import { SiteFooter } from "@/components/site-footer";
 
-/** Home — ordem dos blocos conforme o DESIGN.md. */
+/** Home — ordem dos blocos. */
 export default function Home() {
   return (
     <>
-      <HeaderLockup />
-      <HeroComposicao />
-      <Numeros />
-      <QuemSomos />
+      <Hero />
+      <OQueFazemos />
+      <ObrasHorizontal />
       <FaixaParalaxe />
       <ObrasEntregues />
       <ParticipacaoTecnica />

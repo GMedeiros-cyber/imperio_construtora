@@ -9,7 +9,10 @@ import { TagPill } from "@/components/tag-pill";
  */
 export function ComoTrabalhamos() {
   return (
-    <section className="flex flex-col gap-section px-gutter-sm py-section md:px-gutter">
+    <section
+      id="como-trabalhamos"
+      className="flex flex-col gap-section px-gutter-sm py-section md:px-gutter"
+    >
       <SectionTitleBlock
         eyebrow={secaoModelos.eyebrow}
         statement={secaoModelos.statement}
