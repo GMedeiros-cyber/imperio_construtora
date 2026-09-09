@@ -12,7 +12,11 @@ export const hero = {
   fundo: "/hero/hero-fundo.jpg",
   fundoAlt:
     "Fachada de residência entregue pela Império, com garagem coberta e jardim.",
-  marca: ["IMPÉRIO", "CONSTRUTORA"],
+  /* Logo da navbar: 160x128 no arquivo, servida a 40px de altura. */
+  logo: "/hero/logo-imperio-nav.png",
+  logoAlt: "Império Construtora",
+  logoLargura: 160,
+  logoAltura: 128,
   links: [
     { texto: "OBRAS", href: "#obras" },
     { texto: "COMO TRABALHAMOS", href: "#como-trabalhamos" },

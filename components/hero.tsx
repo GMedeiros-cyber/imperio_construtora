@@ -36,13 +36,14 @@ export function Hero() {
 
       {/* Navegação, dentro da imagem */}
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-8 p-8">
-        <p className="text-caption uppercase tracking-[0.18em] text-bone">
-          {hero.marca.map((linha) => (
-            <span key={linha} className="block">
-              {linha}
-            </span>
-          ))}
-        </p>
+        <Image
+          src={hero.logo}
+          alt={hero.logoAlt}
+          width={hero.logoLargura}
+          height={hero.logoAltura}
+          priority
+          className="h-10 w-auto"
+        />
 
         <nav className="hidden items-center gap-12 md:flex">
           {hero.links.map((link) => (
