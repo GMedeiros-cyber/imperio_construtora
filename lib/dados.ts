@@ -6,13 +6,14 @@
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {
-  /* A foto já vem tratada: escurecimento na base e véu no topo. Não somar
-     gradiente nem filtro por CSS. O .webp fica no repositório ao lado do
-     .jpg, mas quem faz a negociação é o otimizador do next/image. */
+  /* O tratamento (véu no topo e escurecimento na base) está gravado NO
+     ARQUIVO, não em CSS. Foi calculado a partir da luminância medida da foto
+     original — ver o comentário do componente. Trocar a foto exige refazer o
+     tratamento e remedir. */
   fundo: "/hero/hero-fundo.jpg",
   fundoAlt:
-    "Fachada de residência entregue pela Império, com garagem coberta e jardim.",
-  /* Logo da navbar: 160x128 no arquivo, servida a 40px de altura. */
+    "Fachada de residência de alto padrão ao entardecer, com iluminação acesa nas varandas.",
+  /* Logo da navbar: 160x128 no arquivo, servida a 56px de altura. */
   logo: "/hero/logo-imperio-nav.png",
   logoAlt: "Império Construtora",
   logoLargura: 160,

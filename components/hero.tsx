@@ -19,8 +19,16 @@ import { hero } from "@/lib/dados";
 export function Hero() {
   return (
     <section id="inicio" className="relative h-screen w-full overflow-hidden">
-      {/* A foto já vem com o tratamento embutido — escurecimento na base e véu
-          no topo. NÃO acrescentar gradiente, overlay ou filter por CSS.
+      {/* O tratamento está GRAVADO NO ARQUIVO, não em CSS: véu de 0,76 de alpha
+          nos 26% do topo, com rampa até 48%, e escurecimento na base subindo
+          de 0 em 48% até 0,70 na borda inferior. Os valores saíram da
+          luminância medida da foto original — o céu chegava a 0,77 e a parede
+          iluminada da faixa de 55–85% a 0,50.
+          Quem dita o alpha do topo é a LOGO DOURADA, não o texto: o bone
+          passaria com 0,55, mas o ouro tem luminância própria (~0,31) e
+          precisa de fundo bem mais escuro para os 3:1 de gráfico não textual.
+          NÃO acrescentar gradiente, overlay ou filter por CSS: se a foto for
+          trocada, refaça o tratamento no arquivo e remeça.
           O otimizador do next/image faz a negociação de formato: entrega
           webp/avif a quem aceita e jpeg como fallback, com srcset por
           largura. O arquivo tem 1440px de largura, então o otimizador nunca
@@ -42,7 +50,7 @@ export function Hero() {
           width={hero.logoLargura}
           height={hero.logoAltura}
           priority
-          className="h-10 w-auto"
+          className="h-14 w-auto"
         />
 
         <nav className="hidden items-center gap-12 md:flex">
