@@ -57,7 +57,10 @@ export function MenuHero() {
         )
         .fromTo(
           raiz.querySelectorAll("[data-titulo]"),
-          { yPercent: 100 },
+          /* 110 e nao 100: com line-height 1 a caixa do texto e menor que o
+             desenho do glifo, e 100% do proprio box deixaria a ponta das
+             letras assomando acima da linha de corte. */
+          { yPercent: 110 },
           { yPercent: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" },
           0.55,
         )
@@ -69,6 +72,13 @@ export function MenuHero() {
         );
 
       linhaDoTempo.current = tl;
+
+      /* Sonda só de desenvolvimento, para capturar quadros exatos da
+         animação na verificação. Sai do build de produção. */
+      if (process.env.NODE_ENV === "development") {
+        (window as Window & { __menuTimeline?: gsap.core.Timeline })
+          .__menuTimeline = tl;
+      }
     }, nav);
 
     return () => {
@@ -183,12 +193,21 @@ export function MenuHero() {
         type="button"
         aria-expanded={aberto}
         aria-controls={idOverlay}
-        onClick={() => setAberto((v) => !v)}
-        className="flex shrink-0 items-center gap-3 rounded-pill border border-bone px-7 py-[14px] text-body-sm uppercase tracking-[0.1em] text-bone"
+        onClick={() => {
+          setAberto((v) => !v);
+          /* O clique real já foca o botão; a chamada explícita torna o
+             retorno de foco determinístico também por acionamento
+             programático. */
+          botao.current?.focus();
+        }}
+        /* relative z-10 põe o botão acima do overlay, que está em z-9: nenhum
+           ancestral cria contexto de empilhamento, então os dois disputam na
+           raiz. Sem isso o menu abre e não há como fechar no clique. */
+        className="relative z-10 flex shrink-0 items-center gap-3 rounded-pill border border-bone px-7 py-[14px] text-body-sm uppercase tracking-[0.1em] text-bone"
       >
         <span
           ref={textos}
-          className="flex h-[1.1em] flex-col items-end justify-start overflow-hidden"
+          className="flex h-[1.1em] flex-col items-center justify-start overflow-hidden"
         >
           <span className="block leading-[1.1]">{menuHero.abrir}</span>
           <span aria-hidden className="block leading-[1.1]">
@@ -237,21 +256,25 @@ export function MenuHero() {
                   data-item
                   className="relative overflow-hidden transition-opacity duration-300 hover:opacity-100!"
                 >
-                  <a
-                    href={item.href}
-                    onClick={fechar}
-                    className="flex w-full gap-[.75em] pb-[1.15em] pt-[.4em]"
-                  >
-                    <span data-titulo className="block text-caption text-gold" aria-hidden>
-                      {item.numero}
-                    </span>
-                    <span
-                      data-titulo
-                      className="block font-light leading-none text-bone text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
+                  {/* O wrapper é quem desliza; a máscara é o li. O tamanho do
+                      título vive no <a> para que os paddings em em escalem
+                      com ele — é essa folga que impede o glifo de escapar
+                      do corte, já que line-height 1 deixa a caixa menor que
+                      o desenho da letra. */}
+                  <div data-titulo>
+                    <a
+                      href={item.href}
+                      onClick={fechar}
+                      className="flex w-full gap-3 pb-[1.15em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
                     >
-                      {item.texto}
-                    </span>
-                  </a>
+                      <span className="block text-caption text-gold" aria-hidden>
+                        {item.numero}
+                      </span>
+                      <span className="block font-light leading-none text-bone">
+                        {item.texto}
+                      </span>
+                    </a>
+                  </div>
                 </li>
               ))}
             </ul>
