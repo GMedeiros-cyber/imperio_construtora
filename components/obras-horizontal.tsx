@@ -240,7 +240,13 @@ function Painel({
       {/* ── MEIO: a foto, quadrada ────────────────────────────────────── */}
       <motion.div
         style={anima ? { x: xMeio } : undefined}
-        className="flex flex-col items-center overflow-hidden min-[768px]:relative min-[768px]:[grid-area:1/5/2/9]"
+        /* Sem overflow-hidden aqui. O clipe nao recortava nada — o object-cover
+           da <img> ja resolve dentro da propria caixa — e custava caro: clipe
+           numa camada que a mola continua transformando por ~1,5 s depois que
+           a rolagem para faz o compositor errar a regiao suja, e sobravam
+           lascas da foto a esquerda dela na rolagem reversa. Medido a 1440px:
+           810 pixels fantasma com o clipe, zero sem ele. */
+        className="flex flex-col items-center min-[768px]:relative min-[768px]:[grid-area:1/5/2/9]"
       >
         <a
           href={obrasScroll.verTodasHref}
