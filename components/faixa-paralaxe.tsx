@@ -46,10 +46,12 @@ export function FaixaParalaxe() {
           scrollTrigger: gatilho,
         });
 
-        const imagem = wrap.querySelector("img");
-        if (imagem) {
+        /* "img, video": o slot pode trazer qualquer um dos dois, e o
+           deslocamento interno da mídia é o mesmo nos dois casos. */
+        const midia = wrap.querySelector("img, video");
+        if (midia) {
           gsap.fromTo(
-            imagem,
+            midia,
             { yPercent: 0 },
             { yPercent: -30, ease: "none", scrollTrigger: gatilho },
           );
@@ -69,6 +71,22 @@ export function FaixaParalaxe() {
     }, secao);
 
     return () => contexto.revert();
+  }, [reduzido]);
+
+  /* O useMediaQuery começa em false no servidor e no primeiro render do
+     cliente, então o autoPlay chega marcado no HTML mesmo para quem pediu
+     movimento reduzido. Este efeito fecha essa janela: assim que a
+     preferência é lida, pausa e volta ao primeiro quadro, deixando só o
+     pôster à mostra. */
+  useEffect(() => {
+    if (!reduzido) return;
+    const raiz = secao.current;
+    if (!raiz) return;
+    raiz.querySelectorAll("video").forEach((video) => {
+      video.autoplay = false;
+      video.pause();
+      video.currentTime = 0;
+    });
   }, [reduzido]);
 
   /* Sonda de contagem de gatilhos, só em desenvolvimento. */
@@ -97,7 +115,7 @@ export function FaixaParalaxe() {
                 rolagem — isso quebraria o position:sticky do texto. */}
             <div className="grid h-full grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr] gap-2 overflow-hidden max-[480px]:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr]">
             {colunasParalaxe.map((coluna, indice) => (
-              <Fragment key={coluna.imagem}>
+              <Fragment key={coluna.midia.src}>
                 {indice > 0 ? (
                   <div
                     aria-hidden
@@ -121,14 +139,34 @@ export function FaixaParalaxe() {
                     }}
                     className={cn("relative overflow-hidden", coluna.classeWrap)}
                   >
-                    <Image
-                      src={coluna.imagem}
-                      alt=""
-                      fill
-                      unoptimized
-                      sizes="(max-width: 479px) 25vw, 17vw"
-                      className="z-[2] object-cover"
-                    />
+                    {coluna.midia.tipo === "video" ? (
+                      /* Os arquivos já vêm SEM trilha de áudio — conferido no
+                         mp4: só handler "vide", nenhum "soun". O muted fica
+                         assim mesmo, porque é ele que as políticas de
+                         autoplay dos navegadores exigem, não a ausência da
+                         trilha. */
+                      <video
+                        src={coluna.midia.src}
+                        poster={coluna.midia.poster}
+                        autoPlay={!reduzido}
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                        aria-hidden
+                        className="absolute inset-0 z-[2] size-full object-cover"
+                      />
+                    ) : (
+                      <Image
+                        src={coluna.midia.src}
+                        alt=""
+                        fill
+                        /* SVG passa longe do otimizador; foto real, não. */
+                        unoptimized={coluna.midia.src.endsWith(".svg")}
+                        sizes="(max-width: 479px) 25vw, 17vw"
+                        className="z-[2] object-cover"
+                      />
+                    )}
                   </div>
                 </div>
               </Fragment>
@@ -137,22 +175,17 @@ export function FaixaParalaxe() {
 
             <div className="pointer-events-none absolute inset-0 z-[6] flex h-[250vh] flex-col items-center justify-start text-center mix-blend-difference max-[480px]:h-[125rem]">
               <div className="sticky top-0 z-[9] flex h-screen flex-col items-center justify-center overflow-hidden max-[480px]:h-[50rem]">
-                <div className="max-w-[60ch] max-[480px]:max-w-[30ch]">
-                  <p className="text-caption uppercase text-bone">
-                    <span
-                      aria-hidden
-                      className="mr-2 inline-block size-1 rounded-pill bg-bone align-middle"
-                    />
-                    {faixaParalaxe.eyebrow}
-                  </p>
-                  <h2 className="mt-12 text-heading-sm text-bone md:text-heading">
-                    {faixaParalaxe.statement.map((linha) => (
-                      <span key={linha} className="block">
-                        {linha}
-                      </span>
-                    ))}
-                  </h2>
-                </div>
+                {/* Só a manchete: o eyebrow saiu por completo.
+                    Breakpoints todos em min-[Npx]: misturar com os nomeados
+                    (md:) inverte a ordem na cascata, porque o Tailwind emite
+                    os arbitrários antes dos nomeados. */}
+                <h2 className="max-w-[24ch] text-obra-sm text-bone min-[768px]:text-obra-md min-[992px]:max-w-[30ch] min-[992px]:text-obra-lg">
+                  {faixaParalaxe.statement.map((linha) => (
+                    <span key={linha} className="block">
+                      {linha}
+                    </span>
+                  ))}
+                </h2>
               </div>
             </div>
           </div>

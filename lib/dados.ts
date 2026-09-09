@@ -152,13 +152,18 @@ export const obrasScroll = {
 /* ── 5b. Faixa de paralaxe ──────────────────────────────────────────── */
 
 export const faixaParalaxe = {
-  eyebrow: "DOZE ANOS DE CANTEIRO",
   /* Duas linhas fixas: a quebra é da copy, não do acaso da largura. */
-  statement: ["Cada obra entregue é", "um cliente que abriu as portas."],
+  statement: ["Cada obra entregue", "é parte da história."],
 } as const;
 
+/* União discriminada, e não um campo "poster" opcional solto: assim o
+   componente não tem como renderizar <video> sem pôster nem <img> com ele. */
+export type MidiaColuna =
+  | { tipo: "imagem"; src: string }
+  | { tipo: "video"; src: string; poster: string };
+
 export type ColunaParalaxe = {
-  imagem: string;
+  midia: MidiaColuna;
   /* As classes ficam aqui como strings literais para o Tailwind escaneá-las;
      montadas por concatenação em tempo de execução elas não seriam geradas. */
   classeColuna: string;
@@ -171,38 +176,47 @@ export type ColunaParalaxe = {
 
 export const colunasParalaxe: ColunaParalaxe[] = [
   {
-    imagem: "/placeholder/coluna-1.svg",
+    midia: {
+      tipo: "video",
+      src: "/faixa/obra-video-2.mp4",
+      poster: "/faixa/obra-video-2-poster.jpg",
+    },
     classeColuna: "mt-[100vh] max-[480px]:mt-[50rem]",
     classeWrap: "aspect-[213/352]",
     velocidade: 10,
   },
   {
-    imagem: "/placeholder/coluna-2.svg",
+    midia: {
+      tipo: "video",
+      src: "/faixa/obra-video-1.mp4",
+      poster: "/faixa/obra-video-1-poster.jpg",
+    },
     classeColuna: "mt-[50vh] max-[480px]:mt-[25rem]",
     classeWrap: "aspect-[213/435]",
     velocidade: 7,
   },
   {
-    imagem: "/placeholder/coluna-3.svg",
+    midia: { tipo: "imagem", src: "/faixa/casa-em-obra.jpg" },
     classeColuna: "mt-[130vh] max-[480px]:mt-[25rem]",
     classeWrap: "aspect-[213/261]",
     velocidade: 12,
   },
   {
-    imagem: "/placeholder/coluna-4.svg",
+    midia: { tipo: "imagem", src: "/faixa/analia-franco.jpg" },
     classeColuna: "mt-[80vh] max-[480px]:mt-[60rem]",
     classeWrap: "aspect-[213/132]",
     velocidade: 5,
   },
   {
-    imagem: "/placeholder/coluna-5.svg",
+    /* Único slot ainda sem foto: placeholder graphite na proporção certa. */
+    midia: { tipo: "imagem", src: "/faixa/placeholder-5.svg" },
     classeColuna: "mt-[110vh] max-[480px]:mt-[100rem]",
     classeWrap: "aspect-[213/266]",
     velocidade: 9,
     escondeMobile: true,
   },
   {
-    imagem: "/placeholder/coluna-6.svg",
+    midia: { tipo: "imagem", src: "/faixa/interior-obra.jpg" },
     classeColuna: "mt-[80vh] max-[480px]:mt-[25rem]",
     classeWrap: "aspect-[213/287]",
     velocidade: 6.5,
