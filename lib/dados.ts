@@ -99,12 +99,10 @@ export type ObraPainel = {
   rotulo: string;
   titulo: string;
   descricao: string;
-  /* Caminho solto de propósito: as fotos das obras 02 e 03 ainda não vieram e
-     entram aqui trocando só esta linha. Enquanto isso apontam para um
-     placeholder graphite numerado, quadrado como a foto real. */
+  /* Caminho solto, não import estático: a foto é escolhida por posição no
+     scroll e não passa por nenhum cálculo de layout que precise das medidas
+     em tempo de build. As três são quadradas, 828x828. */
   imagem: string;
-  /* Vazio quando a imagem é placeholder: o alt de um espaço reservado é ruído
-     para o leitor de tela, e a legenda ao lado já nomeia a obra. */
   imagemAlt: string;
   tags: string[];
 };
@@ -125,18 +123,23 @@ export const obrasPaineis: ObraPainel[] = [
     titulo: "PETZ, Radial Leste",
     descricao:
       "Gesso liso e drywall, pintura total, instalação de broquete e concregrama.",
-    imagem: "/obras/placeholder-02.svg",
-    imagemAlt: "",
+    imagem: "/obras/petz-radial-leste.jpg",
+    imagemAlt:
+      "Fachada da loja Petz na Radial Leste, em São Paulo, com o estacionamento em primeiro plano.",
     tags: ["Reforma", "Radial Leste", "Gesso e pintura", "60 dias"],
   },
+  /* A Transportadora Videira saiu daqui e ficou só na lista completa de obras,
+     mais abaixo: o scroll horizontal mostra três lojas entregues, e o galpão
+     não tem foto que sustente o painel. O registro dela continua no arquivo. */
   {
     rotulo: "OBRA 03",
-    titulo: "Transportadora Videira",
+    titulo: "Restaurante Boali",
     descricao:
-      "Baldrame, alvenaria perimetral, blocos e sapatas da estrutura do galpão.",
-    imagem: "/obras/placeholder-03.svg",
-    imagemAlt: "",
-    tags: ["Obra nova", "Galpão", "Estrutura", "120 dias"],
+      "Execução de toda a reforma da loja em modelo turnkey, com noventa dias de obra.",
+    imagem: "/obras/boali-restaurante.jpg",
+    imagemAlt:
+      "Fachada do restaurante Boali, com letreiro laranja, balcão de atendimento e painel decorativo em giz.",
+    tags: ["Reforma", "Turnkey", "90 dias"],
   },
 ];
 
