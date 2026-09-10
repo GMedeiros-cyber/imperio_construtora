@@ -238,69 +238,19 @@ export type Obra = {
   acento?: boolean;
 };
 
-export const secaoObras = {
-  eyebrow: "OBRAS ENTREGUES",
-  statement: "Mais de cem lojas e unidades comerciais entregues.",
-} as const;
-
-export const obrasEntregues: Obra[] = [
-  {
-    titulo: "PETZ, Radial Leste",
-    descricao:
-      "Execução de todo o gesso liso e drywall, pintura total, instalação de broquete e concregrama. Sessenta dias de obra.",
-    imagem: "/obras/petz-radial-leste.jpg",
-    alt: "Fachada da loja Petz na Radial Leste, em São Paulo, com o estacionamento em primeiro plano.",
-  },
-  {
-    titulo: "Restaurante Boali",
-    descricao:
-      "Reforma completa da loja em modelo turnkey, com noventa dias de execução e foco em acabamento e conformidade normativa.",
-    imagem: "/obras/boali-restaurante.jpg",
-    alt: "Fachada do restaurante Boali, com letreiro laranja, balcão de atendimento e painel decorativo em giz.",
-  },
-  {
-    titulo: "Transportadora Videira",
-    descricao:
-      "Baldrame, alvenaria perimetral, blocos e sapatas da estrutura do galpão. Cento e vinte dias de obra.",
-    acento: true,
-  },
-];
-
-export const secaoParticipacao = {
-  eyebrow: "PARTICIPAÇÃO TÉCNICA",
-  statement:
-    "Obras conduzidas por outras construtoras, com atuação técnica nossa em campo.",
-} as const;
-
-export const participacaoTecnica: Obra[] = [
-  {
-    titulo: "Residencial Bella Pietra, Anália Franco",
-    descricao:
-      "Empreendimento de alto padrão da Riformato Construtora, com apartamentos e studios e infraestrutura completa de lazer.",
-    imagem: "/obras/bella-pietra.jpg",
-    alt: "Fachada do Residencial Bella Pietra, na Anália Franco.",
-  },
-  {
-    titulo: "Mix Tower Celso Garcia, Belém",
-    descricao:
-      "Torre da Riformato Construtora na Zona Leste, no conceito Mix Tower, com áreas de lazer completas.",
-    imagem: "/obras/mix-tower-celso-garcia.jpg",
-    alt: "Torre Mix Tower na avenida Celso Garcia, bairro do Belém, São Paulo.",
-  },
-  {
-    titulo: "AF 377, Moema",
-    descricao:
-      "Edifício comercial de treze andares da Alfa Realty, com foco em conforto e alta qualidade corporativa.",
-    imagem: "/obras/af-377-moema.jpg",
-    alt: "Edifício comercial AF 377, em Moema, São Paulo.",
-  },
-];
+/* Os arrays obrasEntregues e participacaoTecnica saíram junto com as seções
+   que os liam. O tipo Obra fica: components/obras-grid.tsx ainda o importa.
+   Esse componente ficou órfão na mesma rodada — só era usado pelas duas
+   seções removidas — mas não é meu para apagar. */
 
 /* ── 8. Como trabalhamos ─────────────────────────────────────────────── */
 
-export const secaoModelos = {
-  eyebrow: "MODELOS DE ATUAÇÃO",
-  statement: "Quatro formas de contratar a obra.",
+export const comoTrabalhamos = {
+  eyebrow: "COMO TRABALHAMOS",
+  /* Duas linhas fixas: a quebra é da copy, não do acaso da largura. */
+  manchete: ["Quatro formas de contratar.", "Uma só responsabilidade técnica."],
+  subline:
+    "Executamos obra própria e também atuamos como braço técnico de outras construtoras. Nos dois casos, a engenharia, o cronograma e o controle de qualidade são nossos.",
 } as const;
 
 export type Modelo = { titulo: string; descricao: string };
@@ -328,15 +278,56 @@ export const modelos: Modelo[] = [
   },
 ];
 
-export const tipologias: string[] = [
-  "VAREJO E FRANQUIAS",
-  "ESCRITÓRIOS",
-  "CLÍNICAS",
-  "RESTAURANTES",
-  "RESIDENCIAL MULTIFAMILIAR",
-  "ALTO PADRÃO",
-  "GALPÕES LOGÍSTICOS",
-  "INFRAESTRUTURA",
+/* Painéis da galeria de autoria.
+
+   A CATEGORIA é a construtora responsável, e é ela que resolve a atribuição
+   sem precisar de um rótulo de aviso: quem lê vê de quem é a obra ao lado do
+   nome dela. Nenhuma destas cinco é obra própria da Império — em todas a
+   atuação foi técnica, em campo. */
+export type PainelAutoria = {
+  numero: string;
+  categoria: string;
+  titulo: string;
+  imagem: string;
+  alt: string;
+};
+
+export const galeriaAutoria: PainelAutoria[] = [
+  {
+    numero: "01",
+    categoria: "Riformato Construtora",
+    titulo: "Residencial Bella Pietra",
+    imagem: "/obras/bella-pietra.jpg",
+    alt: "Fachada do Residencial Bella Pietra, na Anália Franco.",
+  },
+  {
+    numero: "02",
+    categoria: "Riformato Construtora",
+    titulo: "Mix Tower Celso Garcia",
+    imagem: "/obras/mix-tower-celso-garcia.jpg",
+    alt: "Torre Mix Tower na avenida Celso Garcia, bairro do Belém, São Paulo.",
+  },
+  {
+    numero: "03",
+    categoria: "Alfa Realty",
+    titulo: "AF 377, Moema",
+    imagem: "/obras/af-377-moema.jpg",
+    alt: "Edifício comercial AF 377, em Moema, São Paulo.",
+  },
+  {
+    numero: "04",
+    categoria: "Alfa Realty",
+    titulo: "i9 Tolle, Santana",
+    imagem: "/obras/alfa-realty-guarulhos.jpg",
+    alt: "Edifício i9 Tolle, em Santana, São Paulo.",
+  },
+  {
+    numero: "05",
+    categoria: "Riformato Construtora",
+    titulo: "Residencial São Marinho",
+    imagem: "/obras/sao-marinho.jpg",
+    alt: "Fachada do Residencial São Marinho.",
+  },
 ];
 
 /* ── 9. Clientes ─────────────────────────────────────────────────────── */
