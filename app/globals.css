@@ -243,3 +243,41 @@
     color: var(--color-bone);
   }
 }
+
+/* ==========================================================================
+   CARROSSEL DE MARCAS
+   ========================================================================== */
+
+/* A trilha carrega DUAS cópias da lista lado a lado. Correr até -50% desloca
+   exatamente o comprimento de uma cópia, então o quadro final é idêntico ao
+   inicial e a emenda não aparece. Mudar o número de cópias quebra isso. */
+@keyframes correr-marcas {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marcas-trilha {
+  animation: correr-marcas 48s linear infinite;
+}
+
+/* Pausa quando o ponteiro está em cima: quem quer ler uma marca consegue. */
+.marcas-carrossel:hover .marcas-trilha {
+  animation-play-state: paused;
+}
+
+/* Sem movimento: a trilha para e o trilho vira rolagem manual, senão metade
+   das marcas ficaria inalcançável. A segunda cópia sai do caminho do leitor
+   de tela por aria-hidden, no componente. */
+@media (prefers-reduced-motion: reduce) {
+  .marcas-trilha {
+    animation: none;
+  }
+
+  .marcas-carrossel {
+    overflow-x: auto;
+  }
+}

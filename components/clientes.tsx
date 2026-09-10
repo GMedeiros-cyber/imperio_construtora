@@ -10,14 +10,16 @@ import { logosClientes } from "@/lib/logos";
  * Era o penúltimo bloco. Prova social funciona no momento da dúvida, logo
  * depois da promessa da hero — no fim da página ela chegava tarde.
  *
- * ══ O CAMPO É PRETO, AS PLACAS SÃO CREME ══
+ * ══ O CAMPO É PRETO, AS PLACAS SÃO CINZA ══
  *
- * As logos entram nas cores originais e seis das dez somem sobre o ink — três
- * são pretas de nascença e não têm versão clara para dar. Em vez de escolher
- * entre o preto e a cor, o preto vira campo e moldura e cada marca recebe a
- * base clara para a qual foi desenhada. A junta preta entre as placas é o que
- * dá a estrutura, e é onde o "+" dos cruzamentos finalmente aparece. Ver o
- * comentário do logo-cloud e a tabela de contraste em lib/logos.ts.
+ * As logos entram nas cores originais e seis das dez somem sobre o ink puro.
+ * O que as faz aparecer é o par placa + tratamento: a placa é um degrau de
+ * valor acima do campo, e as monocromáticas pretas viram ash. As coloridas
+ * passam intactas. Ver o comentário do logo-cloud e lib/logos.ts.
+ *
+ * O carrossel é o formato, não a solução de contraste — logo preta correndo
+ * sobre preto continua invisível. Ele existe para caber marca sem empilhar
+ * linha e para dar movimento onde a página tinha um bloco parado.
  *
  * O ink aqui também encosta no gradiente do OQueFazemos, que começa em
  * #16130E: as duas seções viram uma região escura contínua depois da hero.
