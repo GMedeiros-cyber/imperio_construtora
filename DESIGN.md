@@ -450,9 +450,11 @@ e o próximo que aparecer centrado é bug até prova em contrário.
 sem régua" —, e cada bloco carregava o próprio fundo chapado.
 
 **O desvio:** as duas seções perderam o fundo próprio e passaram a dividir um
-gradiente único, declarado num invólucro em `app/page.tsx`. Ele sai do ink logo
-abaixo da hero, atravessa o carrossel aquecendo, passa por `#16130E` aos 30% e
-`#372F20` aos 50%, floresce no dourado `#6B6144` aos 68% e volta ao ink aos 84%.
+fundo único, declarado num invólucro em `app/page.tsx`. São duas camadas: um
+bloom diagonal a 170deg, que sai do ink logo abaixo da hero, atravessa o
+carrossel aquecendo, passa por `#16130E` aos 30% e `#372F20` aos 55% e chega ao
+dourado `#6B6144` no fim; e, por cima dele, um fecho VERTICAL que escurece para
+o ink nos últimos 110px, logo abaixo da linha de números.
 
 **O motivo:** medido a 1440px, o fundo do "O que fazemos" terminava entre
 `rgb(100,88,64)` e `rgb(117,106,74)` e encostava no `rgb(10,10,10)` do bloco
@@ -466,7 +468,16 @@ olho lê a borda do grão mesmo quando a cor não muda. Dar ao bloco de obras um
 rampa que recebesse o dourado resolvia o risco, mas transformava o começo dele
 numa faixa dourada — trocava um problema por outro.
 
-**A saída:** o gradiente volta ao preto ANTES da própria borda. Assim a emenda
+**Por que o fecho é uma camada à parte, e vertical:** com o retorno ao preto
+dentro do próprio gradiente de 170deg, ele chegava na DIAGONAL — a base esquerda
+ainda estava dourada enquanto a direita já era preta, e a emenda virava uma
+cunha. Medido: `rgb(91,83,59)` na esquerda contra `rgb(16,17,15)` na direita, na
+mesma linha. Vertical, a borda de baixo fecha uniforme, de `rgb(13,13,12)` a
+`rgb(14,13,12)` na largura inteira. Os 110px são ancorados na borda de baixo, e
+não em porcentagem, porque a altura do invólucro varia de 1356 a 1457px entre
+breakpoints.
+
+**A saída:** o fundo volta ao preto ANTES da própria borda. Assim a emenda
 com a seção de obras é preto contra preto, não há rampa invadindo o bloco
 seguinte, e não sobra nada para emendar. Medido depois: 1 por canal entre o
 carrossel e o "O que fazemos", 1 entre este e as obras, 0 entre as obras e a

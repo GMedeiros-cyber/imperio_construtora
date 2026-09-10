@@ -16,10 +16,15 @@ import { oQueFazemos } from "@/lib/dados";
  *
  * ⚠ O FUNDO NÃO É MAIS DESTA SEÇÃO. Ele subiu para um invólucro em
  * app/page.tsx que cobre TAMBÉM o carrossel de marcas, para que as duas leiam
- * como um campo escuro só. O gradiente agora sai do ink, passa por #16130E aos
- * 30%, #372F20 aos 50%, floresce no dourado #6B6144 aos 68% e VOLTA ao ink aos
- * 84% — antes da borda de baixo, para a seção de obras começar preto contra
- * preto. As porcentagens são do invólucro inteiro, não desta seção.
+ * como um campo escuro só. São duas camadas: o bloom diagonal a 170deg, que
+ * sai do ink, passa por #16130E aos 30% e #372F20 aos 55% e chega ao dourado
+ * #6B6144 no fim; e, POR CIMA, um fecho VERTICAL que escurece para o ink nos
+ * últimos 110px. As porcentagens são do invólucro inteiro, não desta seção.
+ *
+ * O fecho é vertical e separado de propósito: quando o retorno ao preto morava
+ * dentro do gradiente de 170deg, ele chegava na diagonal e a emenda com a seção
+ * de obras virava uma cunha. Os 110px são ancorados na borda de baixo para o
+ * fecho cair sempre logo abaixo da linha de números.
  *
  * Com ele atrás, a paleta de texto do canvas creme ficaria ilegível, então a
  * seção inverteu inteira:
@@ -49,10 +54,9 @@ import { oQueFazemos } from "@/lib/dados";
  * encolher — sem ele a seção vira um bloco de texto de um tom só.
  *
  * ⚠ O eyebrow CONTINUA em gold, e só funciona porque está no topo. Remedido
- * depois que o fundo virou arco: 5,44 a 5,95:1 nas cinco larguras, contra os
- * 4,5:1 exigidos — era 5,85 a 6,06:1 antes. Passa, mas com menos folga. Não
- * desça o eyebrow, e se mexer nas paradas do gradiente, meça este primeiro:
- * é o texto mais frágil da página.
+ * com o fundo em arco: 5,69 a 6,05:1 nas cinco larguras, contra os 4,5:1
+ * exigidos. Não desça o eyebrow, e se mexer nas paradas do gradiente, meça
+ * este primeiro: é o texto mais frágil da página.
  *
  * ⚠ SE O FUNDO SAIR, ISTO TUDO VOLTA. O gold do eyebrow é o caso mais rígido:
  * o AGENTS.md só o permite sobre fundo escuro, e sobre o creme ele reprova.
