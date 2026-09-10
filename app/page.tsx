@@ -37,7 +37,10 @@ import { SiteFooter } from "@/components/site-footer";
    inversão de volta ao claro está no miolo, na seção de obras. */
 export default function Home() {
   return (
-    <>
+    /* transicao-rota: fade de 240ms na entrada, o par do mesmo fade em
+       /contato. Só opacidade — ver o comentário em app/globals.css: transform
+       aqui tiraria a coluna fixa do lugar e quebraria o pin da paralaxe. */
+    <div className="transicao-rota">
       {/* Fora da hero de propósito: a coluna é fixa e acompanha a rolagem da
           página inteira. Ver components/navegacao-fixa.tsx. */}
       <NavegacaoFixa />
@@ -97,6 +100,6 @@ export default function Home() {
       <ChamadaFinal />
 
       <SiteFooter />
-    </>
+    </div>
   );
 }

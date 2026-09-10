@@ -2,12 +2,27 @@
 
 import gsap from "gsap";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { hero, menuHero } from "@/lib/dados";
 import { IconeContato } from "@/components/icones-contato";
 import { ROTA_CONTATO } from "@/lib/rotas";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
+
+/* ⚠ AS ÂNCORAS SÃO RESOLVIDAS AQUI, NA VIEW, e não no dado.
+   `menuHero.itens` guarda âncoras cruas da home ("#obras"), e o menu agora
+   aparece TAMBÉM na rota /contato, onde "#obras" apontaria para uma seção que
+   não existe na própria página — o clique não faria nada. A barra na frente
+   resolve as duas coisas: "/#obras" volta para a home e rola até lá.
+
+   É a mesma função que o site-footer já aplica pelo mesmo motivo (hrefDoRodape),
+   e mora na view porque lib/dados.ts não é desta sessão. Quando as duas
+   puderem ser unificadas, o lugar é um helper em lib/. */
+function hrefDoMenu(href: string, naHome: boolean): string {
+  return href.startsWith("#") && !naHome ? `/${href}` : href;
+}
 
 const FOCAVEIS = [
   "a[href]",
@@ -27,6 +42,7 @@ export function MenuHero() {
   const [aberto, setAberto] = useState(false);
   const reduzido = useMovimentoReduzido();
   const idOverlay = useId();
+  const naHome = usePathname() === "/";
 
   const nav = useRef<HTMLDivElement>(null);
   const botao = useRef<HTMLButtonElement>(null);
@@ -288,15 +304,18 @@ export function MenuHero() {
                       do corte, já que line-height 1 deixa a caixa menor que
                       o desenho da letra. */}
                   <div data-titulo>
-                    <a
-                      href={item.href}
+                    {/* <Link> e não <a>: da rota /contato para "/#obras" o <a>
+                        faria recarga completa, e a recarga come a transição de
+                        fade entre as duas rotas. */}
+                    <Link
+                      href={hrefDoMenu(item.href, naHome)}
                       onClick={fechar}
                       className="flex w-full gap-3 pb-[.62em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
                     >
                       <span className="block font-display font-light leading-none text-bone">
                         {item.texto}
                       </span>
-                    </a>
+                    </Link>
                   </div>
                 </li>
               ))}
@@ -332,13 +351,13 @@ export function MenuHero() {
                   </p>
                 );
               })}
-              <a
+              <Link
                 href={ROTA_CONTATO}
                 onClick={fechar}
                 className="mt-6 rounded-pill bg-gold px-6 py-3 text-center text-body text-ink transition-colors hover:bg-gold-lt"
               >
                 {menuHero.cta}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

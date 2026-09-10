@@ -252,6 +252,40 @@
 }
 
 /* ==========================================================================
+   TRANSIÇÃO ENTRE ROTAS
+   ========================================================================== */
+
+/* Fade curto na entrada de cada rota — home e /contato. 240ms, dentro dos
+   200–300ms pedidos.
+
+   ⚠ SÓ OPACIDADE. Nada de transform, translate ou scale aqui, por mais barato
+   que pareça: transform num ancestral cria bloco contentor para `position:
+   fixed`, e a coluna de navegação fixa (components/navegacao-fixa.tsx) fica
+   DENTRO deste elemento — ela deixaria de ser fixa e voltaria a rolar com a
+   página, que é exatamente o bug que este branch existe para matar. O mesmo
+   transform ainda quebraria o pin do ScrollTrigger na faixa de paralaxe.
+   Opacidade não cria bloco contentor: cria contexto de empilhamento, e como o
+   elemento embrulha a rota inteira, não há com quem disputar. */
+@keyframes entrada-rota {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.transicao-rota {
+  animation: entrada-rota 240ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transicao-rota {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
    CARROSSEL DE MARCAS
    ========================================================================== */
 
