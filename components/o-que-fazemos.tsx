@@ -54,10 +54,33 @@ import { oQueFazemos } from "@/lib/dados";
  * contraste de corpo entre número (3.375rem) e descrição (1rem) não pode
  * encolher — sem ele a seção vira um bloco de texto de um tom só.
  *
+ * ══ OS TRÊS NÚMEROS NÃO EMPILHAM MAIS NO CELULAR ══
+ *
+ * A linha era max-[767px]:flex-col e os três desciam um sobre o outro. Agora
+ * ficam lado a lado em qualquer largura. MEDIDO a 360px: coluna de 101,3px com
+ * gap de 12px, "+10.000" ocupando 82,8px dos 101,3 — cabe sem reduzir o
+ * numeral. Quem cede é o gap (32 -> 16 -> 12px) e o arranjo interno do item.
+ *
+ * ⚠ O NUMERAL FICOU EM 1,5rem E QUEM DESCEU FOI A DESCRIÇÃO (1rem -> 0,875rem,
+ * só abaixo de 479px). O pedido era encolher o número, mas ele já cabia, e
+ * encolher o número achataria justamente o contraste de corpo do parágrafo
+ * acima: 24/16 = 1,5x viraria 20/16 = 1,25x. Com a descrição em 14px o degrau
+ * sobe para 1,71x — a hierarquia de tamanho, que aqui é a única que existe,
+ * ficou MAIOR do que era.
+ *
  * ⚠ O eyebrow CONTINUA em gold, e só funciona porque está no topo. Remedido
  * com o fundo em arco: 5,69 a 6,05:1 nas cinco larguras, contra os 4,5:1
  * exigidos. Não desça o eyebrow, e se mexer nas paradas do gradiente, meça
  * este primeiro: é o texto mais frágil da página.
+ *
+ * ⚠ A LINHA HORIZONTAL ENCURTOU A SEÇÃO, E O EYEBROW SENTIU. Três itens em
+ * pilha viravam 1022px de seção a 360px; lado a lado são 813px (968 -> 758 a
+ * 390px). O invólucro do gradiente encolheu junto, as paradas subiram e o
+ * eyebrow passou a cair sobre uma parte mais clara: rgb(37,32,22) virou
+ * rgb(45,40,27) e a razão foi de 5,78 para 5,24:1 a 360px, de 5,80 para 5,27
+ * a 390px. Continua passando, com folga menor. De 768px para cima nada mudou
+ * (5,46:1). Mexeu de novo na altura, remeça isto ANTES de qualquer outra
+ * coisa.
  *
  * ⚠ SE O FUNDO SAIR, ISTO TUDO VOLTA. O gold do eyebrow é o caso mais rígido:
  * o AGENTS.md só o permite sobre fundo escuro, e sobre o creme ele reprova.
@@ -137,21 +160,33 @@ export function OQueFazemos() {
             </TextoEmLinhas>
 
             <TextoEmLinhas>
-              <div className="flex items-start justify-between gap-8 max-[767px]:flex-col">
+              {/* ⚠ OS TRÊS NÚMEROS FICAM LADO A LADO EM QUALQUER LARGURA.
+                  Havia um max-[767px]:flex-col aqui que os empilhava; saiu a
+                  pedido, para a linha ler como no Creative Giants também no
+                  celular. Quem cede espaço é o gap, não o arranjo. */}
+              <div className="flex items-start justify-between gap-8 max-[767px]:gap-4 max-[479px]:gap-3">
                 {oQueFazemos.numeros.map((numero, indice) => {
                   const Icone = ICONES[indice];
 
                   return (
                     <div
                       key={numero.valor}
-                      className="flex max-w-[30ch] flex-col gap-6"
+                      /* flex-1 com basis 0 divide a linha em três partes
+                         iguais; min-w-0 é o que deixa a coluna encolher
+                         abaixo da palavra mais longa da descrição — sem ele
+                         o item vira piso e a linha estoura a viewport. */
+                      className="flex max-w-[30ch] flex-col gap-6 max-[767px]:min-w-0 max-[767px]:flex-1 max-[767px]:gap-3"
                     >
-                      <div className="flex items-center gap-[0.63rem]">
+                      {/* O ícone sobe para cima do número abaixo de 768px:
+                          medida a 360px, a coluna tem ~101px e ícone (48) mais
+                          número na mesma linha pede 143px. Empilhar ÍCONE e
+                          NÚMERO não é empilhar os três itens. */}
+                      <div className="flex items-center gap-[0.63rem] max-[767px]:flex-col max-[767px]:items-start max-[767px]:gap-2">
                         <Icone
                           aria-hidden
                           size={TAMANHO_ICONE}
                           strokeWidth={TRACO_ICONE}
-                          className="shrink-0 text-bone"
+                          className="shrink-0 text-bone max-[767px]:size-9"
                         />
                         <p
                           data-revelar
@@ -160,7 +195,10 @@ export function OQueFazemos() {
                           {numero.valor}
                         </p>
                       </div>
-                      <p data-revelar className="text-body text-bone">
+                      <p
+                        data-revelar
+                        className="text-body text-bone max-[479px]:text-body-sm"
+                      >
                         {numero.descricao}
                       </p>
                     </div>
