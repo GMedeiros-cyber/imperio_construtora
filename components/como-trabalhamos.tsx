@@ -22,6 +22,18 @@ import { comoTrabalhamos, galeriaAutoria, modelos } from "@/lib/dados";
  *   faixa 2  as quatro formas, LARGURA CHEIA em quatro colunas
  *   faixa 3  a galeria, full-bleed
  *
+ * ══ O FUNDO É DELA, E É INK CHAPADO ══
+ *
+ * ⚠ O bg-ink MORA AQUI, e não num invólucro da page. Até esta rodada a seção
+ * não tinha fundo próprio: quem pintava era um arco dourado em app/page.tsx que
+ * a envolvia junto com a chamada final. O arco saiu — a página ficou com um
+ * bloom só, o de cima — e o fim dela virou o mesmo #0A0A0A que já vem da faixa
+ * de paralaxe, sem emenda, até o rodapé. Tirar este bg-ink reabre o creme do
+ * body por baixo do texto bone.
+ *
+ * O texto já era o de fundo escuro (bone, ash, gold) e continua: o ink chapado
+ * é mais escuro que a base do gradiente que saiu, então o contraste subiu.
+ *
  * A manchete sozinha não tem massa para sustentar metade de uma seção
  * full-bleed, e as quatro formas são o conteúdo comercial mais importante da
  * página: em coluna estreita a 12px elas leem como nota de rodapé. O compasso
@@ -39,7 +51,7 @@ export function ComoTrabalhamos() {
   return (
     <section
       id="como-trabalhamos"
-      className="flex flex-col gap-section py-section"
+      className="flex flex-col gap-section bg-ink py-section"
     >
       {/* ── FAIXA 1: cabeçalho ─────────────────────────────────────────── */}
       <div className="grid grid-cols-12 items-end gap-3 px-gutter-sm md:px-gutter">

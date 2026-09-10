@@ -30,9 +30,10 @@ import { SiteFooter } from "@/components/site-footer";
    medição está em lib/logos.ts. O corte embaixo da hero continua existindo,
    invertido — a foto escurece na base e o creme entra por baixo.
 
-   No lugar que ela deixou entrou a ChamadaFinal, essa sim em ink. O ritmo da
-   página fica claro / escuro (OQueFazemos) / claro / escuro (ChamadaFinal) /
-   claro (rodapé): dois campos invertidos, nas duas pontas do miolo. */
+   No lugar que ela deixou entrou a ChamadaFinal. O ritmo da página é claro
+   (hero e marcas) / escuro a partir do OQueFazemos e ATÉ O FIM: obras, faixa de
+   paralaxe, como trabalhamos, chamada final e rodapé são todos ink. A única
+   inversão de volta ao claro está no miolo, na seção de obras. */
 export default function Home() {
   return (
     <>
@@ -64,28 +65,31 @@ export default function Home() {
       </div>
       <ObrasHorizontal />
       <FaixaParalaxe />
-      {/* ══ O ARCO DE BAIXO ══
+      {/* ══ O FIM DA PÁGINA É PRETO CHAPADO, SEM ARCO ══
 
-          Espelha o de cima, e fecha a página. O ink entra pelo ComoTrabalhamos,
-          aquece ao longo dele e floresce em dourado exatamente sobre a chamada
-          final. ⚠ O PICO FICA DENTRO DO ComoTrabalhamos, e não sobre a chamada:
-          a chamada virou uma FAIXA com foto de fundo, que cobre o gradiente
-          inteiro naquele trecho. Com o pico lá embaixo sobrava só uma tira
-          dourada fina acima da faixa, lendo como acidente. O dourado floresce no
-          miolo e já apagou quando a faixa começa.
+          Aqui existia um SEGUNDO arco dourado, espelho do de cima, envolvendo
+          ComoTrabalhamos e ChamadaFinal num invólucro com <FundoGradiente>. Ele
+          SAIU: sobrou UM bloom só na página, o de cima. Dois florescimentos de
+          dourado davam à página duas vezes o mesmo gesto, e o de baixo era o
+          mais fraco dos dois — a chamada final é uma FAIXA com foto de fundo,
+          que cobria o gradiente inteiro no trecho onde ele deveria fechar, e o
+          pico precisava ser empurrado para o miolo do ComoTrabalhamos para não
+          virar uma tira dourada solta acima da faixa.
 
-          ⚠ O FECHO TEM DE TERMINAR NA COR DO RODAPÉ. É o que faz a borda entre
-          os dois não existir. Mexeu na cor de um, mexa no outro no mesmo
-          commit. */}
-      <div className="relative isolate">
-        <FundoGradiente
-          className="absolute inset-0 -z-10"
-          bloom="linear-gradient(170deg, #0A0A0A 0%, #16130E 18%, #372F20 38%, #6B6144 58%, #0A0A0A 84%, #0A0A0A 100%)"
-          fecho="linear-gradient(to bottom, transparent calc(100% - 260px), #0A0A0A 100%)"
-        />
-        <ComoTrabalhamos />
-        <ChamadaFinal />
-      </div>
+          No lugar dele, ink chapado: o mesmo #0A0A0A da faixa de paralaxe segue
+          sem interrupção pelo ComoTrabalhamos, passa por baixo da barra do CTA e
+          entra no rodapé, que também é bg-ink. Quatro seções, uma cor — não há
+          emenda para ninguém ver.
+
+          ⚠ CADA SEÇÃO CARREGA O PRÓPRIO bg-ink AGORA. Sem o invólucro não há
+          quem pinte o fundo por elas: tirar o bg-ink de qualquer uma reabre o
+          creme do body no meio do bloco escuro.
+
+          ⚠ O TEXTO DAS DUAS JÁ ESTAVA INVERTIDO (bone, ash, gold) e continua —
+          o ink chapado é mais escuro que a base do bloom que saiu, então o
+          contraste só subiu. Medido: nada abaixo de 4,5:1. */}
+      <ComoTrabalhamos />
+      <ChamadaFinal />
 
       <SiteFooter />
     </>

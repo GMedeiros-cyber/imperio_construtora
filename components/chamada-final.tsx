@@ -24,13 +24,39 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  * ⚠ SEM PADDING VERTICAL NA SEÇÃO, e a altura vem do aspect. É o que mantém a
  * faixa colada no rodapé. Um py aqui reabriria a folga que a referência não tem.
  *
- * O min-h existe porque só o aspect não basta: entre 768 e 992px a faixa ficaria
- * mais baixa que o próprio conteúdo e o texto vazaria.
+ * ══ A ALTURA, E POR QUE ELA ENCOLHEU 30% ══
+ *
+ * A faixa media 424px a 1440px (aspect 1920/565 + min-h 24rem) e o pedido foi
+ * ~297px. ⚠ NÃO CABIA SÓ ENCOLHENDO A CAIXA: o conteúdo empilhado somava 328px
+ * e o texto vazaria. Por isso SAIU A LINHA DE APOIO — o <p> com
+ * chamadaFinal.apoio. As referências pedidas têm três coisas: logo, manchete e
+ * botão. Sem ela o empilhado mede 268px medidos (logo 48 + 32 + manchete de
+ * duas linhas 108 + 32 + botão 48) e sobra folga.
+ *
+ * ⚠ chamadaFinal.apoio CONTINUA EM lib/dados.ts, só não é renderizado. Não
+ * apague de lá — o texto não é lixo, é decisão de composição desta faixa.
+ *
+ * As duas medidas trabalham juntas e o cruzamento delas é o ponto:
+ *   aspect 1920/396  dá 297px a 1440px, 396px a 1920px
+ *   min-h  18,5rem   = 296px, o piso de 768px até ~1434px, onde o aspect passa
+ *
+ * ⚠ O min-h TEM DE FICAR ABAIXO DOS 297px, senão ele vence o aspect a 1440 e o
+ * alvo se perde; e ACIMA dos 268px do conteúdo, senão o texto vaza pelo
+ * overflow-hidden entre 768 e 1200, onde o aspect sozinho daria 158 a 247px.
+ * A janela inteira é de 268 a 297: mexeu num, remeça o outro.
  *
  * ⚠ E O w-full EXISTE POR CAUSA DO min-h. Com aspect-ratio e uma altura mínima
  * que o supere, o elemento cresce em LARGURA para manter a proporção: medido,
  * a faixa saía com 1305px dentro de um viewport de 768 e estourava a página na
  * horizontal. Com a largura fixada, o min-h só empurra a altura.
+ *
+ * ══ O bg-ink POR BAIXO DA FOTO ══
+ *
+ * A foto cobre a faixa inteira, então o bg-ink quase nunca aparece — ele existe
+ * para o intervalo entre o layout e o decode da imagem, e porque a seção deixou
+ * de ter um fundo emprestado: até esta rodada um arco dourado em app/page.tsx
+ * envolvia esta faixa e o ComoTrabalhamos. O arco saiu, a página ficou com um
+ * bloom só, e o fim dela é ink chapado da paralaxe ao rodapé.
  *
  * ══ A FOTO ══
  *
@@ -54,7 +80,7 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  */
 export function ChamadaFinal() {
   return (
-    <section className="relative isolate flex w-full min-h-[24rem] flex-col items-center justify-center overflow-hidden px-gutter-sm py-16 text-center min-[768px]:aspect-[1920/565] min-[768px]:px-gutter min-[768px]:py-0">
+    <section className="relative isolate flex w-full min-h-[18.5rem] flex-col items-center justify-center overflow-hidden bg-ink px-gutter-sm py-12 text-center min-[768px]:aspect-[1920/396] min-[768px]:px-gutter min-[768px]:py-0">
       <Image
         src={fotoCta}
         alt=""
@@ -75,10 +101,6 @@ export function ChamadaFinal() {
       <h2 className="mt-7 max-w-[18ch] text-heading-sm text-bone min-[768px]:mt-8 min-[768px]:text-heading">
         {chamadaFinal.statement}
       </h2>
-
-      <p className="mt-4 max-w-[52ch] text-body text-ash">
-        {chamadaFinal.apoio}
-      </p>
 
       <a
         href={ROTA_CONTATO}
