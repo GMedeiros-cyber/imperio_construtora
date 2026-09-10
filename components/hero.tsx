@@ -64,7 +64,10 @@ export function Hero() {
             Ritmo: 3,4s por linha em vez do padrão de 1,5s, e 0,35s de defasagem
             entre linhas em vez de 0,12s. A varredura estava rápida demais para
             ser lida como gesto. */}
-        <h1 className="text-heading-sm leading-none text-bone md:text-heading xl:text-display">
+        {/* Os três degraus da manchete são 18% maiores que a escala geral do
+            site: text-hero-sm / md / lg, e não heading-sm / heading / display.
+            Ver os tokens em app/globals.css e o registro em lib/utils.ts. */}
+        <h1 className="text-hero-sm leading-none text-bone md:text-hero-md xl:text-hero-lg">
           {hero.manchete.map((linha, indice) => (
             <span key={linha} className="block">
               <DiaText

@@ -88,6 +88,33 @@
   --text-display--font-weight: 300;
 
   /* ---------------------------------------------------------------------
+     TIPOGRAFIA — manchete da hero
+     Os três degraus de heading-sm / heading / display mais 18%: 34 -> 40,12,
+     54 -> 63,72 e 84 -> 99,12. Tokens próprios porque o resto do site continua
+     usando heading-sm, heading e display no corpo antigo — a manchete da hero
+     é a única que cresceu. Line-height, tracking e peso 300 são os mesmos dos
+     degraus de origem.
+
+     ⚠ REGISTRADOS EM lib/utils.ts NO MESMO COMMIT. Sem isso o tailwind-merge
+     lê "text-hero-lg" como cor e descarta o tamanho quando o cn() receber
+     também uma cor — não quebra build nem lint, só aparece medindo.
+     --------------------------------------------------------------------- */
+  --text-hero-sm: 40.12px;
+  --text-hero-sm--line-height: 1.25;
+  --text-hero-sm--letter-spacing: -0.02em;
+  --text-hero-sm--font-weight: 300;
+
+  --text-hero-md: 63.72px;
+  --text-hero-md--line-height: 1;
+  --text-hero-md--letter-spacing: -0.023em;
+  --text-hero-md--font-weight: 300;
+
+  --text-hero-lg: 99.12px;
+  --text-hero-lg--line-height: 1;
+  --text-hero-lg--letter-spacing: -0.04em;
+  --text-hero-lg--font-weight: 300;
+
+  /* ---------------------------------------------------------------------
      TIPOGRAFIA — escala da seção "O que fazemos"
      Valores vindos do CSS oficial do Creative Giants. Zodiak, peso 300,
      line-height 1 e tracking -0.04em nos três degraus; o que muda entre
