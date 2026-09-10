@@ -1,10 +1,32 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { OPEN_GRAPH_BASE, URL_DO_SITE } from "./site";
+
+/* ══ METADATA — O LAYOUT DÁ A MOLDURA, CADA ROTA DÁ O TEXTO ══
+
+   title e description daqui valem para a HOME. /contato, /privacidade e a 404
+   declaram os seus no próprio arquivo.
+
+   ⚠ O openGraph NÃO TEM title NEM description, E ISSO É O PONTO. O Next herda
+   o openGraph do layout inteiro para toda rota que não declara o seu — e, com
+   os dois campos vazios, preenche og:title e og:description com o title e o
+   description DA ROTA (resolve-metadata.js, inheritFromMetadata). O twitter
+   é preenchido a partir daí, imagem incluída. Se alguém escrever um title no
+   openGraph daqui, TODAS as rotas passam a ser compartilhadas com o título da
+   home.
+
+   ⚠ canonical E og:url SÃO "./", E NÃO "/". Um caminho relativo com ponto é
+   resolvido contra o pathname de cada rota; "/" faria /contato e /privacidade
+   se declararem cópias da home. */
 export const metadata: Metadata = {
-  title: "Império Construtora",
+  metadataBase: new URL(URL_DO_SITE),
+  title: "Império Construtora — construção e reforma em Guarulhos e São Paulo",
   description:
-    "Império Construtora — construção e incorporação com padrão de acabamento e entrega no prazo.",
+    "Construção, reforma e gestão de obras para varejo, corporativo, residencial e industrial em Guarulhos e São Paulo. Equipe própria e prazo fechado em contrato.",
+  alternates: { canonical: "./" },
+  openGraph: { ...OPEN_GRAPH_BASE, url: "./" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

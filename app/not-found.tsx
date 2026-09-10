@@ -3,10 +3,19 @@ import Link from "next/link";
 
 import { ROTA_CONTATO } from "@/lib/rotas";
 
+import { OPEN_GRAPH_BASE } from "./site";
+
 export const metadata: Metadata = {
   title: "Página não encontrada — Império Construtora",
   description:
     "Este endereço não existe no site da Império Construtora. Volte ao início ou fale com a gente pela página de contato.",
+  /* Sem canonical e sem og:url. O layout declara "./" nos dois, e aqui "./"
+     resolve para /_not-found, o caminho interno do Next — medido no HTML
+     gerado. O openGraph é redeclarado a partir da base para manter a imagem,
+     porque declarar qualquer campo dele descarta o do layout inteiro. A 404 já
+     sai com noindex, que o Next injeta sozinho. */
+  alternates: { canonical: null },
+  openGraph: OPEN_GRAPH_BASE,
 };
 
 /* A 404. Um pôster, não uma página de erro.
