@@ -60,7 +60,8 @@ globals.css e lib/utils.ts naquela rodada.
 Commits em português. Autor GMedeiros-cyber <donboymedeiros@gmail.com>.
 
 ## Pendências conhecidas
-- Telefone segue "(em definição)" — não invente.
+- Telefone: (11) 92777-9559. Fonte única em `telefone` de lib/dados.ts —
+  não escreva o número à mão em nenhum outro arquivo.
 - Depoimentos não existem — não gere texto fictício de cliente.
 - Fotos das obras vieram de dentro de PDF, em baixa resolução. Serão
   substituídas quando o cliente enviar os originais.

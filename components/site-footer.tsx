@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import logoRodape from "@/public/hero/logo-imperio-nav.png";
-import { menuHero, sociaisHero } from "@/lib/dados";
+import { menuHero, sociaisHero, telefone, telefoneHref } from "@/lib/dados";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
 /* BLOCO 11 — Full-Bleed Footer
@@ -18,7 +18,8 @@ import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
    `<address>` é semântico e vale registrar por quê: ele marca informação de
    contato DO documento, e não um endereço postal qualquer — é o elemento certo
-   para o e-mail e a praça da empresa, e errado para o endereço de uma obra.
+   para o telefone, o e-mail e a praça da empresa, e errado para o endereço de
+   uma obra.
 
    ══ O RODAPÉ FICOU ESCURO, E O ARQUIVO DO LOGO MUDOU COM ELE ══
 
@@ -110,6 +111,9 @@ export function SiteFooter() {
               aria-labelledby="rodape-onde"
               className="mt-4 flex flex-col gap-element not-italic"
             >
+              <a href={telefoneHref} className={LINK}>
+                {telefone.exibicao}
+              </a>
               <a href={`mailto:${EMAIL}`} className={LINK}>
                 {EMAIL}
               </a>
@@ -174,8 +178,8 @@ export function SiteFooter() {
             </h3>
             <ul aria-labelledby="rodape-legal" className="mt-4 flex flex-col gap-element">
               {/* ⚠ NÃO HÁ CNPJ NO PROJETO, e inventar um é falsificar registro
-                  público. Fica o literal, na mesma convenção que o AGENTS.md já
-                  fixou para o telefone. Quando o número chegar, ele entra aqui;
+                  público. Fica o literal, na mesma convenção que o telefone
+                  seguiu até ter número. Quando o CNPJ chegar, ele entra aqui;
                   se a decisão for não publicar, a coluna inteira sai. */}
               <li className="text-body-sm text-ash">CNPJ (em definição)</li>
             </ul>

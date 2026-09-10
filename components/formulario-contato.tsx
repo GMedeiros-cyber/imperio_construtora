@@ -28,12 +28,12 @@ import {
 
    ⚠ NÃO EXISTE `onSubmit` AQUI, e é a diferença mais importante em relação ao
    projeto de origem. Lá, com JS, o botão interceptava o envio e abria o
-   WhatsApp da empresa em vez de postar na action. Aqui não há número de
-   telefone — segue "(em definição)" —, então esse caminho saiu inteiro e o
-   formulário voltou a ser `<form action={acao}>` puro. Com e sem script o
-   pedido percorre exatamente o mesmo código, o que também significa que o
-   antispam do servidor cobre os dois. Não reintroduza um `onSubmit` que desvie
-   a action.
+   WhatsApp da empresa em vez de postar na action. Aqui esse caminho saiu
+   inteiro quando ainda não havia número de telefone — hoje há, e ele NÃO foi
+   religado — e o formulário voltou a ser `<form action={acao}>` puro. Com e
+   sem script o pedido percorre exatamente o mesmo código, o que também
+   significa que o antispam do servidor cobre os dois. Não reintroduza um
+   `onSubmit` que desvie a action.
 
    ══ OS VALORES SOBREVIVEM AO ERRO ══
 

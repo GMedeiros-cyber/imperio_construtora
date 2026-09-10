@@ -6,6 +6,7 @@ import logoImperio from "@/public/hero/logo-imperio-nav.png";
 import { FormularioContato } from "@/components/formulario-contato";
 import { NavegacaoFixa } from "@/components/navegacao-fixa";
 import { SiteFooter } from "@/components/site-footer";
+import { telefone, telefoneHref } from "@/lib/dados";
 
 export const metadata: Metadata = {
   title: "Contato — Império Construtora",
@@ -42,8 +43,8 @@ export const metadata: Metadata = {
    900px vira uma coluna, e a ordem lida é a mesma do documento — nada de
    `order` no CSS, que move o pixel e não move o foco. */
 
-/* Os canais que existem hoje. O telefone segue "(em definição)" e é literal:
-   não há número para inventar. */
+/* Os canais que existem hoje. O telefone vem de `telefone` em lib/dados.ts,
+   a fonte única do número — não escreva o número à mão aqui. */
 const CANAIS = [
   {
     rotulo: "E-mail",
@@ -56,7 +57,7 @@ const CANAIS = [
     href: "https://www.instagram.com/_construtoraimperio",
   },
   { rotulo: "Local", valor: "Guarulhos, SP" },
-  { rotulo: "Telefone", valor: "(em definição)" },
+  { rotulo: "Telefone", valor: telefone.exibicao, href: telefoneHref },
 ];
 
 export default function PaginaContato() {

@@ -40,9 +40,12 @@ export const metadata: Metadata = {
         da obra, não ambiente de móvel.
 
      2. O CAMINHO DO PEDIDO. Lá os dois caminhos terminam no WhatsApp da
-        empresa. Aqui não há número de telefone, o caminho do WhatsApp foi
-        removido do formulário e a variável de destino está vazia: hoje NADA é
+        empresa. Aqui o caminho do WhatsApp foi removido do formulário quando
+        ainda não havia número, e a variável de destino está vazia: hoje NADA é
         entregue e NADA fica armazenado. A seção de compartilhamento diz isso.
+        O número chegou depois e entrou só como canal do controlador, no
+        <address>; o formulário continua sem desvio para o WhatsApp. Se esse
+        desvio voltar, a seção de compartilhamento muda no mesmo commit.
 
      3. OS COOKIES E OS TERCEIROS. Lá as fontes entram por next/font/google, que
         as serve do próprio domínio, e a política afirma que nenhum terceiro
@@ -156,6 +159,9 @@ export default function PaginaPrivacidade() {
               </span>
               <a href={`mailto:${email}`} className={`mt-4 ${LINK}`}>
                 {email}
+              </a>
+              <a href={controlador.telefoneHref} className={LINK}>
+                {controlador.telefone}
               </a>
             </address>
             <p className={P_SECUNDARIO}>

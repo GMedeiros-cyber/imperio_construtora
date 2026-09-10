@@ -1,10 +1,12 @@
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 /** 28px: os 20 originais mais 40%. Traço 1,5 para a borda pesar mais. */
 export const TAMANHO_ICONE = 28;
 export const TRACO_ICONE = 1.5;
 
-export type TipoContato = "instagram" | "email" | "local";
+export type TipoContato = "instagram" | "email" | "telefone" | "local";
+
+const GLIFOS = { email: Mail, telefone: Phone, local: MapPin } as const;
 
 /*
  * O lucide-react desta versão não traz mais nenhum ícone de marca — Instagram,
@@ -46,7 +48,7 @@ export function IconeContato({
     return <IconeInstagram tamanho={tamanho} traco={traco} />;
   }
 
-  const Glifo = tipo === "email" ? Mail : MapPin;
+  const Glifo = GLIFOS[tipo];
   return (
     <Glifo size={tamanho} strokeWidth={traco} aria-hidden className="block" />
   );
