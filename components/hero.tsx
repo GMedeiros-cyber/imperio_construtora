@@ -3,6 +3,7 @@ import { getImageProps } from "next/image";
 import { hero } from "@/lib/dados";
 import { BotaoContatoHero } from "@/components/botao-contato-hero";
 import { LogoTopo } from "@/components/logo-topo";
+import { SociaisHero } from "@/components/sociais-hero";
 import { DiaText } from "@/components/ui/dia-text";
 
 /**
@@ -48,10 +49,11 @@ export function Hero() {
         />
       </picture>
 
-      {/* Só a logo mora aqui. Botão de menu e ícones sociais saíram para
-          components/navegacao-fixa.tsx, pendurado direto na rota: eles são
-          FIXOS e precisam sobreviver à rolagem da página inteira, e esta
-          <section> é overflow-hidden. Ver o cabeçalho de lá. */}
+      {/* Só a logo mora aqui. O botão de menu é FIXO e vive em
+          components/navegacao-fixa.tsx, pendurado direto na rota — esta
+          <section> é overflow-hidden e cortaria um fixed se um ancestral
+          ganhasse transform. Os ícones sociais NÃO são fixos e ficam no
+          rodapé desta seção, na fila do CTA. */}
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-8 p-8">
         <LogoTopo />
       </div>
@@ -84,14 +86,32 @@ export function Hero() {
           ))}
         </h1>
 
-        <div className="lg:max-w-md lg:shrink-0">
-          <p className="text-body text-bone">{hero.paragrafo}</p>
+        <div className="lg:shrink-0">
+          <p className="text-body text-bone lg:max-w-md">{hero.paragrafo}</p>
 
-          {/* isolate cria contexto de empilhamento: o botão tem camadas em
-              z-30 e z-40 por dentro, e sem isso elas disputavam na raiz e
-              apareciam POR CIMA do overlay do menu, que está em z-9. */}
-          <div className="isolate mt-8">
-            <BotaoContatoHero />
+          {/* ══ A FILA DO CTA ══
+              Ícones sociais primeiro, CTA fechando à direita, na mesma linha —
+              o arranjo da hero da LDF. Os ícones voltaram para cá da coluna
+              fixa: eles não acompanham a rolagem.
+
+              ⚠ O max-w-md FICOU NO PARÁGRAFO, E NÃO NA COLUNA. Três ícones de
+              48 com 2rem entre si somam 208px, mais 2rem até o CTA de 232px:
+              472px. A coluna tinha teto de 448 e a fila estourava por ela. Com
+              o teto só no parágrafo, a coluna cresce até a fila e o CTA fecha
+              rente à borda direita.
+
+              ⚠ SUBIR A FILA NÃO RESOLVE COLISÃO COM A MANCHETE — joga o ícone
+              para dentro do título. Aconteceu na LDF. Se a manchete e a fila
+              encostarem, o conserto é na largura, não na altura. */}
+          <div className="mt-8 flex items-center gap-8">
+            <SociaisHero />
+
+            {/* isolate cria contexto de empilhamento: o botão tem camadas em
+                z-30 e z-40 por dentro, e sem isso elas disputavam na raiz e
+                apareciam POR CIMA do overlay do menu, que está em z-9. */}
+            <div className="isolate">
+              <BotaoContatoHero />
+            </div>
           </div>
         </div>
       </div>
