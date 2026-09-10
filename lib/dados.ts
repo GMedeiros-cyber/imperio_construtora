@@ -417,6 +417,13 @@ export const contato = {
 
 /* ── 11. Rodapé ──────────────────────────────────────────────────────── */
 
+/* Crédito da barra de base. Autor e URL são os MESMOS do rodapé da LDF
+   (lib/dados.ts de lá, `creditos`): o perfil do Instagram, e não o domínio. */
+export const creditos = {
+  autor: "Tribus Labs",
+  url: "https://www.instagram.com/tribus__labs/",
+} as const;
+
 export type ItemRodape = { texto: string; href?: string };
 export type ColunaRodape = { titulo: string; itens: ItemRodape[] };
 

@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 import logoRodape from "@/public/hero/logo-imperio-nav.png";
-import { menuHero, sociaisHero, telefone, telefoneHref } from "@/lib/dados";
+import {
+  creditos,
+  menuHero,
+  sociaisHero,
+  telefone,
+  telefoneHref,
+} from "@/lib/dados";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
 /* BLOCO 11 — Full-Bleed Footer
@@ -189,15 +195,25 @@ export function SiteFooter() {
       <AssinaturaParticulas />
 
       {/* ── Barra de base ──────────────────────────────────────────────── */}
-      <div className="mt-16 border-t border-bone/15 pt-8">
-        {/* ⚠ SEM LINHA DE CRÉDITO. O rodapé da LDF assina "Design e site por
-            <autor>", e aqui não existe esse dado em lugar nenhum do projeto —
-            escrever um nome seria inventá-lo. Quando houver, entra ao lado do
-            copyright, com target="_blank" e rel="noopener" como os demais
-            externos. */}
+      {/* Copyright à esquerda, crédito no canto direito — o arranjo da barra
+          de base da LDF, com o mesmo corte: abaixo de 640px os dois empilham
+          alinhados à esquerda, porque um item solto na direita de uma tela
+          estreita lê como resto de layout, não como assinatura.
+
+          O crédito lê como o resto da barra (caption, ash), e não como link
+          das colunas: aqui a hierarquia é a do copyright ao lado. */}
+      <div className="mt-16 flex flex-wrap items-center justify-between gap-x-12 gap-y-4 border-t border-bone/15 pt-8 max-[640px]:grid max-[640px]:justify-items-start">
         <p className="text-caption text-ash">
           © {ano} Império Construtora
         </p>
+        <a
+          href={creditos.url}
+          target="_blank"
+          rel="noopener"
+          className="text-caption text-ash transition-colors hover:text-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk"
+        >
+          Desenvolvido por {creditos.autor}
+        </a>
       </div>
     </footer>
   );
