@@ -237,9 +237,10 @@ export function MenuHero() {
            valendo lá dentro. Sem isso o menu abre e não há como fechar no
            clique.
 
-           px/py/tamanho são os valores antigos mais 25%: 28→35, 14→17,5 e
-           text-body-sm (14px) → text-menu (17,5px). O ícone é size-[1em] e
-           acompanha a fonte sozinho: 14px → 17,5px, medido.
+           px/py/tamanho: subiram 25% numa rodada (28→35, 14→17,5, 14→17,5px)
+           e desceram 15% na seguinte, a pedido do cliente — hoje 30, 15 e
+           text-menu em 14,875px. O ícone é size-[1em] e acompanha a fonte
+           sozinho; conferido por medição nas duas mudanças.
 
            cursor-pointer porque <button> não ganha a mãozinha do navegador.
 
@@ -250,7 +251,7 @@ export function MenuHero() {
            ink chapado o texto fica em 18,6:1 e a borda dourada em 7,0:1 em
            qualquer ponto da rolagem. É também a paleta que o cliente pediu:
            preto, dourado e a cor da letra. */
-        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill border border-gold bg-ink px-[35px] py-[17.5px] text-menu uppercase tracking-[0.1em] text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
+        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill border border-gold bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
       >
         <span
           ref={textos}

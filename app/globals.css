@@ -61,10 +61,11 @@
   --text-body-lg--line-height: 1.4;
   --text-body-lg--letter-spacing: -0.018em;
 
-  /* Botão do menu fixo: os 14px do body-sm mais 25%. Token próprio porque o
-     body-sm continua valendo para todo o resto do site e não deve engordar
-     junto. Registrado em lib/utils.ts no mesmo commit — ver AGENTS.md. */
-  --text-menu: 17.5px;
+  /* Botão do menu fixo. Subiu 25% (14 -> 17,5px) e depois desceu 15%, a
+     pedido do cliente: 17,5 x 0,85 = 14,875px. Token próprio porque o body-sm
+     continua valendo para todo o resto do site. Registrado em lib/utils.ts —
+     ver a armadilha do cn() no AGENTS.md. */
+  --text-menu: 14.875px;
   --text-menu--line-height: 1.43;
   --text-menu--letter-spacing: -0.018em;
 

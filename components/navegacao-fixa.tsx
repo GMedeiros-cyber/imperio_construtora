@@ -14,7 +14,8 @@ import { SociaisHero } from "@/components/sociais-hero";
  *
  * ⚠ A COLUNA É UM SÓ ELEMENTO FIXO, com o botão e os ícones dentro. Fossem
  * dois fixos irmãos, cada um com o próprio `top`, o conjunto se desalinharia
- * ao mudar a altura do botão. Assim o gap-[25px] resolve o alinhamento.
+ * ao mudar a altura do botão. O gap acompanha a escala do botão: era 25px com
+ * ele a 17,5px e desce os mesmos 15% junto, para 21px.
  *
  * ⚠ z-50 é o topo do site. O mapa em uso vai até z-40 (separadores da faixa de
  * paralaxe); o overlay do menu, em z-[9], fica DENTRO desta coluna e portanto
@@ -23,7 +24,7 @@ import { SociaisHero } from "@/components/sociais-hero";
  */
 export function NavegacaoFixa() {
   return (
-    <div className="fixed right-0 top-0 z-50 flex flex-col items-end gap-[25px] p-8">
+    <div className="fixed right-0 top-0 z-50 flex flex-col items-end gap-[21px] p-8">
       <MenuHero />
       <SociaisHero />
     </div>
