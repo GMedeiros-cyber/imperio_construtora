@@ -5,42 +5,43 @@ import type { LogoCliente } from "@/lib/logos";
 import { cn } from "@/lib/utils";
 
 /**
- * Logo Cloud — grade de marcas com régua entre as células.
+ * Logo Cloud — placas de creme assentadas em argamassa preta.
  *
  * NÃO é carrossel: 2 colunas no mobile, 5 no desktop. Com DEZ marcas fecha em
- * cinco linhas exatas embaixo e duas em cima, sem célula órfã em nenhuma das
- * duas larguras. ⚠ O número de logos e o de colunas são a mesma decisão: com
- * quatro colunas, dez deixaria duas sobrando na última linha. Mexeu num, remeça
- * o outro.
+ * cinco linhas exatas embaixo e duas em cima, sem célula órfã. ⚠ O número de
+ * logos e o de colunas são a mesma decisão: com quatro colunas, dez deixaria
+ * duas sobrando na última linha. Mexeu num, remeça o outro.
+ *
+ * ══ POR QUE PLACA CLARA SOBRE CAMPO PRETO ══
+ *
+ * A faixa é ink, mas as logos entram nas cores originais das marcas — e seis
+ * das dez somem sobre o preto, três delas por serem pretas de nascença. A
+ * medição está em lib/logos.ts. A saída não é escolher entre preto e cor: é
+ * dar a cada marca a base clara para a qual ela foi desenhada e deixar o preto
+ * fazer o que ele faz melhor, que é emoldurar.
+ *
+ * O vão entre as placas É o desenho, não um gap qualquer: são 12px no mobile e
+ * 20px no desktop, largos o bastante para lerem como junta e não como falha de
+ * alinhamento.
+ *
+ * ══ O "+" DOS CRUZAMENTOS, QUE AGORA APARECE ══
+ *
+ * Na versão de hairlines ele era invisível: caía exatamente sobre o cruzamento
+ * de duas linhas ash, na mesma cor e espessura. Aqui ele cai no meio da junta
+ * preta, em ash — medido, 9:1 sobre o ink. Ele é a razão da junta ser larga.
  *
  * ══ O QUE MUDOU DO COMPONENTE DE ORIGEM ══
  *
- * O original vinha do sistema do shadcn, com oito cards escritos à mão
- * apontando para SVGs de CDN, e o xadrez distribuído classe por classe. A
- * grade, o xadrez e os cruzamentos estão preservados, mas CALCULADOS por
- * índice — era a única forma de sair de oito células fixas para dez.
- *
- * Traduções obrigatórias, porque nada disso existe no nosso sistema:
- *   bg-background       -> bone (é o fundo da própria página, então: nada)
- *   bg-secondary        -> ash a 20%, o degrau que o creme aceita
- *   border sem cor      -> ash, a hairline do sistema
- *   dark:*              -> fora, o site não tem tema escuro alternável
- *   brightness-0 invert -> fora, as logos entram nas cores originais
- *
- * ══ AS RÉGUAS w-screen ══
- *
- * As duas barras absolutas de topo e base sangram até a borda da viewport
- * enquanto a grade respeita o gutter. É isso que amarra a faixa ao full-bleed
- * do site. Quem segura o 100vw é o overflow-x-clip da <section>.
+ * Do shadcn vinham oito cards à mão apontando para SVGs de CDN, com o xadrez
+ * distribuído classe a classe. A grade e os cruzamentos ficaram; o xadrez saiu.
+ * Com a argamassa preta separando tudo, alternar o tom das placas viraria
+ * ruído — a junta já dá a estrutura que o xadrez dava. As traduções obrigatórias
+ * (bg-background, bg-secondary, dark:*, brightness-0 invert) deixaram de fazer
+ * sentido junto com ele.
  */
 
 const COLUNAS_MOBILE = 2;
 const COLUNAS_DESKTOP = 5;
-
-/* Sombreia quando linha + coluna é par. Com dez células o padrão fecha
-   equilibrado nas duas grades e nenhuma linha termina pela metade. */
-const ehXadrez = (i: number, colunas: number) =>
-  (Math.floor(i / colunas) + (i % colunas)) % 2 === 0;
 
 const ehUltimaColuna = (i: number, colunas: number) =>
   i % colunas === colunas - 1;
@@ -58,48 +59,33 @@ export function LogoCloud({
   return (
     <div
       className={cn(
-        "relative grid grid-cols-2 border-x border-ash md:grid-cols-5",
+        "grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-5",
         className,
       )}
       {...props}
     >
-      <div className="pointer-events-none absolute -top-px left-1/2 w-screen -translate-x-1/2 border-t border-ash" />
-
       {logos.map((logo, i) => {
-        const ultimaColMob = ehUltimaColuna(i, COLUNAS_MOBILE);
-        const ultimaLinMob = ehUltimaLinha(i, COLUNAS_MOBILE, total);
-        const ultimaColDesk = ehUltimaColuna(i, COLUNAS_DESKTOP);
-        const ultimaLinDesk = ehUltimaLinha(i, COLUNAS_DESKTOP, total);
-
         /* Só cruzamento interno ganha o "+": quem está na última coluna ou na
-           última linha não tem cruzamento à frente. */
-        const maisMob = !ultimaColMob && !ultimaLinMob;
-        const maisDesk = !ultimaColDesk && !ultimaLinDesk;
+           última linha não tem junta cruzando à frente. */
+        const maisMob =
+          !ehUltimaColuna(i, COLUNAS_MOBILE) &&
+          !ehUltimaLinha(i, COLUNAS_MOBILE, total);
+        const maisDesk =
+          !ehUltimaColuna(i, COLUNAS_DESKTOP) &&
+          !ehUltimaLinha(i, COLUNAS_DESKTOP, total);
 
-        /* As classes precisam existir INTEIRAS no fonte, com o prefixo do
-           breakpoint escrito por extenso — senão o scanner do Tailwind não as
-           vê e elas não entram no CSS. Daí os ternários com literais completos
-           em vez de template string. */
         return (
           <div
             key={logo.arquivo}
-            className={cn(
-              "relative flex items-center justify-center border-ash px-4 py-10 md:px-6 md:py-14",
-              ultimaColMob ? "" : "border-r",
-              ultimaLinMob ? "" : "border-b",
-              ultimaColDesk ? "md:border-r-0" : "md:border-r",
-              ultimaLinDesk ? "md:border-b-0" : "md:border-b",
-              ehXadrez(i, COLUNAS_MOBILE) ? "bg-ash/20" : "bg-transparent",
-              ehXadrez(i, COLUNAS_DESKTOP)
-                ? "md:bg-ash/20"
-                : "md:bg-transparent",
-            )}
+            /* Canto reto: o DESIGN.md reserva o raio 1440px para botão, pill e
+               tag. Placa é superfície editorial, e superfície editorial é reta. */
+            className="relative flex items-center justify-center bg-bone px-4 py-10 md:px-6 md:py-14"
           >
             {/* Altura e largura limitadas juntas: as proporções vão de 7,06:1 a
                 0,84:1, então nas marcas largas quem trava é a largura e nas
                 compactas é a altura. Com width e height em auto, um max-*
                 encolhe a imagem inteira mantendo a proporção — não recorta.
-                O min() com 100% impede o estouro nas larguras em que a célula
+                O min() com 100% impede o estouro nas larguras em que a placa
                 fica mais estreita que o teto nominal.
 
                 A escala entra como custom property porque o teto muda no
@@ -115,11 +101,13 @@ export function LogoCloud({
             />
 
             {maisMob || maisDesk ? (
+              /* Centrado no cruzamento das juntas: meia junta para fora da
+                 placa em cada eixo, depois metade do próprio corpo de volta. */
               <PlusIcon
                 aria-hidden
                 strokeWidth={1}
                 className={cn(
-                  "pointer-events-none absolute -bottom-[12.5px] -right-[12.5px] z-10 size-6 text-ash",
+                  "pointer-events-none absolute left-[calc(100%+6px)] top-[calc(100%+6px)] z-10 size-3 -translate-x-1/2 -translate-y-1/2 text-ash md:left-[calc(100%+10px)] md:top-[calc(100%+10px)] md:size-4",
                   maisMob ? "block" : "hidden",
                   maisDesk ? "md:block" : "md:hidden",
                 )}
@@ -128,8 +116,6 @@ export function LogoCloud({
           </div>
         );
       })}
-
-      <div className="pointer-events-none absolute -bottom-px left-1/2 w-screen -translate-x-1/2 border-b border-ash" />
     </div>
   );
 }
