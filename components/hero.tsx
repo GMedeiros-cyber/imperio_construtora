@@ -1,9 +1,8 @@
-import Image, { getImageProps } from "next/image";
+import { getImageProps } from "next/image";
 
 import { hero } from "@/lib/dados";
-import { MenuHero } from "@/components/menu-hero";
-import { SociaisHero } from "@/components/sociais-hero";
 import { BotaoContatoHero } from "@/components/botao-contato-hero";
+import { LogoTopo } from "@/components/logo-topo";
 import { DiaText } from "@/components/ui/dia-text";
 
 /**
@@ -49,19 +48,12 @@ export function Hero() {
         />
       </picture>
 
-      {/* Navegação, dentro da imagem */}
+      {/* Só a logo mora aqui. Botão de menu e ícones sociais saíram para
+          components/navegacao-fixa.tsx, pendurado direto na rota: eles são
+          FIXOS e precisam sobreviver à rolagem da página inteira, e esta
+          <section> é overflow-hidden. Ver o cabeçalho de lá. */}
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-8 p-8">
-        <Image
-          src={hero.logo}
-          alt={hero.logoAlt}
-          priority
-          className="h-14 w-auto"
-        />
-
-        <div className="flex flex-col items-end gap-5">
-          <MenuHero />
-          <SociaisHero />
-        </div>
+        <LogoTopo />
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
@@ -72,7 +64,10 @@ export function Hero() {
             Ritmo: 3,4s por linha em vez do padrão de 1,5s, e 0,35s de defasagem
             entre linhas em vez de 0,12s. A varredura estava rápida demais para
             ser lida como gesto. */}
-        <h1 className="text-heading-sm leading-none text-bone md:text-heading xl:text-display">
+        {/* Os três degraus da manchete são 18% maiores que a escala geral do
+            site: text-hero-sm / md / lg, e não heading-sm / heading / display.
+            Ver os tokens em app/globals.css e o registro em lib/utils.ts. */}
+        <h1 className="text-hero-sm leading-none text-bone md:text-hero-md xl:text-hero-lg">
           {hero.manchete.map((linha, indice) => (
             <span key={linha} className="block">
               <DiaText

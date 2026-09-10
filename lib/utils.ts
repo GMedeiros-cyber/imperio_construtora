@@ -20,10 +20,15 @@ const twMerge = extendTailwindMerge({
             "body-sm",
             "body",
             "body-lg",
+            "menu",
             "subheading",
             "heading-sm",
             "heading",
             "display",
+            /* Manchete da hero — os três degraus, 18% acima da escala geral. */
+            "hero-sm",
+            "hero-md",
+            "hero-lg",
             /* Escala da seção "O que fazemos" — três degraus por largura. */
             "statement-lg",
             "statement-md",

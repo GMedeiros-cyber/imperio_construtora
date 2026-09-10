@@ -4,6 +4,7 @@ import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { FaixaParalaxe } from "@/components/faixa-paralaxe";
 import { Hero } from "@/components/hero";
+import { NavegacaoFixa } from "@/components/navegacao-fixa";
 import { ObrasHorizontal } from "@/components/obras-horizontal";
 import { OQueFazemos } from "@/components/o-que-fazemos";
 import { SiteFooter } from "@/components/site-footer";
@@ -36,7 +37,14 @@ import { SiteFooter } from "@/components/site-footer";
    inversão de volta ao claro está no miolo, na seção de obras. */
 export default function Home() {
   return (
-    <>
+    /* transicao-rota: fade de 240ms na entrada, o par do mesmo fade em
+       /contato. Só opacidade — ver o comentário em app/globals.css: transform
+       aqui tiraria a coluna fixa do lugar e quebraria o pin da paralaxe. */
+    <div className="transicao-rota">
+      {/* Fora da hero de propósito: a coluna é fixa e acompanha a rolagem da
+          página inteira. Ver components/navegacao-fixa.tsx. */}
+      <NavegacaoFixa />
+
       <Hero />
 
       {/* ══ O ARCO ESCURO ══
@@ -92,6 +100,6 @@ export default function Home() {
       <ChamadaFinal />
 
       <SiteFooter />
-    </>
+    </div>
   );
 }

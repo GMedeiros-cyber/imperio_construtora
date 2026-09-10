@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import logoImperio from "@/public/hero/logo-imperio-nav.png";
 import { FormularioContato } from "@/components/formulario-contato";
+import { NavegacaoFixa } from "@/components/navegacao-fixa";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
@@ -60,10 +61,19 @@ const CANAIS = [
 
 export default function PaginaContato() {
   return (
-    <>
+    /* transicao-rota: o mesmo fade de 240ms da home, para a ida e a volta pelo
+       menu terem o mesmo gesto. */
+    <div className="transicao-rota">
+      {/* O MESMO botão e o MESMO overlay da home. Antes desta rota ganhar
+          menu, quem entrava aqui só saía pelo botão do navegador: não havia
+          nenhum caminho de volta além da logo. */}
+      <NavegacaoFixa />
+
       <main className="bg-ink px-gutter py-16 max-[479px]:px-gutter-sm">
-        {/* Chrome mínimo: só a marca, de volta para a home. */}
-        <Link href="/" className="inline-block" aria-label="Império Construtora, ir para o início">
+        {/* Chrome mínimo: só a marca, de volta para a home. A logo daqui
+            continua sendo <Link href="/"> — é troca de rota, e não a volta ao
+            topo da própria página que a logo da hero faz. */}
+        <Link href="/" className="inline-block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-lt" aria-label="Império Construtora, ir para o início">
           <Image src={logoImperio} alt="Império Construtora" height={56} priority />
         </Link>
 
@@ -106,6 +116,6 @@ export default function PaginaContato() {
         </div>
       </main>
       <SiteFooter />
-    </>
+    </div>
   );
 }

@@ -2,12 +2,27 @@
 
 import gsap from "gsap";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { hero, menuHero } from "@/lib/dados";
 import { IconeContato } from "@/components/icones-contato";
 import { ROTA_CONTATO } from "@/lib/rotas";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
+
+/* ⚠ AS ÂNCORAS SÃO RESOLVIDAS AQUI, NA VIEW, e não no dado.
+   `menuHero.itens` guarda âncoras cruas da home ("#obras"), e o menu agora
+   aparece TAMBÉM na rota /contato, onde "#obras" apontaria para uma seção que
+   não existe na própria página — o clique não faria nada. A barra na frente
+   resolve as duas coisas: "/#obras" volta para a home e rola até lá.
+
+   É a mesma função que o site-footer já aplica pelo mesmo motivo (hrefDoRodape),
+   e mora na view porque lib/dados.ts não é desta sessão. Quando as duas
+   puderem ser unificadas, o lugar é um helper em lib/. */
+function hrefDoMenu(href: string, naHome: boolean): string {
+  return href.startsWith("#") && !naHome ? `/${href}` : href;
+}
 
 const FOCAVEIS = [
   "a[href]",
@@ -27,6 +42,7 @@ export function MenuHero() {
   const [aberto, setAberto] = useState(false);
   const reduzido = useMovimentoReduzido();
   const idOverlay = useId();
+  const naHome = usePathname() === "/";
 
   const nav = useRef<HTMLDivElement>(null);
   const botao = useRef<HTMLButtonElement>(null);
@@ -215,10 +231,26 @@ export function MenuHero() {
              programático. */
           botao.current?.focus();
         }}
-        /* relative z-10 põe o botão acima do overlay, que está em z-9: nenhum
-           ancestral cria contexto de empilhamento, então os dois disputam na
-           raiz. Sem isso o menu abre e não há como fechar no clique. */
-        className="relative z-10 flex shrink-0 items-center gap-3 rounded-pill border border-bone px-7 py-[14px] text-body-sm uppercase tracking-[0.1em] text-bone"
+        /* relative z-10 põe o botão acima do overlay, que está em z-9. Os dois
+           agora moram na mesma coluna fixa (components/navegacao-fixa.tsx), que
+           é quem cria o contexto de empilhamento — a ordem entre eles continua
+           valendo lá dentro. Sem isso o menu abre e não há como fechar no
+           clique.
+
+           px/py/tamanho são os valores antigos mais 25%: 28→35, 14→17,5 e
+           text-body-sm (14px) → text-menu (17,5px). O ícone é size-[1em] e
+           acompanha a fonte sozinho: 14px → 17,5px, medido.
+
+           cursor-pointer porque <button> não ganha a mãozinha do navegador.
+
+           ⚠ O FUNDO INK NÃO É ENFEITE. Fixo, o botão atravessa a página
+           inteira, e a página tem faixas claras: medido atrás dele, o creme do
+           carrossel de marcas e as fotos claras do "Como trabalhamos" dão
+           1,00:1 contra o bone — o botão simplesmente sumia. Com a pastilha em
+           ink chapado o texto fica em 18,6:1 e a borda dourada em 7,0:1 em
+           qualquer ponto da rolagem. É também a paleta que o cliente pediu:
+           preto, dourado e a cor da letra. */
+        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill border border-gold bg-ink px-[35px] py-[17.5px] text-menu uppercase tracking-[0.1em] text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
       >
         <span
           ref={textos}
@@ -272,15 +304,18 @@ export function MenuHero() {
                       do corte, já que line-height 1 deixa a caixa menor que
                       o desenho da letra. */}
                   <div data-titulo>
-                    <a
-                      href={item.href}
+                    {/* <Link> e não <a>: da rota /contato para "/#obras" o <a>
+                        faria recarga completa, e a recarga come a transição de
+                        fade entre as duas rotas. */}
+                    <Link
+                      href={hrefDoMenu(item.href, naHome)}
                       onClick={fechar}
                       className="flex w-full gap-3 pb-[.62em] pt-[.4em] text-[2.9rem] min-[768px]:text-[3.7rem] min-[992px]:text-[4.8rem]"
                     >
                       <span className="block font-display font-light leading-none text-bone">
                         {item.texto}
                       </span>
-                    </a>
+                    </Link>
                   </div>
                 </li>
               ))}
@@ -316,13 +351,13 @@ export function MenuHero() {
                   </p>
                 );
               })}
-              <a
+              <Link
                 href={ROTA_CONTATO}
                 onClick={fechar}
                 className="mt-6 rounded-pill bg-gold px-6 py-3 text-center text-body text-ink transition-colors hover:bg-gold-lt"
               >
                 {menuHero.cta}
-              </a>
+              </Link>
             </div>
           </div>
         </div>
