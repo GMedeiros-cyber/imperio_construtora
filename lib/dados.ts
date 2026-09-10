@@ -330,13 +330,20 @@ export const galeriaAutoria: PainelAutoria[] = [
   },
 ];
 
-/* ── 9. Clientes ─────────────────────────────────────────────────────── */
+/* ── 9. Marcas ───────────────────────────────────────────────────────── */
 
+/* A faixa subiu para logo abaixo da hero e virou escura. Ali ela é prova
+   social, não seção de conteúdo: o eyebrow saiu e o statement passou a ser uma
+   linha de apoio miúda, para não disputar com a manchete da hero logo acima.
+   O texto é o mesmo — mudou o posto, não a copy. */
 export const secaoClientes = {
-  eyebrow: "CLIENTES E PARCEIROS",
   statement: "Marcas que já abriram as portas com a gente.",
 } as const;
 
+/* ⚠ ÓRFÃO. Era a lista tipográfica de nomes que a faixa de logos substituiu.
+   Fica porque cobre onze clientes e as logos só cobrem oito — três marcas
+   (Boali, Authentic Feet, Riformato) existem aqui e não têm arquivo. Antes de
+   apagar, decida se elas entram na faixa. */
 export const clientes: string[] = [
   "PETZ",
   "Artwalk",
@@ -350,6 +357,24 @@ export const clientes: string[] = [
   "Transportadora Videira",
   "Riformato Construtora",
 ];
+
+/* ── 9b. Chamada final ───────────────────────────────────────────────── */
+
+/* O último bloco antes do rodapé: o ponto de decisão da página.
+
+   A manchete NÃO é copy nova — é a mesma frase que abre o bloco de contato em
+   /contato. Repetir de propósito: quem desce a home inteira e quem chega
+   direto na rota de contato lê a mesma pergunta, e a página não inventa
+   promessa que o resto do site não faz.
+
+   ⚠ O rótulo do botão diverge dos outros três CTAs do site, que dizem "Falar
+   com a Império". Foi pedido assim. Se for para unificar, é aqui que muda. */
+export const chamadaFinal = {
+  statement: "Conte para nós sobre a sua próxima obra.",
+  apoio:
+    "Equipe própria, prazo fechado em contrato e orçamento blindado do início ao fim.",
+  botao: "Começar aqui",
+} as const;
 
 /* ── 10. Contato ─────────────────────────────────────────────────────── */
 
