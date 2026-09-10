@@ -4,6 +4,7 @@ import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { FaixaParalaxe } from "@/components/faixa-paralaxe";
 import { Hero } from "@/components/hero";
+import { NavegacaoFixa } from "@/components/navegacao-fixa";
 import { ObrasHorizontal } from "@/components/obras-horizontal";
 import { OQueFazemos } from "@/components/o-que-fazemos";
 import { SiteFooter } from "@/components/site-footer";
@@ -37,6 +38,10 @@ import { SiteFooter } from "@/components/site-footer";
 export default function Home() {
   return (
     <>
+      {/* Fora da hero de propósito: a coluna é fixa e acompanha a rolagem da
+          página inteira. Ver components/navegacao-fixa.tsx. */}
+      <NavegacaoFixa />
+
       <Hero />
 
       {/* ══ O ARCO ESCURO ══
