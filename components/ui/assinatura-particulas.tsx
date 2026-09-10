@@ -21,7 +21,7 @@ function PalavraChapada({ visivel }: { visivel: boolean }) {
   return (
     <p
       aria-hidden={visivel ? undefined : "true"}
-      className="text-center font-display text-obra-sm tracking-[0.06em] text-gold-dk min-[768px]:text-obra-md min-[992px]:text-obra-lg"
+      className="text-center font-display text-obra-sm tracking-[0.06em] text-gold min-[768px]:text-obra-md min-[992px]:text-obra-lg"
       style={visivel ? undefined : { visibility: "hidden" }}
     >
       IMPÉRIO
@@ -73,7 +73,7 @@ export function AssinaturaParticulas() {
 
   if (reduzido) {
     return (
-      <div ref={caixa} className="mt-16">
+      <div ref={caixa} className="-mx-gutter mt-24 max-[479px]:-mx-gutter-sm">
         <PalavraChapada visivel />
       </div>
     );
@@ -82,7 +82,9 @@ export function AssinaturaParticulas() {
   return (
     <div
       ref={caixa}
-      className="mt-16"
+      /* Sangra o gutter do rodapé: a assinatura é a última coisa da página e
+         ganha a largura inteira da viewport. */
+      className="-mx-gutter mt-24 max-[479px]:-mx-gutter-sm"
       style={{ aspectRatio: String(PROPORCAO_ASSINATURA) }}
     >
       {emCena ? (

@@ -115,7 +115,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
               <span
                 style={{ transition: reduzido ? undefined : `transform 500ms ${CURVA}, opacity 500ms ${CURVA}` }}
                 className={cn(
-                  "absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-bone px-4 py-4 min-[768px]:px-8 min-[768px]:py-6",
+                  "absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-ink px-4 py-4 min-[768px]:px-8 min-[768px]:py-6",
                   eAberto
                     ? "translate-y-0 opacity-100 delay-200"
                     : "pointer-events-none translate-y-full opacity-0",
@@ -124,10 +124,10 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                 {/* Sem o 01-05 do original: marcador numerado só se
                     justifica quando o conteúdo é sequência, e cinco obras são
                     um conjunto. O que fica é a construtora. */}
-                <span className="truncate text-caption uppercase tracking-[0.1em] text-gold-dk">
+                <span className="truncate text-caption uppercase tracking-[0.1em] text-gold">
                   {painel.categoria}
                 </span>
-                <span className="truncate font-display text-subheading font-light text-ink min-[768px]:text-heading-sm">
+                <span className="truncate font-display text-subheading font-light text-bone min-[768px]:text-heading-sm">
                   {painel.titulo}
                 </span>
               </span>
@@ -144,7 +144,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                   /* Ancorada no rodapé em ambos, como o bottom-8 do
                      original. Altura de conteúdo: inset-y-0 com bottom-auto
                      colapsava a caixa e jogava o texto para o topo. */
-                  "absolute bottom-0 left-0 flex items-center gap-3 bg-bone px-4 py-2",
+                  "absolute bottom-0 left-0 flex items-center gap-3 bg-ink px-4 py-2",
                   "min-[768px]:flex-col-reverse min-[768px]:gap-4 min-[768px]:px-2 min-[768px]:py-6",
                   eAberto ? "pointer-events-none opacity-0" : "opacity-100 delay-500",
                 )}
@@ -152,7 +152,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                 {/* Desktop mostra o título inteiro; no celular a barra é
                     baixa e fica a primeira palavra, no lugar onde o original
                     punha o número. */}
-                <span className="whitespace-nowrap font-display text-body-sm font-light text-ink min-[768px]:[writing-mode:vertical-rl]">
+                <span className="whitespace-nowrap font-display text-body-sm font-light text-bone min-[768px]:[writing-mode:vertical-rl]">
                   <span className="min-[768px]:hidden">{primeiraPalavra(painel.titulo)}</span>
                   <span className="max-[767px]:hidden">{painel.titulo}</span>
                 </span>
@@ -160,7 +160,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                 {/* ⚠ A CONSTRUTORA TAMBÉM NO ESTADO FECHADO. A atribuição de
                     autoria é a razão desta galeria existir — não pode
                     depender de hover para aparecer. */}
-                <span className="whitespace-nowrap text-caption uppercase tracking-[0.1em] text-gold-dk min-[768px]:[writing-mode:vertical-rl]">
+                <span className="whitespace-nowrap text-caption uppercase tracking-[0.1em] text-gold min-[768px]:[writing-mode:vertical-rl]">
                   {painel.categoria}
                 </span>
               </span>

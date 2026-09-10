@@ -39,7 +39,19 @@
    que repinta a cada quadro, atrás de uma seção inteira.
 
    Com `prefers-reduced-motion` não muda nada, justamente por ser estático. */
-export function GradientBackground({ className }: { className?: string }) {
+/* `bloom` e `fecho` viram parametros porque a pagina usa DOIS arcos: o de cima,
+   que fecha no ink para a secao de obras comecar preto contra preto, e o de
+   baixo, que fecha no navy do rodape. A mecanica das tres camadas e a mesma —
+   ver o comentario delas abaixo. */
+export function GradientBackground({
+  className,
+  bloom = "linear-gradient(170deg, #0A0A0A 0%, #16130E 30%, #372F20 55%, #6B6144 100%)",
+  fecho = "linear-gradient(to bottom, transparent calc(100% - 110px), #0A0A0A 100%)",
+}: {
+  className?: string;
+  bloom?: string;
+  fecho?: string;
+}) {
   return (
     <div
       aria-hidden="true"
@@ -73,7 +85,7 @@ export function GradientBackground({ className }: { className?: string }) {
              1356 a 1457px. Ancorado assim, o fecho cai sempre logo abaixo da
              linha de numeros, que termina de 64 a 112px antes do fim. */
           backgroundImage:
-            "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.130'/></svg>\"), linear-gradient(to bottom, transparent calc(100% - 110px), #0A0A0A 100%), linear-gradient(170deg, #0A0A0A 0%, #16130E 30%, #372F20 55%, #6B6144 100%)",
+            `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.130'/></svg>"), ${fecho}, ${bloom}`,
           backgroundSize: "120px 120px, auto, auto",
           backgroundBlendMode: "overlay, normal, normal",
         }}
@@ -110,10 +122,18 @@ export function GradientBackground({ className }: { className?: string }) {
    Fica neste arquivo, e não no componente que o usa, porque é consequência
    direta de uma decisão do código vendorizado — se um dia o builder parar de
    fixar `position` no inline, o invólucro some daqui e mais nada muda. */
-export function FundoGradiente({ className }: { className?: string }) {
+export function FundoGradiente({
+  className,
+  bloom,
+  fecho,
+}: {
+  className?: string;
+  bloom?: string;
+  fecho?: string;
+}) {
   return (
     <div aria-hidden="true" className={className}>
-      <GradientBackground className="h-full w-full" />
+      <GradientBackground className="h-full w-full" bloom={bloom} fecho={fecho} />
     </div>
   );
 }

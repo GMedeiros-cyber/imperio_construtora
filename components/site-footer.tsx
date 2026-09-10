@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import logoRodape from "@/public/hero/logo-imperio-rodape.png";
+import logoRodape from "@/public/hero/logo-imperio-nav.png";
 import { menuHero, sociaisHero } from "@/lib/dados";
 import { paraRotaDeContato } from "@/lib/rotas";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
@@ -21,19 +21,23 @@ import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
    contato DO documento, e não um endereço postal qualquer — é o elemento certo
    para o e-mail e a praça da empresa, e errado para o endereço de uma obra.
 
-   ══ A MARCA É O LOGOTIPO, MAS NÃO O ARQUIVO DA HERO ══
+   ══ O RODAPÉ FICOU ESCURO, E O ARQUIVO DO LOGO MUDOU COM ELE ══
 
-   ⚠ NÃO troque por `hero.logo` (logo-imperio-nav.png). Aquele arquivo é
-   dourado #B79653 sobre transparente, desenhado para fundo escuro: medido
-   sobre o bone dá 2,20:1 de média, com 99,9% dos pixels opacos abaixo dos 3:1
-   que gráfico não textual exige — e cai na regra do AGENTS.md de que #B79653
-   só existe sobre fundo escuro. Sobre o ink o mesmo arquivo dá 8,84:1, que é
-   por que ele serve na hero e em /contato.
+   ⚠ AGORA É logo-imperio-nav.png, o dourado #B79653. Enquanto o rodapé era
+   creme, o arquivo certo era o logo-imperio-rodape.png, em gold-dk #8A6D2F —
+   medido, 4,68:1 sobre o bone contra 2,20:1 do dourado da hero. Com o fundo
+   navy a conta inverte: o gold-dk mede 3,62:1 ali, que reprova para o mínimo
+   de texto, e o dourado da hero passa folgado.
 
-   Daí `logo-imperio-rodape.png`: o MESMO desenho reescalado para o gold-dk
-   #8A6D2F, o único dourado que o AGENTS.md admite sobre o creme. Medido sobre
-   o bone: 4,68:1 de média, faixa de 3,05 a 6,54:1, nenhum pixel abaixo de 3:1.
-   Os dois arquivos coexistem de propósito — cada fundo tem o seu.
+   Os dois arquivos continuam coexistindo de propósito. Se o rodapé voltar a
+   ser claro, o arquivo volta junto — e o inverso também vale.
+
+   ══ O FUNDO É INK ══
+
+   A paleta do site e preto, dourado e a cor da letra. Nada mais entra. O
+   rodape fecha em ink e a chamada final logo acima fecha em ink tambem, pelo
+   gradiente do arco de baixo — a emenda entre os dois e preto contra preto e
+   nao existe borda. Mexeu num, mexa no outro.
 
    ══ A FRASE SOBRE A EMPRESA É CONDENSAÇÃO, NÃO AFIRMAÇÃO NOVA ══
 
@@ -70,9 +74,9 @@ function hrefDoRodape(href: string): string {
 /* Rótulo de coluna: o degrau mais baixo da escala, caixa alta, graphite.
    O foco é `outline` e nunca `ring` — o `ring` do Tailwind é box-shadow, e o
    AGENTS.md proíbe box-shadow em qualquer elemento. */
-const ROTULO = "text-caption uppercase tracking-[0.1em] text-graphite";
+const ROTULO = "text-caption uppercase tracking-[0.1em] text-gold";
 const LINK =
-  "text-body-sm text-ink transition-colors hover:text-gold-dk " +
+  "text-body-sm text-bone transition-colors hover:text-gold-lt " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk";
 
 export function SiteFooter() {
@@ -83,7 +87,7 @@ export function SiteFooter() {
   const ano = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-ash px-gutter py-section max-[479px]:px-gutter-sm">
+    <footer className="bg-ink px-gutter py-section text-bone max-[479px]:px-gutter-sm">
       <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,26rem)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
         <div>
@@ -95,7 +99,7 @@ export function SiteFooter() {
             className="h-16 w-auto"
           />
 
-          <p className="mt-6 max-w-[46ch] text-body-sm text-graphite">{SOBRE}</p>
+          <p className="mt-6 max-w-[46ch] text-body-sm text-ash">{SOBRE}</p>
 
           <div className="mt-8">
             <h3 className={ROTULO} id="rodape-onde">
@@ -110,7 +114,7 @@ export function SiteFooter() {
               <a href={`mailto:${EMAIL}`} className={LINK}>
                 {EMAIL}
               </a>
-              <span className="text-body-sm text-graphite">Guarulhos, SP</span>
+              <span className="text-body-sm text-ash">Guarulhos, SP</span>
             </address>
           </div>
         </div>
@@ -174,7 +178,7 @@ export function SiteFooter() {
                   público. Fica o literal, na mesma convenção que o AGENTS.md já
                   fixou para o telefone. Quando o número chegar, ele entra aqui;
                   se a decisão for não publicar, a coluna inteira sai. */}
-              <li className="text-body-sm text-graphite">CNPJ (em definição)</li>
+              <li className="text-body-sm text-ash">CNPJ (em definição)</li>
             </ul>
           </div>
         </nav>
@@ -184,13 +188,13 @@ export function SiteFooter() {
       <AssinaturaParticulas />
 
       {/* ── Barra de base ──────────────────────────────────────────────── */}
-      <div className="mt-16 border-t border-ash pt-8">
+      <div className="mt-16 border-t border-bone/15 pt-8">
         {/* ⚠ SEM LINHA DE CRÉDITO. O rodapé da LDF assina "Design e site por
             <autor>", e aqui não existe esse dado em lugar nenhum do projeto —
             escrever um nome seria inventá-lo. Quando houver, entra ao lado do
             copyright, com target="_blank" e rel="noopener" como os demais
             externos. */}
-        <p className="text-caption text-graphite">
+        <p className="text-caption text-ash">
           © {ano} Império Construtora
         </p>
       </div>

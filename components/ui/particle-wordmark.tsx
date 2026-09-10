@@ -49,18 +49,29 @@ import type { CSSProperties } from "react";
  * serifadas se perde na amostragem.
  */
 
-/* Bone #FAF8F2 — o mesmo canvas do rodapé. */
-const FUNDO = "#FAF8F2";
+/* Ink #0A0A0A — o mesmo canvas do rodapé, que ficou escuro. */
+const FUNDO = "#0A0A0A";
 
-/* A razão do quadro, e a mesma do viewBox do SVG abaixo. */
-export const PROPORCAO_ASSINATURA = 16 / 3;
+/* A razão do quadro, e a mesma do viewBox do SVG abaixo.
+   ⚠ ERA 16/3, COM O viewBox EM 1600. Medido no render, a palavra ocupava só
+   66% da largura: sobrava margem morta dos dois lados e a assinatura chegava
+   miúda no fim da página. O viewBox apertou para 1140, encostando na palavra,
+   e a razão veio junto — como a largura é dada pelo layout, quadro mais
+   estreito significa quadro mais ALTO, e a palavra cresce na mesma proporção.
 
-const PALAVRA_SVG = `<svg width="1600" height="300" viewBox="0 0 1600 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <text x="800" y="232" text-anchor="middle" fill="#FFFFFF" font-family="Zodiak, Georgia, 'Times New Roman', serif" font-size="252" font-weight="300" letter-spacing="-6">IMPÉRIO</text>
+   Mexeu num, mexa no outro: se os dois discordarem, a máscara deforma. */
+export const PROPORCAO_ASSINATURA = 1140 / 300;
+
+const PALAVRA_SVG = `<svg width="1140" height="300" viewBox="0 0 1140 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="570" y="232" text-anchor="middle" fill="#FFFFFF" font-family="Zodiak, Georgia, 'Times New Roman', serif" font-size="252" font-weight="300" letter-spacing="-6">IMPÉRIO</text>
 </svg>`;
 
-/* gold-dk e um gold mais fechado. Ver "A PALETA" acima. */
-const PALETA = "[[138, 109, 47], [138, 109, 47], [110, 86, 38]]";
+/* ⚠ AGORA E O GOLD CHEIO #B79653, e nao mais o gold-dk. O rodape virou ink, e
+   a conta se inverteu: sobre o creme so o gold-dk passava (4,59:1 contra 2,64:1
+   do gold); sobre o ink o gold cheio mede 7,07:1 e e ele que faz a palavra
+   brilhar. O terceiro tom e o gold-lt #D4B872, para os graos mais quentes
+   pegarem luz na borda. */
+const PALETA = "[[183, 150, 83], [183, 150, 83], [212, 184, 114]]";
 
 function documentoDoIframe() {
   return `<!DOCTYPE html>
