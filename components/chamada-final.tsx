@@ -35,7 +35,7 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  */
 export function ChamadaFinal() {
   return (
-    <section className="bg-ink px-gutter-sm py-section-lg md:px-gutter">
+    <section className="px-gutter-sm py-section-lg md:px-gutter">
       <Image
         src={logoMarca}
         alt="Império Construtora"

@@ -64,8 +64,27 @@ export default function Home() {
       </div>
       <ObrasHorizontal />
       <FaixaParalaxe />
-      <ComoTrabalhamos />
-      <ChamadaFinal />
+      {/* ══ O ARCO DE BAIXO ══
+
+          Espelha o de cima, e fecha a página. O ink entra pelo ComoTrabalhamos,
+          aquece ao longo dele e floresce em dourado exatamente sobre a chamada
+          final — o momento da decisão é o único da página, além da promessa lá
+          em cima, que recebe luz. Depois o dourado apaga: os últimos 260px caem
+          no ink do rodapé, e a emenda com ele é preto contra preto.
+
+          ⚠ O FECHO TEM DE TERMINAR NA COR DO RODAPÉ. É o que faz a borda entre
+          os dois não existir. Mexeu na cor de um, mexa no outro no mesmo
+          commit. */}
+      <div className="relative isolate">
+        <FundoGradiente
+          className="absolute inset-0 -z-10"
+          bloom="linear-gradient(170deg, #0A0A0A 0%, #16130E 22%, #372F20 48%, #6B6144 82%, #6B6144 100%)"
+          fecho="linear-gradient(to bottom, transparent calc(100% - 260px), #0A0A0A 100%)"
+        />
+        <ComoTrabalhamos />
+        <ChamadaFinal />
+      </div>
+
       <SiteFooter />
     </>
   );

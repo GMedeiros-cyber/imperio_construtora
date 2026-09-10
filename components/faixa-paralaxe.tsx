@@ -12,11 +12,19 @@ import { cn } from "@/lib/utils";
 /**
  * BLOCO 5b — Faixa de paralaxe
  * Seis colunas de imagem alternando com cinco divisores de 1px, cada coluna
- * correndo em uma velocidade, e o fundo virando creme no fim da rolagem.
+ * correndo em uma velocidade.
  *
- * A legibilidade do texto vem do mix-blend-mode: difference, não de um
- * overlay: sobre o preto inicial o bone lê quase branco e, quando o fundo
- * vira creme, ele inverte sozinho para escuro.
+ * ⚠ O FUNDO NÃO VIRA MAIS CREME NO FIM DA ROLAGEM. Havia um tween que levava a
+ * seção a #FAF8F2 para entregar no ComoTrabalhamos, que era creme. Ele ficou
+ * escuro, e o tween passou a terminar a faixa em creme contra ink — uma emenda
+ * dura de 240 por canal, medida.
+ *
+ * Tirar também melhorou a composição: a página tem dois blooms dourados, um em
+ * cada arco, e esta faixa é o vale escuro entre eles. Uma terceira virada de
+ * valor aqui, e ainda para outra temperatura, disputava com os dois.
+ *
+ * A legibilidade do texto continua vindo do mix-blend-mode: difference, não de
+ * um overlay: sobre o ink o bone lê quase branco.
  */
 export function FaixaParalaxe() {
   const secao = useRef<HTMLElement>(null);
@@ -25,7 +33,7 @@ export function FaixaParalaxe() {
 
   useEffect(() => {
     /* Com a preferência ativa não se cria gatilho nenhum: as colunas ficam na
-       posição inicial e o fundo já entra em bone, pela variante motion-reduce. */
+       posição inicial. O fundo é ink nos dois casos. */
     if (reduzido) return;
 
     gsap.registerPlugin(ScrollTrigger);
@@ -58,16 +66,6 @@ export function FaixaParalaxe() {
         }
       });
 
-      gsap.to(secao.current, {
-        backgroundColor: "#FAF8F2",
-        ease: "none",
-        scrollTrigger: {
-          trigger: secao.current,
-          start: "bottom 150%",
-          end: "bottom 100%",
-          scrub: true,
-        },
-      });
     }, secao);
 
     return () => contexto.revert();
@@ -102,7 +100,7 @@ export function FaixaParalaxe() {
       /* ink, e não bg-black: preto puro não existe na paleta, e a diferença
          de 10 por canal para o ink do ObrasHorizontal logo acima aparecia como
          mais uma listra na emenda. */
-      className="bg-ink motion-reduce:bg-bone"
+      className="bg-ink"
     >
       {/* max-[480px] e não max-[479px]: o Tailwind gera
           "@media not (min-width: N)", que é exclusivo. Com 479 as regras não

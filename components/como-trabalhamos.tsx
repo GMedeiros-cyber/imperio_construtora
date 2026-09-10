@@ -43,10 +43,10 @@ export function ComoTrabalhamos() {
     >
       {/* ── FAIXA 1: cabeçalho ─────────────────────────────────────────── */}
       <div className="grid grid-cols-12 items-end gap-3 px-gutter-sm md:px-gutter">
-        <p className="col-span-full flex items-center gap-[.38rem] whitespace-nowrap text-eyebrow uppercase text-ink">
+        <p className="col-span-full flex items-center gap-[.38rem] whitespace-nowrap text-eyebrow uppercase text-gold">
           <span
             aria-hidden
-            className="inline-block size-[.31rem] shrink-0 rounded-pill bg-ink"
+            className="inline-block size-[.31rem] shrink-0 rounded-pill bg-gold"
           />
           {comoTrabalhamos.eyebrow}
         </p>
@@ -54,7 +54,7 @@ export function ComoTrabalhamos() {
         {/* 5 de 12. A quebra em duas linhas é da copy; dentro de 5 colunas
             cada uma dessas linhas ainda quebra por conta própria — ver a
             medição no relatório da rodada. */}
-        <h2 className="col-start-1 col-end-6 mt-8 text-statement-sm text-ink max-[767px]:col-end-13 min-[768px]:text-statement-md min-[992px]:text-statement-lg">
+        <h2 className="col-start-1 col-end-6 mt-8 text-statement-sm text-bone max-[767px]:col-end-13 min-[768px]:text-statement-md min-[992px]:text-statement-lg">
           {comoTrabalhamos.manchete.map((linha) => (
             <span key={linha} className="block">
               {linha}
@@ -64,7 +64,7 @@ export function ComoTrabalhamos() {
 
         {/* 4 de 12, começando na 7. items-end no grid é o que alinha a base
             desta pela base da manchete. */}
-        <p className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-graphite max-[767px]:col-start-1 max-[767px]:col-end-13 max-[767px]:mt-6">
+        <p className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-ash max-[767px]:col-start-1 max-[767px]:col-end-13 max-[767px]:mt-6">
           {comoTrabalhamos.subline}
         </p>
       </div>
@@ -76,8 +76,8 @@ export function ComoTrabalhamos() {
       <ul className="grid grid-cols-1 gap-12 px-gutter-sm md:px-gutter min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
         {modelos.map((modelo) => (
           <li key={modelo.titulo}>
-            <h3 className="font-display text-forma text-ink">{modelo.titulo}</h3>
-            <p className="mt-3 max-w-[30ch] text-body text-graphite">
+            <h3 className="font-display text-forma text-bone">{modelo.titulo}</h3>
+            <p className="mt-3 max-w-[30ch] text-body text-ash">
               {modelo.descricao}
             </p>
           </li>
