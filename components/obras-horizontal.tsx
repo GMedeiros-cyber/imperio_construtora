@@ -133,8 +133,16 @@ export function ObrasHorizontal() {
       /* Ink chapado. A transição do dourado termina ANTES desta borda, dentro
          do arco que cobre as marcas e o "O que fazemos" — ver app/page.tsx. Se a
          rampa invadisse esta seção, o começo dela viraria uma faixa dourada e a
-         emenda voltaria a desenhar um risco. */
-      className="relative bg-ink min-[768px]:h-[300vh]"
+         emenda voltaria a desenhar um risco.
+
+         200vh, e não 300vh: a altura aqui é só quanta ROLAGEM a travessia
+         consome — não a geometria. O x vai de 0 a -curso e o curso é MEDIDO
+         do offsetLeft+offsetWidth do último painel, então encurtar a seção
+         faz o mesmo curso ser percorrido em menos rolagem: os painéis
+         continuam idênticos, só passam mais rápido. Medido a 1440px depois
+         da troca, o último painel ainda chega a left: 0 no fim da seção,
+         que é como o curso foi calibrado. */
+      className="relative bg-ink min-[768px]:h-[200vh]"
     >
       {/* relative z-10 mantem o conteudo ACIMA do pseudo-elemento do grao. Sem
           isso, no mobile — onde este div nao e sticky e portanto nao e
