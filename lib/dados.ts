@@ -57,7 +57,7 @@ export const menuHero = {
     { texto: "Obras", href: "#obras" },
     { texto: "Sobre", href: "#sobre" },
     { texto: "Como trabalhamos", href: "#como-trabalhamos" },
-    { texto: "Contato", href: "#contato" },
+    { texto: "Contato", href: "/contato" },
   ],
   contatoRotulo: "CONTATO",
   contatoLinhas: [
@@ -401,7 +401,7 @@ export const rodape: ColunaRodape[] = [
     itens: [
       { texto: "Início", href: "#inicio" },
       { texto: "Obras", href: "#obras" },
-      { texto: "Contato", href: "#contato" },
+      { texto: "Contato", href: "/contato" },
     ],
   },
   {

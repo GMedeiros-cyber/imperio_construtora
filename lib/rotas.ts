@@ -1,28 +1,22 @@
 /* Rotas do site que outros arquivos precisam citar por nome.
 
-   ══ POR QUE ESTE ARQUIVO EXISTE ══
+   O contato é uma ROTA (/contato), não uma âncora. Não existe nenhuma seção
+   com id="contato" na home: o bloco foi removido quando a rota nasceu, e uma
+   âncora que sobrasse apontaria para o nada.
 
-   O contato virou uma ROTA (/contato) e deixou de ser uma âncora (#contato) na
-   home. Três links do site apontavam para a âncora: o item "Contato" do menu, o
-   CTA da hero e o item "Contato" do rodapé.
+   ══ O REMENDO QUE MORREU AQUI ══
 
-   ⚠ DOIS DELES TÊM O href ESCRITO EM lib/dados.ts — `menuHero.itens` e
-   `rodape` —, e naquela rodada o dados.ts era de outra sessão e não podia ser
-   tocado. Daí `paraRotaDeContato`: a view traduz a âncora velha na rota nova, em
-   vez de o dado ser corrigido na origem.
+   Existia `paraRotaDeContato`, que traduzia "#contato" em "/contato" na
+   RENDERIZAÇÃO. Ela nasceu porque os dois href viviam em lib/dados.ts e aquele
+   arquivo era de outra sessão naquela rodada, então não podia ser corrigido na
+   origem.
 
-   ISTO É REMENDO, E TEM DATA PARA SAIR. O certo é trocar "#contato" por
-   "/contato" nos dois lugares do dados.ts e apagar a função. Enquanto ela
-   existir, o dado do site diz uma coisa e a tela mostra outra — que é
-   exatamente o tipo de divergência que some sem ninguém notar.
+   Foi corrigido: `menuHero.itens` e `rodape` agora dizem "/contato" no dado, e
+   a função foi apagada junto com as duas chamadas. Enquanto ela existia, o dado
+   do site dizia uma coisa e a tela mostrava outra — o tipo de divergência que
+   some sem ninguém notar.
 
-   Não existe mais nenhuma seção com id="contato" na home: o bloco 10 foi
-   removido quando a rota nasceu. Uma âncora que sobrasse apontaria para o
-   nada. */
+   ⚠ NÃO RESSUSCITE A TRADUÇÃO. Se aparecer um "#contato" em algum lugar, é bug
+   no dado, e o conserto é no dado. */
 
 export const ROTA_CONTATO = "/contato";
-
-/** Traduz a âncora antiga na rota nova. Ver o aviso no topo do arquivo. */
-export function paraRotaDeContato(href: string): string {
-  return href === "#contato" ? ROTA_CONTATO : href;
-}

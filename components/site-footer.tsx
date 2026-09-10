@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import logoRodape from "@/public/hero/logo-imperio-nav.png";
 import { menuHero, sociaisHero } from "@/lib/dados";
-import { paraRotaDeContato } from "@/lib/rotas";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
 /* BLOCO 11 — Full-Bleed Footer
@@ -64,11 +63,11 @@ const MENU = [{ texto: "Início", href: "/" }, ...menuHero.itens];
    a home apontariam para uma seção inexistente na própria página. A barra na
    frente resolve as duas coisas: "/#obras" volta para a home e rola até lá.
 
-   `paraRotaDeContato` roda antes porque "#contato" não é âncora nenhuma desde
-   que o contato virou rota — ver lib/rotas.ts. */
+   O contato NÃO passa mais por aqui: ele já vem "/contato" do dado, desde que
+   o remendo `paraRotaDeContato` foi apagado — ver lib/rotas.ts. Esta função
+   cuida só das âncoras. */
 function hrefDoRodape(href: string): string {
-  const destino = paraRotaDeContato(href);
-  return destino.startsWith("#") ? `/${destino}` : destino;
+  return href.startsWith("#") ? `/${href}` : href;
 }
 
 /* Rótulo de coluna: o degrau mais baixo da escala, caixa alta, graphite.
