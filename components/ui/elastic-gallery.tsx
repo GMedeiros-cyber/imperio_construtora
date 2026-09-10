@@ -20,9 +20,18 @@ import { cn } from "@/lib/utils";
  * numerado só se justifica quando o conteúdo é sequência, e cinco obras são
  * um conjunto, não uma ordem.
  *
- * ══ AS QUATRO REGRAS QUE O ORIGINAL QUEBRAVA ══
+ * ══ O QUE FOI MUDADO EM RELAÇÃO AO ORIGINAL ══
  *
- * 1. rounded-2xl -> canto reto. O DESIGN.md não admite raio em imagem.
+ * 1. rounded-2xl: MANTIDO. Esta linha já dizia o contrário — o raio tinha
+ *    sido zerado para "canto reto", porque o DESIGN.md não admitia raio em
+ *    imagem. O DESIGN.md NÃO VALE MAIS: o cliente mandou abandoná-lo e pediu
+ *    o raio de volta, então o quadrado foi desfeito e os painéis voltaram a
+ *    rounded-2xl (16px). Não re-zerar citando o DESIGN.md.
+ *
+ *    O overflow-hidden do <li> é quem clipa a foto E os chips de legenda
+ *    (a barra do rodapé no aberto, a tira vertical no fechado) na curva —
+ *    os chips são absolutos nas bordas e sem esse clipe os cantos deles
+ *    escapariam do arredondamento. Se mexer no overflow, meça de novo.
  *
  * 2. bg-gradient-to-t from-black/80 sobre a foto -> REMOVIDO, overlay é
  *    proibido. O texto foi para uma FAIXA OPACA de bone: barra no rodapé do
@@ -86,7 +95,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
               flexGrow: eAberto ? PESO_ABERTO : 1,
               transition: reduzido ? undefined : `flex-grow 700ms ${CURVA}`,
             }}
-            className="relative min-h-0 min-w-0 flex-none basis-0 overflow-hidden"
+            className="relative min-h-0 min-w-0 flex-none basis-0 overflow-hidden rounded-2xl"
           >
             <button
               type="button"
