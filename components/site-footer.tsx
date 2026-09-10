@@ -154,11 +154,9 @@ export function SiteFooter() {
                   Instagram
                 </a>
               </li>
-              <li>
-                <a href={`mailto:${EMAIL}`} className={LINK}>
-                  E-mail
-                </a>
-              </li>
+              {/* O e-mail NÃO mora aqui: ele é canal de contato, não rede
+                  social, e já está no <address> de "Onde estamos". Nesta
+                  coluna ficam só os perfis. */}
               <li>
                 {/* ⚠ PENDENTE: a página de Facebook da Império não existe no
                     projeto. O "#" é literal e provisório — inventar uma URL
