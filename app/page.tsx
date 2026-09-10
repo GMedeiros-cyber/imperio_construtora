@@ -68,9 +68,11 @@ export default function Home() {
 
           Espelha o de cima, e fecha a página. O ink entra pelo ComoTrabalhamos,
           aquece ao longo dele e floresce em dourado exatamente sobre a chamada
-          final — o momento da decisão é o único da página, além da promessa lá
-          em cima, que recebe luz. Depois o dourado apaga: os últimos 260px caem
-          no ink do rodapé, e a emenda com ele é preto contra preto.
+          final. ⚠ O PICO FICA DENTRO DO ComoTrabalhamos, e não sobre a chamada:
+          a chamada virou uma FAIXA com foto de fundo, que cobre o gradiente
+          inteiro naquele trecho. Com o pico lá embaixo sobrava só uma tira
+          dourada fina acima da faixa, lendo como acidente. O dourado floresce no
+          miolo e já apagou quando a faixa começa.
 
           ⚠ O FECHO TEM DE TERMINAR NA COR DO RODAPÉ. É o que faz a borda entre
           os dois não existir. Mexeu na cor de um, mexa no outro no mesmo
@@ -78,7 +80,7 @@ export default function Home() {
       <div className="relative isolate">
         <FundoGradiente
           className="absolute inset-0 -z-10"
-          bloom="linear-gradient(170deg, #0A0A0A 0%, #16130E 22%, #372F20 48%, #6B6144 82%, #6B6144 100%)"
+          bloom="linear-gradient(170deg, #0A0A0A 0%, #16130E 18%, #372F20 38%, #6B6144 58%, #0A0A0A 84%, #0A0A0A 100%)"
           fecho="linear-gradient(to bottom, transparent calc(100% - 260px), #0A0A0A 100%)"
         />
         <ComoTrabalhamos />
