@@ -39,10 +39,13 @@
    que repinta a cada quadro, atrás de uma seção inteira.
 
    Com `prefers-reduced-motion` não muda nada, justamente por ser estático. */
-/* `bloom` e `fecho` viram parametros porque a pagina usa DOIS arcos: o de cima,
-   que fecha no ink para a secao de obras comecar preto contra preto, e o de
-   baixo, que fecha no navy do rodape. A mecanica das tres camadas e a mesma —
-   ver o comentario delas abaixo. */
+/* ⚠ `bloom` e `fecho` SAO PARAMETROS E HOJE NINGUEM OS PASSA: a pagina tem UM
+   arco so, o de cima, e ele usa os defaults. Existiam porque havia um segundo
+   arco no fim da pagina, com paradas proprias — ele saiu, e o fim da pagina
+   virou ink chapado (ver app/page.tsx). Os parametros ficam porque sao o unico
+   ponto de remix deste fundo vendorizado: quem quiser um segundo arco em outro
+   lugar nao precisa duplicar o componente. A mecanica das tres camadas e a
+   mesma — ver o comentario delas abaixo. */
 export function GradientBackground({
   className,
   bloom = "linear-gradient(170deg, #0A0A0A 0%, #16130E 30%, #372F20 55%, #6B6144 100%)",
