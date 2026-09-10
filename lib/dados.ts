@@ -7,6 +7,25 @@ import logoNav from "@/public/hero/logo-imperio-nav.png";
  * A estrutura dos blocos segue o DESIGN.md — aqui vive só o texto.
  */
 
+/* ── 0. Telefone da empresa ──────────────────────────────────────────── */
+
+/* FONTE ÚNICA DO NÚMERO. Rodapé, menu, /contato e a política leem daqui, e
+   nenhum outro arquivo escreve o número à mão — trocar aqui troca em todos.
+   Até 2026-09-10 esses mesmos lugares mostravam o marcador de pendência.
+
+   Dois formatos, e cada um tem um uso só: `exibicao` é o que se lê na tela;
+   `e164` é o que vai no href. */
+export const telefone = {
+  exibicao: "(11) 92777-9559",
+  e164: "+5511927779559",
+} as const;
+
+export const telefoneHref = `tel:${telefone.e164}`;
+
+/* O wa.me quer só dígitos, com o DDI e sem o "+": derivado do mesmo número,
+   para o botão flutuante nunca divergir do telefone exibido. */
+export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}`;
+
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {
@@ -70,13 +89,18 @@ export const menuHero = {
       texto: "contato@imperioconstrutora.com.br",
       href: "mailto:contato@imperioconstrutora.com.br",
     },
+    { tipo: "telefone" as const, texto: telefone.exibicao, href: telefoneHref },
     {
       tipo: "instagram" as const,
       texto: "@_construtoraimperio",
       href: "https://www.instagram.com/_construtoraimperio",
     },
     { tipo: "local" as const, texto: "Guarulhos, SP" },
-  ] as { tipo: "email" | "instagram" | "local"; texto: string; href?: string }[],
+  ] as {
+    tipo: "email" | "telefone" | "instagram" | "local";
+    texto: string;
+    href?: string;
+  }[],
   cta: "Falar com a Império",
 } as const;
 
@@ -385,9 +409,10 @@ export const chamadaFinal = {
 export const contato = {
   eyebrow: "CONTATO",
   statement: "Conte para nós sobre a sua próxima obra.",
-  /* Telefone e e-mail ainda não definidos — texto literal, não inventar. */
+  /* O e-mail ainda é o literal — este objeto não é lido por ninguém desde que
+     o bloco virou a rota /contato, que tem a própria lista de canais. */
   linhas: [
-    { rotulo: "Telefone", valor: "(em definição)" },
+    { rotulo: "Telefone", valor: telefone.exibicao },
     { rotulo: "E-mail", valor: "(em definição)" },
     { rotulo: "Local", valor: "São Paulo, SP" },
   ],
@@ -395,6 +420,13 @@ export const contato = {
 } as const;
 
 /* ── 11. Rodapé ──────────────────────────────────────────────────────── */
+
+/* Crédito da barra de base. Autor e URL são os MESMOS do rodapé da LDF
+   (lib/dados.ts de lá, `creditos`): o perfil do Instagram, e não o domínio. */
+export const creditos = {
+  autor: "Tribus Labs",
+  url: "https://www.instagram.com/tribus__labs/",
+} as const;
 
 export type ItemRodape = { texto: string; href?: string };
 export type ColunaRodape = { titulo: string; itens: ItemRodape[] };
@@ -424,8 +456,7 @@ export const rodape: ColunaRodape[] = [
   {
     titulo: "CONTATO",
     itens: [
-      /* Telefone ainda sem definição — literal, não inventar. */
-      { texto: "(em definição)" },
+      { texto: telefone.exibicao, href: telefoneHref },
       { texto: "contato@imperioconstrutora.com.br", href: "mailto:contato@imperioconstrutora.com.br" },
       { texto: "Guarulhos, SP" },
     ],

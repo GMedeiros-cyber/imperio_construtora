@@ -35,8 +35,9 @@ import {
 /* Envio em menos disto, com o carimbo presente, é robô. */
 const RAPIDO_DEMAIS_MS = 3000;
 
-/* Canal real da Império, e o único que existe hoje. O telefone segue "(em
-   definição)" e NÃO entra aqui até alguém informar o número. */
+/* O canal que a mensagem de falha aponta. O telefone já existe (`telefone` em
+   lib/dados.ts), mas a mensagem continua mandando para o e-mail: trocar o
+   destino do fallback é decisão à parte, ver o bloco da ENTREGA abaixo. */
 const EMAIL_IMPERIO = "contato@imperioconstrutora.com.br";
 
 function texto(dados: FormData, campo: string) {
@@ -117,9 +118,12 @@ export async function enviarContato(
      ══ POR QUE ISTO NÃO TERMINA NO WHATSAPP ══
 
      O projeto de origem, com a variável vazia, redirecionava para o wa.me da
-     empresa. Aqui NÃO DÁ: o telefone da Império segue "(em definição)" e
-     inventar número é pior que não ter fallback. Então o caminho sem webhook
-     avisa a pessoa e aponta o e-mail real, que é o único canal que existe hoje.
+     empresa. Aqui isso saiu quando a Império ainda não tinha número, e o
+     caminho sem webhook avisa a pessoa e aponta o e-mail real.
+
+     ⚠ O NÚMERO CHEGOU DEPOIS, e o fallback NÃO foi religado junto. Religar é
+     mudança de comportamento e de política de privacidade ao mesmo tempo — o
+     pedido passaria a trafegar pelo WhatsApp —, e fica para quando for pedido.
 
      Em desenvolvimento a coisa é outra: o pedido é registrado no console e a
      tela responde sucesso, para o fluxo poder ser testado de ponta a ponta sem

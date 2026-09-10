@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { WhatsappFlutuante } from "@/components/whatsapp-flutuante";
+
 import { OPEN_GRAPH_BASE, URL_DO_SITE } from "./site";
 
 /* ══ METADATA — O LAYOUT DÁ A MOLDURA, CADA ROTA DÁ O TEXTO ══
@@ -85,6 +87,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         {children}
+        {/* No layout, e não em cada página: é a mesma peça em todas as rotas.
+            Fica DEPOIS das rotas no DOM e fora do fade de entrada — o de
+            app/template.tsx e a `.transicao-rota` das páginas —, então não
+            pisca junto com a troca de rota. Ver o topo do componente sobre o
+            que isso implica com o menu aberto. */}
+        <WhatsappFlutuante />
       </body>
     </html>
   );

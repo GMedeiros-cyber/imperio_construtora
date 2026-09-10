@@ -23,6 +23,8 @@
 
    Ou os campos são preenchidos antes de publicar, ou a rota não sobe. */
 
+import { telefone, telefoneHref } from "@/lib/dados";
+
 /** Marcador literal dos campos que dependem do cliente. Não substituir por
     texto plausível: ou vem o dado real, ou fica isto. */
 export const PENDENTE = "(em definição)";
@@ -37,6 +39,9 @@ export const controlador = {
   endereco: PENDENTE,
   municipio: "Guarulhos, SP",
   email: "contato@imperioconstrutora.com.br",
+  /* Lido de lib/dados.ts, a fonte única do número — não copiar para cá. */
+  telefone: telefone.exibicao,
+  telefoneHref,
   /* Encarregado pelo tratamento de dados (art. 41 da LGPD): a pessoa ou canal
      que atende titular e autoridade. Pode ser o próprio e-mail acima, mas é
      decisão do cliente — e precisa estar declarada. */
@@ -72,7 +77,7 @@ export const destino = {
 
 /* Data desta versão, em ISO. É a data em que o texto foi escrito — não é
    marcador pendente. Toda alteração de conteúdo sobe esta data junto. */
-export const atualizadaEm = "2026-09-09";
+export const atualizadaEm = "2026-09-10";
 
 /* ── Terceiros que o navegador contacta, MEDIDOS, não deduzidos ────────────
 
