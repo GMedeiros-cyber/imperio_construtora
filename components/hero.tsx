@@ -1,7 +1,8 @@
-import Image, { getImageProps } from "next/image";
+import { getImageProps } from "next/image";
 
 import { hero } from "@/lib/dados";
 import { BotaoContatoHero } from "@/components/botao-contato-hero";
+import { LogoTopo } from "@/components/logo-topo";
 import { DiaText } from "@/components/ui/dia-text";
 
 /**
@@ -52,12 +53,7 @@ export function Hero() {
           FIXOS e precisam sobreviver à rolagem da página inteira, e esta
           <section> é overflow-hidden. Ver o cabeçalho de lá. */}
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-8 p-8">
-        <Image
-          src={hero.logo}
-          alt={hero.logoAlt}
-          priority
-          className="h-14 w-auto"
-        />
+        <LogoTopo />
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
