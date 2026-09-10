@@ -13,8 +13,12 @@ import { cn } from "@/lib/utils";
  * O QUE FOI PRESERVADO: a altura fixa do contêiner (que é o que mantém a
  * animação estável), o acordeão em coluna no celular e em linha no desktop, o
  * flex-[4] contra flex-[1] com a mesma curva e duração, o zoom sutil da foto
- * inativa, o título rotacionado nos painéis fechados e o painel 03 aberto por
- * padrão.
+ * inativa, o título rotacionado nos painéis fechados e o terceiro painel
+ * aberto por padrão.
+ *
+ * A numeração 01-05 do original SAIU, do aberto e do fechado: marcador
+ * numerado só se justifica quando o conteúdo é sequência, e cinco obras são
+ * um conjunto, não uma ordem.
  *
  * ══ AS QUATRO REGRAS QUE O ORIGINAL QUEBRAVA ══
  *
@@ -51,6 +55,13 @@ import { cn } from "@/lib/utils";
  * Aqui cada painel é <button>, com onFocus abrindo junto: navegar por Tab
  * percorre a galeria.
  */
+
+/* No celular a barra do painel fechado é baixa e não cabe o título inteiro.
+   ⚠ "Residencial Bella Pietra" e "Residencial São Marinho" dão a MESMA
+   primeira palavra — ver o aviso no relatório da rodada. */
+function primeiraPalavra(titulo: string) {
+  return titulo.split(" ")[0];
+}
 
 /** O painel aberto ocupa 4 partes; cada fechado, 1. */
 const PESO_ABERTO = 4;
@@ -110,11 +121,11 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                     : "pointer-events-none translate-y-full opacity-0",
                 )}
               >
-                <span className="flex items-baseline gap-2">
-                  <span className="text-caption text-graphite">{painel.numero}</span>
-                  <span className="truncate text-caption uppercase tracking-[0.1em] text-gold-dk">
-                    {painel.categoria}
-                  </span>
+                {/* Sem o 01-05 do original: marcador numerado só se
+                    justifica quando o conteúdo é sequência, e cinco obras são
+                    um conjunto. O que fica é a construtora. */}
+                <span className="truncate text-caption uppercase tracking-[0.1em] text-gold-dk">
+                  {painel.categoria}
                 </span>
                 <span className="truncate font-display text-subheading font-light text-ink min-[768px]:text-heading-sm">
                   {painel.titulo}
@@ -138,10 +149,20 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                   eAberto ? "pointer-events-none opacity-0" : "opacity-100 delay-500",
                 )}
               >
+                {/* Desktop mostra o título inteiro; no celular a barra é
+                    baixa e fica a primeira palavra, no lugar onde o original
+                    punha o número. */}
                 <span className="whitespace-nowrap font-display text-body-sm font-light text-ink min-[768px]:[writing-mode:vertical-rl]">
-                  {painel.titulo}
+                  <span className="min-[768px]:hidden">{primeiraPalavra(painel.titulo)}</span>
+                  <span className="max-[767px]:hidden">{painel.titulo}</span>
                 </span>
-                <span className="text-caption text-graphite">{painel.numero}</span>
+
+                {/* ⚠ A CONSTRUTORA TAMBÉM NO ESTADO FECHADO. A atribuição de
+                    autoria é a razão desta galeria existir — não pode
+                    depender de hover para aparecer. */}
+                <span className="whitespace-nowrap text-caption uppercase tracking-[0.1em] text-gold-dk min-[768px]:[writing-mode:vertical-rl]">
+                  {painel.categoria}
+                </span>
               </span>
             </button>
           </li>

@@ -144,6 +144,15 @@
   --text-obra-sm--letter-spacing: -0.04em;
   --text-obra-sm--font-weight: 300;
 
+  /* Título de cada forma de contratar: 1.5rem, Zodiak, peso 300. Não
+     reaproveita --text-numeral-sm, que tem o mesmo corpo mas line-height 1 e
+     tracking -0.04em porque existe para numeral de destaque, que nunca
+     quebra linha. Este quebra em duas ou três palavras. */
+  --text-forma: 1.5rem; /* 24px */
+  --text-forma--line-height: 1.15;
+  --text-forma--letter-spacing: -0.02em;
+  --text-forma--font-weight: 300;
+
   /* Eyebrow do Creative Giants: 16px caixa alta, peso 400, line-height 1 —
      o line-height cravado é o que alinha o ponto ao texto. */
   --text-eyebrow: 1rem; /* 16px */

@@ -35,6 +35,8 @@ const twMerge = extendTailwindMerge({
             "obra-lg",
             "obra-md",
             "obra-sm",
+            /* Título das quatro formas de contratar. */
+            "forma",
             "eyebrow",
           ],
         },
