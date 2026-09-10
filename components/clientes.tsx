@@ -1,12 +1,13 @@
-import { Fragment } from "react";
-
-import { clientes, secaoClientes } from "@/lib/dados";
+import { LogoCloud } from "@/components/ui/logo-cloud";
 import { SectionTitleBlock } from "@/components/section-title-block";
+import { secaoClientes } from "@/lib/dados";
+import { logosClientes } from "@/lib/logos";
 
 /**
  * BLOCO 9 — Clientes
- * Lista tipográfica, sem logos: nomes em 34px peso 300 correndo em fluxo
- * horizontal, separados por " · " em ash.
+ * Saiu a lista tipográfica de nomes e entrou o grid de logos: 2 colunas no
+ * mobile, 4 no desktop, com hairline entre as células. As logos vivem em
+ * lib/logos.ts, não aqui.
  */
 export function Clientes() {
   return (
@@ -16,14 +17,7 @@ export function Clientes() {
         statement={secaoClientes.statement}
       />
 
-      <p className="text-heading-sm text-ink">
-        {clientes.map((nome, indice) => (
-          <Fragment key={nome}>
-            {indice > 0 ? <span className="text-ash"> · </span> : null}
-            {nome}
-          </Fragment>
-        ))}
-      </p>
+      <LogoCloud logos={logosClientes} />
     </section>
   );
 }
