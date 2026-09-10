@@ -427,3 +427,59 @@ O DESIGN.md lista 18px entre os tamanhos da Switzer e pede 18–20px no título 
 card, mas a tabela da escala pula de 16px para 20px. O token foi acrescentado
 com o tracking dos demais tamanhos de corpo, para as três linhas do bloco de
 contato.
+
+### 3. Manchete centrada no carrossel de marcas
+
+**A regra:** o AGENTS.md lista "Texto sempre alinhado à esquerda" entre as
+regras invioláveis, e o resto do site cumpre — hero, Section Title Block,
+números, cards, rodapé e formulário são todos à esquerda.
+
+**O desvio:** a manchete "Marcas que confiaram na Império", no bloco 9, é
+centrada. Só ela.
+
+**O motivo:** foi decisão do cliente, pedida explicitamente. Não há justificativa
+de medição por trás — é escolha de composição, e está registrada aqui para não
+virar precedente silencioso.
+
+**O escopo:** UMA manchete, em UM bloco. Nenhum outro texto do site centraliza,
+e o próximo que aparecer centrado é bug até prova em contrário.
+
+### 4. Um fundo só para o carrossel de marcas e o "O que fazemos"
+
+**A regra:** o DESIGN.md trata separação de seções como respiro — "sem fundo,
+sem régua" —, e cada bloco carregava o próprio fundo chapado.
+
+**O desvio:** as duas seções perderam o fundo próprio e passaram a dividir um
+gradiente único, declarado num invólucro em `app/page.tsx`. Ele sai do ink logo
+abaixo da hero, atravessa o carrossel aquecendo, passa por `#16130E` aos 30% e
+`#372F20` aos 50%, floresce no dourado `#6B6144` aos 68% e volta ao ink aos 84%.
+
+**O motivo:** medido a 1440px, o fundo do "O que fazemos" terminava entre
+`rgb(100,88,64)` e `rgb(117,106,74)` e encostava no `rgb(10,10,10)` do bloco
+seguinte — um salto de cerca de 100 por canal, que lia como uma barra dourada
+colada numa preta.
+
+Duas tentativas anteriores não resolveram, e vale registrar por quê. Casar as
+cores de ponta entre blocos vizinhos derrubou o salto para 6, mas a TEXTURA
+continuava denunciando a emenda: o ruído de um bloco começava de supetão, e o
+olho lê a borda do grão mesmo quando a cor não muda. Dar ao bloco de obras uma
+rampa que recebesse o dourado resolvia o risco, mas transformava o começo dele
+numa faixa dourada — trocava um problema por outro.
+
+**A saída:** o gradiente volta ao preto ANTES da própria borda. Assim a emenda
+com a seção de obras é preto contra preto, não há rampa invadindo o bloco
+seguinte, e não sobra nada para emendar. Medido depois: 1 por canal entre o
+carrossel e o "O que fazemos", 1 entre este e as obras, 0 entre as obras e a
+faixa de paralaxe.
+
+**O preço, e a regra que sai disso:** as paradas do gradiente codificam a
+proporção de altura entre os dois blocos. Mudar a altura de qualquer um dos
+dois desloca onde cada parada cai, e o eyebrow dourado do "O que fazemos" é o
+texto mais frágil da página — remedido em 5,44 a 5,95:1 contra 4,5:1 exigidos,
+uma folga menor do que os 5,85 a 6,06:1 de antes. Mexeu na altura ou nas
+paradas, meça o eyebrow primeiro.
+
+**Detalhe que custou uma rodada:** o grão precisa ser aplicado com
+`background-blend-mode: overlay`, e não pintado direto. Overlay preserva
+escuros; pintura direta levanta o `#0A0A0A` para `rgb(26,25,25)`, e aí o preto
+deixa de ser preto e nasce um degrau contra o bloco seguinte.

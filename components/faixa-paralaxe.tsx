@@ -99,7 +99,10 @@ export function FaixaParalaxe() {
   return (
     <section
       ref={secao}
-      className="bg-black motion-reduce:bg-bone"
+      /* ink, e não bg-black: preto puro não existe na paleta, e a diferença
+         de 10 por canal para o ink do ObrasHorizontal logo acima aparecia como
+         mais uma listra na emenda. */
+      className="bg-ink motion-reduce:bg-bone"
     >
       {/* max-[480px] e não max-[479px]: o Tailwind gera
           "@media not (min-width: N)", que é exclusivo. Com 479 as regras não

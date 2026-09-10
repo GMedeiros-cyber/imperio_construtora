@@ -6,15 +6,19 @@ import { cn } from "@/lib/utils";
 /**
  * Carrossel de marcas — placas em cinza-quase-preto correndo sobre o campo ink.
  *
- * ══ O CARROSSEL NÃO RESOLVE CONTRASTE, A PLACA RESOLVE ══
+ * ══ O CARROSSEL NÃO RESOLVE CONTRASTE, O TRATAMENTO DO ARQUIVO RESOLVE ══
  *
  * Logo preta correndo sobre preto continua invisível. Quem faz a marca aparecer
- * é o par placa + tratamento: a placa é um degrau de valor acima do campo, e as
- * logos monocromáticas pretas — adidas, Authentic Feet, magicfeet — entram em
- * ash. As coloridas passam intactas. A regra que separa uma coisa da outra é
- * pixel a pixel e está no gerador: tinta ESCURA e NEUTRA vira ash, tinta com
- * croma fica como está. Por isso o símbolo laranja do Boali sobrevive enquanto
- * o wordmark preto dele vira cinza. Ver /logos/escuro e lib/logos.ts.
+ * é o tratamento: as monocromáticas pretas — adidas, Authentic Feet, magicfeet,
+ * Videira — entram em ash, e as coloridas passam intactas. A regra que separa
+ * uma coisa da outra é pixel a pixel e está no gerador: tinta ESCURA e NEUTRA
+ * vira ash, tinta com croma fica como está. Por isso o símbolo laranja do Boali
+ * sobrevive enquanto o wordmark preto dele vira cinza, no mesmo arquivo.
+ * Ver /logos/escuro, scripts/logos-para-fundo-escuro.mjs e lib/logos.ts.
+ *
+ * Não há placa atrás das marcas. Houve, e saiu: sobre o ink direto o pior caso
+ * é a Leovit em 3,83:1, contra 3,08:1 quando havia placa cinza. Fundo mais
+ * escuro dá mais contraste — a placa era redundante e cobrava por isso.
  *
  * ══ A MECÂNICA ══
  *
@@ -37,11 +41,10 @@ function Placa({ logo, oculto }: { logo: LogoCliente; oculto?: boolean }) {
   return (
     <li
       aria-hidden={oculto || undefined}
-      /* Canto reto: o raio 1440px é reservado a botão, pill e tag. Placa é
-         superfície editorial, e superfície editorial é reta.
-         O bone a 10% sobre o ink dá rgb(34,34,33) — o cinza próximo do preto,
-         um degrau de valor acima do campo sem virar cinza médio. */
-      className="flex h-28 w-48 shrink-0 items-center justify-center bg-bone/10 px-5 md:h-36 md:w-72 md:px-8"
+      /* Sem fundo: a caixa é só medida e respiro. Houve uma versão com placa
+         cinza atrás de cada marca, e ela saiu porque piorava o contraste —
+         sobre o ink direto o pior caso é 3,83:1, contra 3,08:1 com placa. */
+      className="flex h-28 w-48 shrink-0 items-center justify-center px-5 md:h-36 md:w-72 md:px-8"
     >
       {/* Altura e largura limitadas juntas: as proporções vão de 7,06:1 a
           0,84:1, então nas marcas largas quem trava é a largura e nas compactas

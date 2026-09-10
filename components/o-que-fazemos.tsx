@@ -1,7 +1,6 @@
 import { Building2, Clock, Ruler, type LucideIcon } from "lucide-react";
 
 import { oQueFazemos } from "@/lib/dados";
-import { FundoGradiente } from "@/components/ui/background-rowds-shop-v1";
 
 /**
  * BLOCO 2 — O que fazemos
@@ -15,9 +14,15 @@ import { FundoGradiente } from "@/components/ui/background-rowds-shop-v1";
  *
  * ══ A SEÇÃO É ESCURA, E TODA A COR DE TEXTO DEPENDE DISSO ══
  *
- * O fundo é o gradiente de components/ui/background-rowds-shop-v1.tsx, que vai
- * de #16130E a #372F20 e termina em #6B6144. Com ele atrás, a paleta de texto
- * do canvas creme ficaria ilegível, então a seção inverteu inteira:
+ * ⚠ O FUNDO NÃO É MAIS DESTA SEÇÃO. Ele subiu para um invólucro em
+ * app/page.tsx que cobre TAMBÉM o carrossel de marcas, para que as duas leiam
+ * como um campo escuro só. O gradiente agora sai do ink, passa por #16130E aos
+ * 30%, #372F20 aos 50%, floresce no dourado #6B6144 aos 68% e VOLTA ao ink aos
+ * 84% — antes da borda de baixo, para a seção de obras começar preto contra
+ * preto. As porcentagens são do invólucro inteiro, não desta seção.
+ *
+ * Com ele atrás, a paleta de texto do canvas creme ficaria ilegível, então a
+ * seção inverteu inteira:
  *
  *   manchete   ink      -> bone
  *   parágrafo  graphite -> bone
@@ -43,16 +48,19 @@ import { FundoGradiente } from "@/components/ui/background-rowds-shop-v1";
  * contraste de corpo entre número (3.375rem) e descrição (1rem) não pode
  * encolher — sem ele a seção vira um bloco de texto de um tom só.
  *
- * ⚠ O eyebrow CONTINUA em gold, e só funciona porque está no topo: ele mede
- * 5,85 a 6,06:1 sobre o #16130E, e o gold só aguenta até 14% da altura da
- * seção. Não desça o eyebrow.
+ * ⚠ O eyebrow CONTINUA em gold, e só funciona porque está no topo. Remedido
+ * depois que o fundo virou arco: 5,44 a 5,95:1 nas cinco larguras, contra os
+ * 4,5:1 exigidos — era 5,85 a 6,06:1 antes. Passa, mas com menos folga. Não
+ * desça o eyebrow, e se mexer nas paradas do gradiente, meça este primeiro:
+ * é o texto mais frágil da página.
  *
  * ⚠ SE O FUNDO SAIR, ISTO TUDO VOLTA. O gold do eyebrow é o caso mais rígido:
  * o AGENTS.md só o permite sobre fundo escuro, e sobre o creme ele reprova.
  * Não deixe a seção clarear com a paleta invertida no lugar.
  *
- * O `bg-ink` no <section> é piso, não decoração: enquanto o gradiente não
- * pinta, o que aparece atrás do texto bone é ink e não o bone do <body>.
+ * O piso ink saiu do <section> junto com o fundo: quem garante que o texto bone
+ * nunca cai sobre o creme do <body> agora é o invólucro, que pinta ink por trás
+ * das duas seções.
  */
 
 /* Um ícone por número, na ordem de `oQueFazemos.numeros`. Fica aqui, e não em
@@ -67,12 +75,11 @@ export function OQueFazemos() {
   return (
     <section
       id="sobre"
-      className="relative isolate bg-ink px-gutter max-[479px]:px-gutter-sm"
+      className="relative px-gutter max-[479px]:px-gutter-sm"
     >
       {/* O gradiente cobre a seção inteira e fica ABAIXO do conteúdo. O
           `isolate` no <section> prende o empilhamento aqui dentro, para o
           z-index não disputar com o resto da página. */}
-      <FundoGradiente className="absolute inset-0 -z-10" />
 
       {/* 120rem = 1920px, o teto do CSS de origem. Acima disso a seção para de
           crescer e centraliza; até 1920 o comportamento é full-bleed. */}

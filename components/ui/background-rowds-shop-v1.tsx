@@ -56,9 +56,9 @@ export function GradientBackground({ className }: { className?: string }) {
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "#16130E",
+          backgroundColor: "#0A0A0A",
           backgroundImage:
-            "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.130'/></svg>\"), linear-gradient(170deg, #16130E 0%, #372F20 32%, #6B6144 100%)",
+            "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.130'/></svg>\"), linear-gradient(170deg, #0A0A0A 0%, #16130E 30%, #372F20 50%, #6B6144 68%, #0A0A0A 84%, #0A0A0A 100%)",
           backgroundSize: "120px 120px, auto",
           backgroundBlendMode: "overlay, normal",
         }}

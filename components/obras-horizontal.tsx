@@ -130,9 +130,17 @@ export function ObrasHorizontal() {
     <section
       ref={secao}
       id="obras-em-destaque"
+      /* Ink chapado. A transição do dourado termina ANTES desta borda, dentro
+         do arco que cobre as marcas e o "O que fazemos" — ver app/page.tsx. Se a
+         rampa invadisse esta seção, o começo dela viraria uma faixa dourada e a
+         emenda voltaria a desenhar um risco. */
       className="relative bg-ink min-[768px]:h-[300vh]"
     >
-      <div className="min-[768px]:sticky min-[768px]:top-0 min-[768px]:h-screen min-[768px]:overflow-hidden">
+      {/* relative z-10 mantem o conteudo ACIMA do pseudo-elemento do grao. Sem
+          isso, no mobile — onde este div nao e sticky e portanto nao e
+          posicionado — o ruido pintaria por cima das fotos das obras, que o
+          AGENTS.md proibe. */}
+      <div className="relative z-10 min-[768px]:sticky min-[768px]:top-0 min-[768px]:h-screen min-[768px]:overflow-hidden">
         {/* O typo "compnent" é do CSS original; mantido para o dia em que
             alguém comparar os dois lado a lado. */}
         <motion.div

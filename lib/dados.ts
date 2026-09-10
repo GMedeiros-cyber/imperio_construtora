@@ -337,7 +337,7 @@ export const galeriaAutoria: PainelAutoria[] = [
    linha de apoio miúda, para não disputar com a manchete da hero logo acima.
    O texto é o mesmo — mudou o posto, não a copy. */
 export const secaoClientes = {
-  statement: "Marcas que já abriram as portas com a gente.",
+  statement: "Marcas que confiaram na Império",
 } as const;
 
 /* ⚠ ÓRFÃO. Era a lista tipográfica de nomes que a faixa de logos substituiu.

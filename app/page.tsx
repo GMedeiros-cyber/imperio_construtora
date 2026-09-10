@@ -1,4 +1,5 @@
 import { ChamadaFinal } from "@/components/chamada-final";
+import { FundoGradiente } from "@/components/ui/background-rowds-shop-v1";
 import { Clientes } from "@/components/clientes";
 import { ComoTrabalhamos } from "@/components/como-trabalhamos";
 import { FaixaParalaxe } from "@/components/faixa-paralaxe";
@@ -36,8 +37,31 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Clientes />
-      <OQueFazemos />
+
+      {/* ══ O ARCO ESCURO ══
+
+          UM fundo só cobre as duas seções, e é por isso que ele mora aqui e não
+          dentro de nenhuma delas. O gradiente sai do ink logo abaixo da hero,
+          atravessa o carrossel de marcas aquecendo, floresce no dourado #6B6144
+          a 82% da altura e VOLTA ao ink antes do fim.
+
+          ⚠ O RETORNO AO PRETO É O PONTO. Enquanto o dourado terminava na borda,
+          a seção de obras precisava de uma rampa para recebê-lo — e essa rampa
+          virava uma faixa dourada no começo dela, com um risco visível na
+          emenda. Com o arco fechando em ink, a borda é preto contra preto e não
+          há o que emendar. Nenhuma das duas seções tem fundo próprio.
+
+          ⚠ AS PARADAS CODIFICAM A PROPORÇÃO ENTRE OS DOIS BLOCOS: o carrossel
+          ocupa os primeiros ~32%, e é lá que o #16130E cai — o valor em que o
+          "O que fazemos" começava quando tinha fundo próprio. Mudou a altura de
+          um dos dois, remeça o contraste do eyebrow dourado e do texto miúdo,
+          que dependem de onde cada parada cai. Ver o cabeçalho do
+          o-que-fazemos. */}
+      <div className="relative isolate">
+        <FundoGradiente className="absolute inset-0 -z-10" />
+        <Clientes />
+        <OQueFazemos />
+      </div>
       <ObrasHorizontal />
       <FaixaParalaxe />
       <ComoTrabalhamos />
