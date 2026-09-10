@@ -54,7 +54,11 @@ export const menuHero = {
   abrir: "MENU",
   fechar: "FECHAR",
   itens: [
-    { texto: "Obras", href: "#obras" },
+    /* ⚠ #obras-em-destaque, e nao #obras. O id da secao e esse; enquanto o
+       dado dizia "#obras" o item existia no menu e nao levava a lugar nenhum
+       — a URL mudava e a pagina ficava em y=0. Conferido contra os ids reais
+       da home: inicio, obras-em-destaque, sobre, como-trabalhamos. */
+    { texto: "Obras", href: "#obras-em-destaque" },
     { texto: "Sobre", href: "#sobre" },
     { texto: "Como trabalhamos", href: "#como-trabalhamos" },
     { texto: "Contato", href: "/contato" },
@@ -400,7 +404,11 @@ export const rodape: ColunaRodape[] = [
     titulo: "NAVEGAÇÃO",
     itens: [
       { texto: "Início", href: "#inicio" },
-      { texto: "Obras", href: "#obras" },
+      /* ⚠ #obras-em-destaque, e nao #obras. O id da secao e esse; enquanto o
+       dado dizia "#obras" o item existia no menu e nao levava a lugar nenhum
+       — a URL mudava e a pagina ficava em y=0. Conferido contra os ids reais
+       da home: inicio, obras-em-destaque, sobre, como-trabalhamos. */
+    { texto: "Obras", href: "#obras-em-destaque" },
       { texto: "Contato", href: "/contato" },
     ],
   },
