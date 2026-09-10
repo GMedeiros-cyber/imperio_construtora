@@ -22,6 +22,10 @@ export const telefone = {
 
 export const telefoneHref = `tel:${telefone.e164}`;
 
+/* O wa.me quer só dígitos, com o DDI e sem o "+": derivado do mesmo número,
+   para o botão flutuante nunca divergir do telefone exibido. */
+export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}`;
+
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
 export const hero = {

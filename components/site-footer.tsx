@@ -93,7 +93,13 @@ export function SiteFooter() {
   const ano = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink px-gutter py-section text-bone max-[479px]:px-gutter-sm">
+    /* ⚠ O PÉ É MAIS FUNDO QUE O TOPO A PARTIR DE 640px, e é por causa do
+       WhatsApp flutuante. Ele é fixo no canto inferior direito, e o crédito
+       da barra de base mora no MESMO canto: com 64px de pé, no fim da rolagem
+       o botão cobria o crédito. Com 112px (section-lg) a linha do crédito
+       fica acima do topo do botão, com folga. Abaixo de 640px a barra empilha
+       à esquerda e o crédito sai do caminho sozinho, então o pé volta a 64. */
+    <footer className="bg-ink px-gutter pb-section pt-section text-bone max-[479px]:px-gutter-sm min-[640px]:pb-section-lg">
       <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,26rem)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
         <div>
