@@ -26,6 +26,11 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * html deste site já carrega `scroll-behavior: smooth` em app/globals.css,
  * então quem pediu menos movimento continuava recebendo a animação inteira.
  * Com "instant" a rolagem ignora o CSS: 1 posição amostrada, salto seco.
+ *
+ * ⚠ h-20, 80px: subiu de h-14 (56px) a pedido do cliente. O limite é o botão de
+ * menu fixo, que divide a mesma linha do topo. Medido a 360px, a mais estreita:
+ * logo de 32 a 132px, botão de 173 a 328px — 41px de folga. Se o botão crescer,
+ * ou a logo, é ESTA folga que some primeiro; abaixo de zero, desce para h-16.
  */
 export function LogoTopo() {
   const reduzido = useMovimentoReduzido();
@@ -39,7 +44,7 @@ export function LogoTopo() {
       }
       className="block cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-lt"
     >
-      <Image src={hero.logo} alt="" priority className="h-14 w-auto" />
+      <Image src={hero.logo} alt="" priority className="h-20 w-auto" />
     </button>
   );
 }
