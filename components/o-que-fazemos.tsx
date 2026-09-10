@@ -1,5 +1,6 @@
 import { Building2, Clock, Ruler, type LucideIcon } from "lucide-react";
 
+import { TextoEmLinhas } from "@/components/ui/texto-em-linhas";
 import { oQueFazemos } from "@/lib/dados";
 
 /**
@@ -65,6 +66,22 @@ import { oQueFazemos } from "@/lib/dados";
  * O piso ink saiu do <section> junto com o fundo: quem garante que o texto bone
  * nunca cai sobre o creme do <body> agora é o invólucro, que pinta ink por trás
  * das duas seções.
+ *
+ * ══ A REVELAÇÃO EM LINHAS, E POR QUE ELA NÃO MEXE NO GRADIENTE ══
+ *
+ * Manchete, parágrafo e números sobem linha a linha ao entrar na tela. São TRÊS
+ * grupos, e não um: um gatilho único no topo da seção revelaria os números
+ * enquanto eles ainda estão duas telas abaixo, e o leitor chegaria neles já
+ * prontos. O eyebrow FICA DE FORA — é um <p> em flex, com o ponto dourado como
+ * item irmão do texto, e trocar o conteúdo dele por linhas em bloco
+ * transformaria as linhas em itens do próprio flex.
+ *
+ * ⚠ O SplitType reescreve o DOM do texto, e a altura desta seção é o que decide
+ * onde as paradas do gradiente do invólucro caem. As máscaras foram construídas
+ * para devolver a altura exata (ver o bloco da folga em texto-em-linhas.tsx), e
+ * isso foi MEDIDO: as alturas de #sobre e do invólucro ficaram idênticas nas
+ * seis larguras, e o eyebrow dourado seguiu entre 5,49 e 6,27:1, o mesmo
+ * intervalo de antes do split. Quem mexer na folga refaz essa medição.
  */
 
 /* Um ícone por número, na ordem de `oQueFazemos.numeros`. Fica aqui, e não em
@@ -98,42 +115,59 @@ export function OQueFazemos() {
               />
               {oQueFazemos.eyebrow}
             </p>
-            <h2 className="mt-12 text-statement-lg text-bone max-[991px]:text-statement-md max-[767px]:text-statement-sm">
-              {oQueFazemos.manchete}
-            </h2>
+            <TextoEmLinhas>
+              <h2
+                data-revelar
+                className="mt-12 text-statement-lg text-bone max-[991px]:text-statement-md max-[767px]:text-statement-sm"
+              >
+                {oQueFazemos.manchete}
+              </h2>
+            </TextoEmLinhas>
           </div>
 
           {/* Linha 2, colunas 2–4: o recuo de uma coluna é intencional. */}
           <div className="col-start-2 col-end-5 row-start-2 row-end-3 flex flex-col gap-16 max-[991px]:gap-10">
-            <p className="text-body-lg text-bone max-[767px]:text-body">
-              {oQueFazemos.paragrafo}
-            </p>
+            <TextoEmLinhas>
+              <p
+                data-revelar
+                className="text-body-lg text-bone max-[767px]:text-body"
+              >
+                {oQueFazemos.paragrafo}
+              </p>
+            </TextoEmLinhas>
 
-            <div className="flex items-start justify-between gap-8 max-[767px]:flex-col">
-              {oQueFazemos.numeros.map((numero, indice) => {
-                const Icone = ICONES[indice];
+            <TextoEmLinhas>
+              <div className="flex items-start justify-between gap-8 max-[767px]:flex-col">
+                {oQueFazemos.numeros.map((numero, indice) => {
+                  const Icone = ICONES[indice];
 
-                return (
-                  <div
-                    key={numero.valor}
-                    className="flex max-w-[30ch] flex-col gap-6"
-                  >
-                    <div className="flex items-center gap-[0.63rem]">
-                      <Icone
-                        aria-hidden
-                        size={TAMANHO_ICONE}
-                        strokeWidth={TRACO_ICONE}
-                        className="shrink-0 text-bone"
-                      />
-                      <p className="font-display text-numeral-lg text-bone max-[991px]:text-numeral-md max-[767px]:text-numeral-sm">
-                        {numero.valor}
+                  return (
+                    <div
+                      key={numero.valor}
+                      className="flex max-w-[30ch] flex-col gap-6"
+                    >
+                      <div className="flex items-center gap-[0.63rem]">
+                        <Icone
+                          aria-hidden
+                          size={TAMANHO_ICONE}
+                          strokeWidth={TRACO_ICONE}
+                          className="shrink-0 text-bone"
+                        />
+                        <p
+                          data-revelar
+                          className="font-display text-numeral-lg text-bone max-[991px]:text-numeral-md max-[767px]:text-numeral-sm"
+                        >
+                          {numero.valor}
+                        </p>
+                      </div>
+                      <p data-revelar className="text-body text-bone">
+                        {numero.descricao}
                       </p>
                     </div>
-                    <p className="text-body text-bone">{numero.descricao}</p>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            </TextoEmLinhas>
           </div>
         </div>
       </div>
