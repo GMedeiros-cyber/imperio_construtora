@@ -29,6 +29,31 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+/* ══ MARCAÇÃO DE NEGÓCIO LOCAL (JSON-LD) ══
+
+   GeneralContractor é o tipo do schema.org para construtora, derivado de
+   LocalBusiness. Vai no layout porque descreve a empresa, não uma página.
+
+   ⚠ FORA DE PROPÓSITO: CNPJ (taxID), endereço (address) e razão social
+   (legalName). Os três estão pendentes com o cliente, e um campo com marcador
+   é pior do que um campo ausente — o buscador lê o marcador como dado. Entram
+   quando chegarem, junto com a identificação do controlador em
+   app/privacidade/dados-politica.ts. */
+const negocioLocal = {
+  "@context": "https://schema.org",
+  "@type": "GeneralContractor",
+  name: "Império Construtora",
+  url: URL_DO_SITE,
+  image: `${URL_DO_SITE}${OPEN_GRAPH_BASE.images[0].url}`,
+  telephone: "+5511927779559",
+  email: "contato@imperioconstrutora.com.br",
+  areaServed: [
+    { "@type": "City", name: "Guarulhos" },
+    { "@type": "City", name: "São Paulo" },
+  ],
+  sameAs: ["https://www.instagram.com/_construtoraimperio"],
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     /* ⚠ data-scroll-behavior="smooth" É O PAR DO `scroll-behavior: smooth` DO
@@ -49,7 +74,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="https://api.fontshare.com/v2/css?f[]=switzer@300,400&f[]=zodiak@300,400&display=swap"
         />
       </head>
-      <body className="min-h-full bg-bone text-ink">{children}</body>
+      <body className="min-h-full bg-bone text-ink">
+        <script
+          type="application/ld+json"
+          /* O replace troca "<" pelo escape unicode: sem ele, um "</script>"
+             dentro de qualquer valor fecharia a tag. É a recomendação do guia
+             de JSON-LD desta versão do Next. */
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(negocioLocal).replace(/</g, "\\u003c"),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
