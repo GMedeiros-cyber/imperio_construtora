@@ -1,4 +1,5 @@
 import { ElasticGallery } from "@/components/ui/elastic-gallery";
+import { TextoEmLinhas } from "@/components/ui/texto-em-linhas";
 import { comoTrabalhamos, galeriaAutoria, modelos } from "@/lib/dados";
 
 /**
@@ -46,6 +47,23 @@ import { comoTrabalhamos, galeriaAutoria, modelos } from "@/lib/dados";
  * com um rótulo de aviso: a categoria de cada painel É a construtora
  * responsável, e aparece tanto no painel aberto quanto no fechado. A subline
  * diz o resto — que nesses casos a atuação foi técnica.
+ *
+ * ══ A REVELAÇÃO EM LINHAS PARA NA FAIXA 2 ══
+ *
+ * Manchete, subline e as quatro formas sobem linha a linha ao entrar na tela,
+ * em DOIS grupos: o cabeçalho (faixa 1) e a lista (faixa 2). O cabeçalho é um
+ * grupo só porque manchete e subline são lidos juntos — no desktop estão lado a
+ * lado, alinhados pela base.
+ *
+ * ⚠ A GALERIA DA FAIXA 3 FICA DE FORA. O ElasticGallery já tem movimento
+ * próprio nos painéis; somar uma revelação por cima vira ruído, e os rótulos
+ * dela são `writing-mode: vertical-rl` — texto girado dentro de máscara
+ * horizontal é problema que não vale criar. O eyebrow também fica de fora, pelo
+ * mesmo motivo do OQueFazemos: é um flex com o ponto dourado como item irmão.
+ *
+ * ⚠ O bg-ink CONTINUA ONDE ESTAVA. As máscaras das linhas são transparentes e
+ * não pintam nada; tirar o bg-ink daqui reabre o creme do body por baixo do
+ * texto bone, exatamente como antes.
  */
 export function ComoTrabalhamos() {
   return (
@@ -66,35 +84,46 @@ export function ComoTrabalhamos() {
         {/* 5 de 12. A quebra em duas linhas é da copy; dentro de 5 colunas
             cada uma dessas linhas ainda quebra por conta própria — ver a
             medição no relatório da rodada. */}
-        <h2 className="col-start-1 col-end-6 mt-8 text-statement-sm text-bone max-[767px]:col-end-13 min-[768px]:text-statement-md min-[992px]:text-statement-lg">
-          {comoTrabalhamos.manchete.map((linha) => (
-            <span key={linha} className="block">
-              {linha}
-            </span>
-          ))}
-        </h2>
+        {/* `contents` no invólucro: sem ele os dois filhos abaixo virariam UM
+            item do grid de 12 e perderiam as colocações. */}
+        <TextoEmLinhas>
+          <h2 className="col-start-1 col-end-6 mt-8 text-statement-sm text-bone max-[767px]:col-end-13 min-[768px]:text-statement-md min-[992px]:text-statement-lg">
+            {comoTrabalhamos.manchete.map((linha) => (
+              <span key={linha} data-revelar className="block">
+                {linha}
+              </span>
+            ))}
+          </h2>
 
-        {/* 4 de 12, começando na 7. items-end no grid é o que alinha a base
-            desta pela base da manchete. */}
-        <p className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-ash max-[767px]:col-start-1 max-[767px]:col-end-13 max-[767px]:mt-6">
-          {comoTrabalhamos.subline}
-        </p>
+          {/* 4 de 12, começando na 7. items-end no grid é o que alinha a base
+              desta pela base da manchete. */}
+          <p
+            data-revelar
+            className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-ash max-[767px]:col-start-1 max-[767px]:col-end-13 max-[767px]:mt-6"
+          >
+            {comoTrabalhamos.subline}
+          </p>
+        </TextoEmLinhas>
       </div>
 
       {/* ── FAIXA 2: as quatro formas, largura cheia ────────────────────
           Sem régua, sem card, sem borda: o que separa as colunas é o gap de
           3rem, e o que separa a faixa do cabeçalho é o gap-section da seção,
           que são os 64px. */}
-      <ul className="grid grid-cols-1 gap-12 px-gutter-sm md:px-gutter min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
-        {modelos.map((modelo) => (
-          <li key={modelo.titulo}>
-            <h3 className="font-display text-forma text-bone">{modelo.titulo}</h3>
-            <p className="mt-3 max-w-[30ch] text-body text-ash">
-              {modelo.descricao}
-            </p>
-          </li>
-        ))}
-      </ul>
+      <TextoEmLinhas>
+        <ul className="grid grid-cols-1 gap-12 px-gutter-sm md:px-gutter min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
+          {modelos.map((modelo) => (
+            <li key={modelo.titulo}>
+              <h3 data-revelar className="font-display text-forma text-bone">
+                {modelo.titulo}
+              </h3>
+              <p data-revelar className="mt-3 max-w-[30ch] text-body text-ash">
+                {modelo.descricao}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </TextoEmLinhas>
 
       {/* ── FAIXA 3: a galeria, full-bleed ─────────────────────────────── */}
       <ElasticGallery paineis={galeriaAutoria} />
