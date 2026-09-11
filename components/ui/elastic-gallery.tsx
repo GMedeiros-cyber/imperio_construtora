@@ -51,15 +51,18 @@ import { cn } from "@/lib/utils";
  * só se justifica quando o conteúdo é sequência, e cinco obras são um conjunto,
  * não uma ordem.
  *
- * 1. rounded-2xl: MANTIDO, nas duas vertentes. Esta linha já dizia o contrário
- *    — o raio tinha sido zerado para "canto reto", porque o DESIGN.md não
- *    admitia raio em imagem. O DESIGN.md NÃO VALE MAIS AQUI: o cliente mandou
- *    abandoná-lo e pediu o raio de volta. Não re-zerar citando o DESIGN.md.
+ * 1. rounded-2xl -> CANTO RETO, nas duas vertentes. O DESIGN.md manda 0px em
+ *    card e imagem, e o raio de 1440px só em botão, pastilha e tag.
  *
- *    No acordeão, o overflow-hidden do <li> é quem clipa a foto E os chips de
- *    legenda na curva — os chips são absolutos nas bordas e sem esse clipe os
- *    cantos deles escapariam do arredondamento. Se mexer no overflow, meça de
- *    novo.
+ *    ⚠ O RAIO JÁ VOLTOU UMA VEZ SEM REGISTRO. O commit 8f03a7c devolveu o
+ *    rounded-2xl dizendo que o cliente tinha mandado abandonar o DESIGN.md —
+ *    mas nada disso entrou na seção "Desvios", que é onde decisão de fugir do
+ *    sistema fica registrada. Sem registro lá, é regressão. Se o raio for
+ *    mesmo pedido, ele entra PRIMEIRO como Desvio no DESIGN.md, com escopo, e
+ *    só depois aqui.
+ *
+ *    O overflow-hidden do <li> do acordeão continua: é ele que prende a foto
+ *    no zoom de scale-110 do painel fechado.
  *
  * 2. bg-gradient-to-t from-black/80 sobre a foto -> REMOVIDO, overlay é
  *    proibido. No acordeão o texto foi para uma FAIXA OPACA de ink; na lista
@@ -116,7 +119,7 @@ function ListaAutoria({ paineis }: { paineis: PainelAutoria[] }) {
           {/* Quadrada, como as fotos do scroll horizontal de obras. As cinco
               originais são retrato (de 0,657 a 0,884), então o quadrado corta
               pouco; deitada cortaria a fachada pela metade. */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+          <div className="relative aspect-square w-full overflow-hidden">
             <Image
               src={painel.imagem}
               alt={painel.alt}
@@ -160,7 +163,7 @@ function AcordeaoAutoria({ paineis }: { paineis: PainelAutoria[] }) {
               flexGrow: eAberto ? PESO_ABERTO : 1,
               transition: reduzido ? undefined : `flex-grow 700ms ${CURVA}`,
             }}
-            className="relative min-h-0 min-w-0 flex-none basis-0 overflow-hidden rounded-2xl"
+            className="relative min-h-0 min-w-0 flex-none basis-0 overflow-hidden"
           >
             <button
               type="button"
