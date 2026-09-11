@@ -37,10 +37,11 @@ const ParticleWordmark = dynamic(
    hidden e o conteúdo subindo de yPercent 100 para 0, 0,6s, power1.out, no
    gatilho "top 75%". Aqui a "linha" é o quadro inteiro do canvas.
 
-   ⚠ Os três valores abaixo são CÓPIA dos de texto-em-linhas.tsx, que não
-   exporta nenhum deles e é do agente A. Há pedido em PEDIDOS-GLOBAIS-C.md
-   para exportá-los de lá (ou de um lib/revelacao.ts) e apagar esta cópia.
-   Até lá: mudou lá, muda aqui.
+   ⚠ Os três valores abaixo são CÓPIA dos de texto-em-linhas.tsx. O agente A
+   JÁ os exportou de lá (DURACAO, ESCALONAMENTO, SUAVIZACAO, INICIO — commit
+   ce76470 do branch hero-e-menu, que este branch ainda não tem): na primeira
+   mudança depois do merge, troque esta cópia pelo import e embrulhe o INICIO
+   em clamp(). Até lá: mudou lá, muda aqui.
 
    Por que não usar o próprio <TextoEmLinhas>: ele revela LINHAS DE TEXTO via
    SplitType, quebrando `textContent` em spans. Um iframe não tem linhas nem
