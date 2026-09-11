@@ -8,69 +8,85 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 import { cn } from "@/lib/utils";
 
 /*
- * Galeria elástica — adaptado do componente recebido.
+ * Galeria de autoria — DUAS VERTENTES, e não uma que se adapta.
  *
- * O QUE FOI PRESERVADO: a altura fixa do contêiner (que é o que mantém a
- * animação estável), o acordeão em coluna no celular e em linha no desktop, o
- * flex-[4] contra flex-[1] com a mesma curva e duração, o zoom sutil da foto
- * inativa, o título rotacionado nos painéis fechados e o terceiro painel
- * aberto por padrão.
+ * ══ POR QUE O ACORDEÃO NÃO DESCE PARA O CELULAR ══
  *
- * A numeração 01-05 do original SAIU, do aberto e do fechado: marcador
- * numerado só se justifica quando o conteúdo é sequência, e cinco obras são
- * um conjunto, não uma ordem.
+ * Acordeão por hover é interação de PONTEIRO. No toque ele vira "toque para
+ * expandir", que para cinco itens é pior do que uma lista — o leitor tem de
+ * descobrir que aquilo abre, tocar, esperar a transição e repetir cinco vezes
+ * para ver cinco fotos que caberiam em cinco rolagens.
  *
- * ══ O QUE FOI MUDADO EM RELAÇÃO AO ORIGINAL ══
+ * E a geometria não fechava. MEDIDO a 360, 390 e 414px, antes da troca: o
+ * contêiner em coluna tinha 500px para cinco painéis; o aberto comia 4 partes
+ * das 8 (234px) e cada fechado ficava com 58,5px, dos quais 36px eram a tarja
+ * da legenda — sobravam 22,5px de foto. E a tarja do fechado mostrava só a
+ * primeira palavra do título, então "Residencial Bella Pietra" e "Residencial
+ * São Marinho" liam igual. Não é um efeito apertado: é um efeito que não
+ * acontece.
  *
- * 1. rounded-2xl: MANTIDO. Esta linha já dizia o contrário — o raio tinha
- *    sido zerado para "canto reto", porque o DESIGN.md não admitia raio em
- *    imagem. O DESIGN.md NÃO VALE MAIS: o cliente mandou abandoná-lo e pediu
- *    o raio de volta, então o quadrado foi desfeito e os painéis voltaram a
- *    rounded-2xl (16px). Não re-zerar citando o DESIGN.md.
+ * Abaixo de 768px, portanto: lista vertical simples, foto em proporção fixa,
+ * construtora e nome ABAIXO dela. Sem expansão, sem hover, sem texto girado.
+ * De 768px para cima o acordeão continua idêntico ao que era.
  *
- *    O overflow-hidden do <li> é quem clipa a foto E os chips de legenda
- *    (a barra do rodapé no aberto, a tira vertical no fechado) na curva —
- *    os chips são absolutos nas bordas e sem esse clipe os cantos deles
- *    escapariam do arredondamento. Se mexer no overflow, meça de novo.
+ * As duas vertentes são estruturas IRMÃS, alternadas por display. Não é
+ * duplicação de conteúdo para o leitor de tela: `display: none` tira a outra da
+ * árvore de acessibilidade, e as fotos escondidas não são nem baixadas — imagem
+ * com lazy dentro de display:none nunca chega a intersectar a janela.
+ *
+ * ⚠ AS DUAS VERTENTES TROCAM PELA MESMA CONSULTA, min-[768px]: a lista é
+ * `min-[768px]:hidden` e o acordeão é `hidden min-[768px]:flex`. Uma consulta
+ * só, ligando uma e desligando a outra, não tem largura em que as duas
+ * apareçam ou somem juntas. NÃO troque um dos lados por max-[767px]: são duas
+ * consultas diferentes, e a fronteira entre elas vira uma fresta.
+ *
+ * ══ O QUE VEIO DO COMPONENTE ORIGINAL, E O QUE MUDOU ══
+ *
+ * Preservado no acordeão: a altura fixa do contêiner (que é o que mantém a
+ * animação estável), o flex-[4] contra flex-[1] com a mesma curva e duração, o
+ * zoom sutil da foto inativa, o título rotacionado nos painéis fechados e o
+ * terceiro painel aberto por padrão.
+ *
+ * A numeração 01-05 do original SAIU, do aberto e do fechado: marcador numerado
+ * só se justifica quando o conteúdo é sequência, e cinco obras são um conjunto,
+ * não uma ordem.
+ *
+ * 1. rounded-2xl: MANTIDO, nas duas vertentes. Esta linha já dizia o contrário
+ *    — o raio tinha sido zerado para "canto reto", porque o DESIGN.md não
+ *    admitia raio em imagem. O DESIGN.md NÃO VALE MAIS AQUI: o cliente mandou
+ *    abandoná-lo e pediu o raio de volta. Não re-zerar citando o DESIGN.md.
+ *
+ *    No acordeão, o overflow-hidden do <li> é quem clipa a foto E os chips de
+ *    legenda na curva — os chips são absolutos nas bordas e sem esse clipe os
+ *    cantos deles escapariam do arredondamento. Se mexer no overflow, meça de
+ *    novo.
  *
  * 2. bg-gradient-to-t from-black/80 sobre a foto -> REMOVIDO, overlay é
- *    proibido. O texto foi para uma FAIXA OPACA de bone: barra no rodapé do
- *    painel aberto, tira vertical na borda do fechado. Faixa opaca é
- *    superfície, não véu — não escurece a foto para consertar contraste,
- *    ocupa o próprio espaço.
+ *    proibido. No acordeão o texto foi para uma FAIXA OPACA de ink; na lista
+ *    do celular ele nem encosta na foto: mora ABAIXO dela, sobre o ink da
+ *    seção. Faixa opaca é superfície, não véu.
  *
  *    ⚠ POR QUE NÃO DEIXAR O TEXTO SOBRE A FOTO: medido no terço inferior das
- *    cinco fotos, texto bone dentro do quadro dá de 1,53 a 4,23:1 no pior
- *    corte de cada uma — todas abaixo dos 4,5:1. Não há "área escura da
- *    própria foto" para usar: são fachadas com céu claro. Na faixa bone o
- *    ink dá 18,64:1 e o gold-dk 4,59:1, sem depender da foto.
+ *    cinco fotos, texto bone dentro do quadro dá de 1,53 a 4,23:1 no pior corte
+ *    de cada uma — todas abaixo dos 4,5:1. Não há "área escura da própria foto"
+ *    para usar: são fachadas com céu claro.
  *
  * 3. font-black uppercase -> peso 300, sem caixa alta forçada.
  *
  * 4. brightness-50 nos painéis inativos -> REMOVIDO. É filter por CSS sobre
- *    foto, que o AGENTS.md proíbe na mesma frase do overlay. O original usava
- *    o escurecimento para marcar qual painel está ativo; aqui quem marca é o
- *    próprio tamanho — 4 partes contra 1 é diferença de sobra — mais a troca
- *    da tira vertical pela barra do rodapé.
+ *    foto, que o AGENTS.md proíbe na mesma frase do overlay.
  *
  * Saíram também: o dark:, o bg-white/bg-neutral-950, o max-w-6xl (a galeria é
  * full-bleed, e container de largura máxima é proibido), o backdrop-blur da
- * pílula de categoria e a CTA "View Project", que apontaria para uma página
- * por obra que não existe aqui.
+ * pílula de categoria e a CTA "View Project", que apontaria para uma página por
+ * obra que não existe aqui.
  *
  * ══ UM ACRÉSCIMO ══
  *
  * O original põe o onMouseEnter/onClick num <div>, que teclado não alcança.
- * Aqui cada painel é <button>, com onFocus abrindo junto: navegar por Tab
- * percorre a galeria.
+ * Aqui cada painel do acordeão é <button>, com onFocus abrindo junto: navegar
+ * por Tab percorre a galeria.
  */
-
-/* No celular a barra do painel fechado é baixa e não cabe o título inteiro.
-   ⚠ "Residencial Bella Pietra" e "Residencial São Marinho" dão a MESMA
-   primeira palavra — ver o aviso no relatório da rodada. */
-function primeiraPalavra(titulo: string) {
-  return titulo.split(" ")[0];
-}
 
 /** O painel aberto ocupa 4 partes; cada fechado, 1. */
 const PESO_ABERTO = 4;
@@ -79,12 +95,61 @@ const PESO_ABERTO = 4;
 const CURVA = "cubic-bezier(0.25, 1, 0.5, 1)";
 
 export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
+  return (
+    <>
+      <ListaAutoria paineis={paineis} />
+      <AcordeaoAutoria paineis={paineis} />
+    </>
+  );
+}
+
+/* ── Celular: lista vertical ──────────────────────────────────────────── */
+
+function ListaAutoria({ paineis }: { paineis: PainelAutoria[] }) {
+  return (
+    /* px-gutter-sm alinha a lista com o cabeçalho e as quatro formas, que já
+       usam essa margem. O full-bleed da galeria é decisão do desktop, onde o
+       acordeão precisa da largura inteira para o 4-contra-1 aparecer. */
+    <ul className="flex flex-col gap-10 px-gutter-sm min-[768px]:hidden">
+      {paineis.map((painel) => (
+        <li key={painel.numero}>
+          {/* Quadrada, como as fotos do scroll horizontal de obras. As cinco
+              originais são retrato (de 0,657 a 0,884), então o quadrado corta
+              pouco; deitada cortaria a fachada pela metade. */}
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+            <Image
+              src={painel.imagem}
+              alt={painel.alt}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
+
+          {/* ⚠ A CONSTRUTORA VEM ANTES DO NOME, como no painel aberto do
+              acordeão: a atribuição de autoria é a razão desta galeria
+              existir. */}
+          <p className="mt-4 text-caption uppercase tracking-[0.1em] text-gold">
+            {painel.categoria}
+          </p>
+          <h3 className="mt-1 font-display text-subheading font-light text-bone">
+            {painel.titulo}
+          </h3>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ── Desktop: acordeão elástico ───────────────────────────────────────── */
+
+function AcordeaoAutoria({ paineis }: { paineis: PainelAutoria[] }) {
   /* O terceiro nasce aberto, como no original. */
   const [aberto, setAberto] = useState(paineis[2]?.numero ?? paineis[0]?.numero);
   const reduzido = useMovimentoReduzido();
 
   return (
-    <ul className="flex h-[500px] w-full flex-col gap-2 min-[768px]:h-[600px] min-[768px]:flex-row min-[768px]:gap-4">
+    <ul className="hidden h-[600px] w-full gap-4 min-[768px]:flex">
       {paineis.map((painel) => {
         const eAberto = painel.numero === aberto;
 
@@ -112,7 +177,7 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
                 /* O painel aberto chega a ~50vw; o fechado fica perto de
                    12vw. O sizes acompanha o aberto, que é o que precisa de
                    resolução. */
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="50vw"
                 className={cn(
                   "object-cover",
                   !reduzido && "transition-transform duration-1000",
@@ -124,52 +189,41 @@ export function ElasticGallery({ paineis }: { paineis: PainelAutoria[] }) {
               <span
                 style={{ transition: reduzido ? undefined : `transform 500ms ${CURVA}, opacity 500ms ${CURVA}` }}
                 className={cn(
-                  "absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-ink px-4 py-4 min-[768px]:px-8 min-[768px]:py-6",
+                  "absolute inset-x-0 bottom-0 flex flex-col gap-1 bg-ink px-8 py-6",
                   eAberto
                     ? "translate-y-0 opacity-100 delay-200"
                     : "pointer-events-none translate-y-full opacity-0",
                 )}
               >
-                {/* Sem o 01-05 do original: marcador numerado só se
-                    justifica quando o conteúdo é sequência, e cinco obras são
-                    um conjunto. O que fica é a construtora. */}
                 <span className="truncate text-caption uppercase tracking-[0.1em] text-gold">
                   {painel.categoria}
                 </span>
-                <span className="truncate font-display text-subheading font-light text-bone min-[768px]:text-heading-sm">
+                <span className="truncate font-display text-heading-sm font-light text-bone">
                   {painel.titulo}
                 </span>
               </span>
 
-              {/* ── Painel FECHADO ───────────────────────────────────────────
-                  Desktop: tira vertical de bone na borda esquerda, com o
-                  título rotacionado — é o [writing-mode:vertical-rl] do
-                  original, só que sobre superfície opaca em vez de sobre a
-                  foto. Celular: o acordeão é vertical e a tira não caberia,
-                  então fica uma barra baixa com o número. */}
+              {/* ── Painel FECHADO: tira vertical na borda esquerda ──────────
+                  É o [writing-mode:vertical-rl] do original, só que sobre
+                  superfície opaca em vez de sobre a foto. */}
               <span
                 style={{ transition: reduzido ? undefined : `opacity 500ms ${CURVA}` }}
                 className={cn(
-                  /* Ancorada no rodapé em ambos, como o bottom-8 do
-                     original. Altura de conteúdo: inset-y-0 com bottom-auto
-                     colapsava a caixa e jogava o texto para o topo. */
-                  "absolute bottom-0 left-0 flex items-center gap-3 bg-ink px-4 py-2",
-                  "min-[768px]:flex-col-reverse min-[768px]:gap-4 min-[768px]:px-2 min-[768px]:py-6",
+                  /* Ancorada no rodapé, como o bottom-8 do original. Altura de
+                     conteúdo: inset-y-0 com bottom-auto colapsava a caixa e
+                     jogava o texto para o topo. */
+                  "absolute bottom-0 left-0 flex flex-col-reverse items-center gap-4 bg-ink px-2 py-6",
                   eAberto ? "pointer-events-none opacity-0" : "opacity-100 delay-500",
                 )}
               >
-                {/* Desktop mostra o título inteiro; no celular a barra é
-                    baixa e fica a primeira palavra, no lugar onde o original
-                    punha o número. */}
-                <span className="whitespace-nowrap font-display text-body-sm font-light text-bone min-[768px]:[writing-mode:vertical-rl]">
-                  <span className="min-[768px]:hidden">{primeiraPalavra(painel.titulo)}</span>
-                  <span className="max-[767px]:hidden">{painel.titulo}</span>
+                <span className="whitespace-nowrap font-display text-body-sm font-light text-bone [writing-mode:vertical-rl]">
+                  {painel.titulo}
                 </span>
 
                 {/* ⚠ A CONSTRUTORA TAMBÉM NO ESTADO FECHADO. A atribuição de
-                    autoria é a razão desta galeria existir — não pode
-                    depender de hover para aparecer. */}
-                <span className="whitespace-nowrap text-caption uppercase tracking-[0.1em] text-gold min-[768px]:[writing-mode:vertical-rl]">
+                    autoria é a razão desta galeria existir — não pode depender
+                    de hover para aparecer. */}
+                <span className="whitespace-nowrap text-caption uppercase tracking-[0.1em] text-gold [writing-mode:vertical-rl]">
                   {painel.categoria}
                 </span>
               </span>
