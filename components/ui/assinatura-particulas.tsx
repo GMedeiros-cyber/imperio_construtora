@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
-import { PROPORCAO_ASSINATURA } from "@/components/ui/particle-wordmark";
+import { PROPORCAO_ASSINATURA } from "@/components/ui/assinatura-constantes";
 
 /* ssr:false só é permitido em componente de cliente, daí este invólucro.
    O iframe carrega um documento HTML inteiro com Canvas 2D em

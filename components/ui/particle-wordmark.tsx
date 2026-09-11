@@ -2,6 +2,8 @@
 
 import type { CSSProperties } from "react";
 
+import { SINAL_PRONTA } from "@/components/ui/assinatura-constantes";
+
 /*
  * Assinatura em partículas — adaptado do componente recebido.
  *
@@ -16,27 +18,48 @@ import type { CSSProperties } from "react";
  * documento, sem nada para esconder.
  *
  * Sumiram junto: os tipos FocusTarget/EffectDefinition, o par light/dark (o
- * nosso canvas é um só, o bone) e os controles de hue/saturation/brightness,
+ * nosso canvas é um só, o ink) e os controles de hue/saturation/brightness,
  * que existiam para a galeria de demonstração.
  *
- * ══ A PALETA ══
+ * ══ NÃO HÁ FORMAÇÃO — E NUNCA HOUVE ══
  *
- * O original vinha em brancos e azulados, para fundo escuro. Aqui é dourado
- * sobre creme, e a matemática do contraste fecha a escolha:
+ * A palavra sai inteira no primeiro quadro. MEDIDO (Playwright, print do
+ * iframe a partir do instante em que ele entra no DOM): a 390px o primeiro
+ * quadro tem 87.279 pixels acesos e o regime tem 87.2k; a 1440px, 37.711
+ * contra 37.6k. Não existe código de convergência, de dispersão nem de
+ * escalonamento por distância — nunca existiu. O que se move é a NEVASCA: uma
+ * banda de brilho que atravessa a palavra pronta. A ENTRADA (surgir conforme
+ * a rolagem) é outra coisa e mora no invólucro, assinatura-particulas.tsx.
  *
- *   gold    #B79653 opaco sobre bone = 2,64:1  -> NUNCA alcança 3:1
- *   gold-lt #D4B872 é mais claro ainda        -> pior
- *   gold-dk #8A6D2F opaco sobre bone = 4,59:1 -> passa, e é o único que passa
+ * ══ POR QUE "NÃO ANIMAVA NO CELULAR" ══
  *
- * Não é questão de dosar: partícula é sempre composta com alfa sobre o fundo,
- * e compor só CLAREIA. Se o tom opaco já reprova, nenhuma alfa salva. Por isso
- * a paleta não tem gold nem gold-lt — os dois degraus são gold-dk e um gold
- * mais fechado, para sobrar variação tonal sem sair da faixa aprovada.
+ * Nenhum dos quatro suspeitos: o iframe monta (dynamic import ok), tem altura
+ * (95/103/109px a 360/390/414), o canvas recebe o DPR (backing store 2× e
+ * 3×), o IntersectionObserver interno reporta visível e o relógio avança
+ * 1,017s por segundo. O que morria era a GEOMETRIA: abaixo de 992px o passo da
+ * grade cai para 3px, mas o tamanho da partícula (2,4–5,6px) não acompanhava,
+ * e 69% dos pares vizinhos se SOBREPUNHAM (0% a 1440, onde o passo é 6px). A
+ * palavra virava uma chapa contínua, e o cintilar de um ponto sumia debaixo do
+ * vizinho. Somado ao piso de alfa 0,80 herdado do fundo creme, a amplitude
+ * temporal por pixel era de ~11/255 em TODAS as larguras — fraca no desktop,
+ * invisível na chapa do celular. Daí: o tamanho passou a escalar com o passo
+ * (sobreposição zero em toda largura) e a nevasca ganhou amplitude real.
  *
- * Pelo mesmo motivo o piso de alfa é alto: gold-dk só cruza os 3:1 a partir de
- * alfa 0,77 (medido: 0,80 dá 3,19:1 e 1,00 dá 4,59:1). O efeito de nevasca do
- * original vivia de partícula quase transparente, e sobre creme isso é o mesmo
- * que apagar a palavra.
+ * ══ A PALETA, SOBRE O INK ══
+ *
+ * O rodapé é ink #0A0A0A, e ali o dourado da marca é o gold cheio #B79653
+ * (7,07:1 opaco). O gold-dk é o dourado do CREME e não entra aqui.
+ *
+ * Partícula é composta com alfa sobre o fundo, e sobre o ink compor ESCURECE:
+ * o repouso de cada ponto é gold a alfa PISO, escolhido para o miolo do ponto
+ * ficar acima dos 3:1 de elemento gráfico com folga (o limiar exato do gold
+ * sobre ink é alfa ~0,58). O movimento não desce desse piso: ele SOBE, levando
+ * o ponto a alfa 1 e ao gold-lt #D4B872 quando a nevasca passa por ele.
+ *
+ * Todo ponto desenhado é desenhado INTEIRO: a máscara decide se o ponto existe
+ * (limiar 0,5), e não quanto ele vale. Multiplicar o alfa pela máscara, como o
+ * original fazia, punha pontos de borda a alfa 0,1 — abaixo de qualquer
+ * critério, e sem função: a borda da palavra é dada pela grade, não pelo tom.
  *
  * ══ A FONTE DA MÁSCARA ══
  *
@@ -52,26 +75,24 @@ import type { CSSProperties } from "react";
 /* Ink #0A0A0A — o mesmo canvas do rodapé, que ficou escuro. */
 const FUNDO = "#0A0A0A";
 
-/* A razão do quadro, e a mesma do viewBox do SVG abaixo.
-   ⚠ ERA 16/3, COM O viewBox EM 1600. Medido no render, a palavra ocupava só
-   66% da largura: sobrava margem morta dos dois lados e a assinatura chegava
-   miúda no fim da página. O viewBox apertou para 1140, encostando na palavra,
-   e a razão veio junto — como a largura é dada pelo layout, quadro mais
-   estreito significa quadro mais ALTO, e a palavra cresce na mesma proporção.
-
-   Mexeu num, mexa no outro: se os dois discordarem, a máscara deforma. */
-export const PROPORCAO_ASSINATURA = 1140 / 300;
-
+/* ⚠ O viewBox de 1140×300 abaixo É a PROPORCAO_ASSINATURA de
+   assinatura-constantes.ts. Mexeu num, mexa no outro: se os dois discordarem,
+   a máscara deforma. As constantes moram lá, e não aqui, para este módulo não
+   ser importado estaticamente por ninguém — ver o cabeçalho daquele arquivo. */
 const PALAVRA_SVG = `<svg width="1140" height="300" viewBox="0 0 1140 300" fill="none" xmlns="http://www.w3.org/2000/svg">
   <text x="570" y="232" text-anchor="middle" fill="#FFFFFF" font-family="Zodiak, Georgia, 'Times New Roman', serif" font-size="252" font-weight="300" letter-spacing="-6">IMPÉRIO</text>
 </svg>`;
 
-/* ⚠ AGORA E O GOLD CHEIO #B79653, e nao mais o gold-dk. O rodape virou ink, e
-   a conta se inverteu: sobre o creme so o gold-dk passava (4,59:1 contra 2,64:1
-   do gold); sobre o ink o gold cheio mede 7,07:1 e e ele que faz a palavra
-   brilhar. O terceiro tom e o gold-lt #D4B872, para os graos mais quentes
-   pegarem luz na borda. */
-const PALETA = "[[183, 150, 83], [183, 150, 83], [212, 184, 114]]";
+/* O repouso é o gold cheio #B79653; o brilho da nevasca é o gold-lt #D4B872.
+   Os dois são dourados de fundo escuro — ver "A PALETA, SOBRE O INK". */
+const OURO = "[183, 150, 83]";
+const OURO_CLARO = "[212, 184, 114]";
+
+/* Alfa de repouso do ponto. O gold sobre ink cruza os 3:1 em alfa ~0,58;
+   0,70 deixa folga. MEDIDO no pixel composto do print, no centro de cada
+   ponto desenhado, a 360/390/414/768/1440: mínimo = mediana = 3,94:1, zero
+   pontos abaixo de 3:1; pico de ~10:1 quando a nevasca passa (gold-lt, alfa 1). */
+const PISO = 0.7;
 
 function documentoDoIframe() {
   return `<!DOCTYPE html>
@@ -92,18 +113,35 @@ function documentoDoIframe() {
 <script>
 (function () {
   var WORDMARK = ${JSON.stringify(PALAVRA_SVG)};
-  var PALETTE = ${PALETA};
+  var OURO = ${OURO};
+  var OURO_CLARO = ${OURO_CLARO};
+  var PISO = ${PISO};
   var FORMATS = ["dot", "dot", "square"];
-  /* Pontos maiores que os do original: com 1,4px o desenho é quase só borda
-     antialiasada, e cada pixel de borda é uma composição parcial que clareia.
-     A partir de ~2,4px o ponto passa a ter miolo cheio, que é onde o gold-dk
-     aparece no seu tom, e não numa diluição dele. */
+  /* Tamanhos para o passo de REFERÊNCIA de 6px. Com 1,4px (o original) o
+     ponto é quase só borda antialiasada; a partir de ~2,4px ele tem miolo
+     cheio, que é onde o dourado aparece no seu tom. */
+  var GAP_REF = 6;
   var SIZE_SMALL = [2.4, 3.8];
   var SIZE_BIG = [4.2, 5.6];
   var BIG_CHANCE = 0.07;
+  /* Piso do diâmetro, em px CSS. Escalando 2,4 por 3/6 o menor ponto cairia a
+     1,2px nas larguras de passo 3 (até 768px): numa janela de DPR 1 isso é
+     ~1 pixel e o miolo nunca fecha. Com 1,6px o círculo centrado num pixel
+     cobre o pixel inteiro (raio 0,8 > meia diagonal 0,71) em qualquer DPR. */
+  var SIZE_MIN = 1.6;
+  /* Teto do DPR. Era 2 e os celulares de DPR 3 recebiam um canvas de 2×
+     esticado em 1,5× — cada ponto virava um borrão de 1,5 pixel de borda.
+     A tira tem ~100px de altura: a 3× são 1080×285, custo irrelevante. */
+  var DPR_MAX = 3;
   /* Passo da grade. Fixo em 6px como no original a palavra se desmancha no
      celular: em 358px de largura sobram ~8 partículas por letra e o desenho
-     deixa de ser legível. Passa a acompanhar a largura, entre 3 e 6px. */
+     deixa de ser legível. Passa a acompanhar a largura, entre 3 e 6px.
+
+     ⚠ O TAMANHO ESCALA JUNTO (fator GAP/GAP_REF). Era fixo, e com passo de
+     3px e ponto de até 5,6px os vizinhos se cobriam: 69% dos pares
+     sobrepostos a 360–768px, medido. A palavra virava chapa e a nevasca
+     sumia. Com o fator, o maior par possível (5,6+5,6)/2 × 3/6 = 2,8 < 3 e
+     a sobreposição é zero em toda largura. */
   function gapDe(w) { return Math.max(3, Math.min(6, Math.round(w / 230))); }
   var SPEED = 2;
   var SEED = 1337;
@@ -127,23 +165,21 @@ function documentoDoIframe() {
     return s < n.trail ? 1 - s / n.trail : 0;
   }
 
+  /* ══ O MOVIMENTO ══
+     Uma banda lenta (sin em nx) modula uma "queda" de flocos (snowfall). O
+     resultado é o BRILHO do ponto, de 0 (repouso) a 1 (floco passando). No
+     original o repouso era alfa 0,04 e o floco acendia o ponto — nevasca
+     sobre fundo vazio. Aqui a palavra precisa ser legível o tempo todo, então
+     o repouso é o PISO e o floco é um destaque por cima dele: alfa sobe até 1
+     e a cor caminha do gold para o gold-lt. Nada desce do piso. */
   function squall(p, t) {
     var band = 0.35 + 0.65 * Math.pow(0.5 + 0.5 * Math.sin(3 * p.nx - 0.5 * t), 2);
     var flake = snowfall(p, t, { fall: 0.26, freq: 5, trail: 0.4, sway: 0.14, wind: 0.8 });
-    /* Piso em 0,80, e não nos 0,04 do original: gold-dk sobre bone só cruza
-       os 3:1 a partir de alfa 0,77. A animação vive na faixa 0,80-1,00, que
-       dá cintilância sem derrubar o contraste. */
-    return { a: 0.80 + 0.20 * band * Math.pow(flake, 1.8), p: 0.7 * p.offset };
+    return band * Math.pow(flake, 1.8);
   }
 
   function lerpRGB(a, b, t) {
     return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
-  }
-
-  function mixPalette(p) {
-    var e = Math.max(0, Math.min(1, p)) * (PALETTE.length - 1);
-    var r = Math.floor(e);
-    return lerpRGB(PALETTE[r], PALETTE[Math.min(PALETTE.length - 1, r + 1)], e - r);
   }
 
   var canvas = document.getElementById("tela");
@@ -158,6 +194,7 @@ function documentoDoIframe() {
   var t0 = performance.now();
   var visible = true;
   var raf = 0;
+  var quadros = 0;
 
   function lcg(seed) {
     var e = seed >>> 0;
@@ -187,7 +224,7 @@ function documentoDoIframe() {
   function rebuild() {
     var w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
     canvas.width = Math.max(1, Math.floor(w * dpr));
     canvas.height = Math.max(1, Math.floor(h * dpr));
     canvas.style.width = w + "px";
@@ -197,26 +234,44 @@ function documentoDoIframe() {
     var sample = makeMask(w, h);
     var rand = lcg(SEED);
     var GAP = gapDe(w);
+    var escala = GAP / GAP_REF;
     var cols = Math.ceil(w / GAP), rows = Math.ceil(h / GAP);
     var ox = (w - (cols - 1) * GAP) / 2, oy = (h - (rows - 1) * GAP) / 2;
     var cx = (cols - 1) / 2, cy = (rows - 1) / 2;
     var maxd = Math.hypot(cx, cy) || 1;
     particles = [];
+    /* ⚠ ENCAIXE NA GRADE DE PIXELS DO DISPOSITIVO. O passo é em px CSS e o
+       deslocamento da grade é fracionário (ox = 1,5 a 360px); a DPR 3 o
+       centro caía em 4,5 pixels de dispositivo e o círculo se repartia entre
+       quatro pixels, nenhum cheio. O círculo passa a ser centrado no CENTRO
+       de um pixel (n + 0,5) e o quadrado a ter borda e lado em pixel inteiro:
+       o miolo fecha, e o contraste medido no centro é o da cor, não o de uma
+       fatia dela. */
+    function centro(v) { return (Math.round(v * dpr - 0.5) + 0.5) / dpr; }
     for (var y = 0; y < rows; y++) {
       for (var x = 0; x < cols; x++) {
         var range = rand() < BIG_CHANCE ? SIZE_BIG : SIZE_SMALL;
         var px = ox + x * GAP, py = oy + y * GAP;
+        var format = FORMATS[Math.floor(rand() * FORMATS.length)];
+        var size = Math.max(SIZE_MIN, (range[0] + rand() * (range[1] - range[0])) * escala);
+        var cxp = centro(px), cyp = centro(py);
+        if (format === "square") {
+          size = Math.max(1, Math.round(size * dpr)) / dpr;
+          cxp = Math.round((px - size / 2) * dpr) / dpr + size / 2;
+          cyp = Math.round((py - size / 2) * dpr) / dpr + size / 2;
+        }
         particles.push({
-          cx: px, cy: py,
+          cx: cxp, cy: cyp,
           nx: cols > 1 ? x / (cols - 1) : 0.5,
           ny: rows > 1 ? y / (rows - 1) : 0.5,
           dist: Math.hypot(x - cx, y - cy) / maxd,
-          format: FORMATS[Math.floor(rand() * FORMATS.length)],
-          size: range[0] + rand() * (range[1] - range[0]),
+          format: format,
+          size: size,
           phase: rand() * TAU,
           speed: 0.6 + 2.6 * rand(),
           offset: rand(),
-          mask: sample ? sample(px, py) : 0
+          /* Inteiro ou nada — ver "A PALETA, SOBRE O INK" no cabeçalho. */
+          aceso: sample ? sample(px, py) >= 0.5 : false
         });
       }
     }
@@ -224,14 +279,12 @@ function documentoDoIframe() {
 
   function drawParticle(p, t) {
     /* Fora da palavra não se desenha nada: no original a partícula sem
-       máscara ficava visível e enchia o quadro de ruído. Sobre o creme isso
-       viraria uma poeira dourada de ponta a ponta do rodapé. */
-    if (p.mask <= 0.02) return;
-    var field = squall(p, t);
-    var rgb = mixPalette(field.p);
-    var alpha = Math.max(0, Math.min(1, field.a)) * p.mask;
-    if (alpha <= 0.005) return;
-    ctx.fillStyle = "rgba(" + Math.round(rgb[0]) + "," + Math.round(rgb[1]) + "," + Math.round(rgb[2]) + "," + alpha + ")";
+       máscara ficava visível e enchia o quadro de ruído. */
+    if (!p.aceso) return;
+    var brilho = Math.max(0, Math.min(1, squall(p, t)));
+    var rgb = lerpRGB(OURO, OURO_CLARO, brilho);
+    var alpha = PISO + (1 - PISO) * brilho;
+    ctx.fillStyle = "rgba(" + Math.round(rgb[0]) + "," + Math.round(rgb[1]) + "," + Math.round(rgb[2]) + "," + alpha.toFixed(3) + ")";
     var r = p.size / 2;
     if (p.format === "square") ctx.fillRect(p.cx - r, p.cy - r, p.size, p.size);
     else { ctx.beginPath(); ctx.arc(p.cx, p.cy, r, 0, TAU); ctx.fill(); }
@@ -240,22 +293,41 @@ function documentoDoIframe() {
   function render(t) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < particles.length; i++) drawParticle(particles[i], t);
+    quadros++;
   }
 
   function apply(t) { tNow = ((t % DUR) + DUR) % DUR; render(tNow * SPEED); }
 
+  /* ══ O LAÇO PARA DE VERDADE ══
+     Antes o rAF continuava agendado fora da tela, só sem desenhar — um
+     callback por quadro para nada. Agora o laço só existe enquanto a seção
+     está visível, a aba está em primeiro plano e o movimento não é reduzido;
+     em qualquer outra condição o quadro pendente é cancelado. O relógio é
+     reancorado ao retomar, para a nevasca continuar de onde parou. */
   function tick(now) {
-    if (playing && visible) { tNow = ((now - t0) / 1000) % DUR; render(tNow * SPEED); }
+    tNow = ((now - t0) / 1000) % DUR;
+    render(tNow * SPEED);
     raf = requestAnimationFrame(tick);
+  }
+  function sincronizar() {
+    var deve = playing && visible && !document.hidden;
+    if (deve && !raf) { t0 = performance.now() - tNow * 1000; raf = requestAnimationFrame(tick); }
+    else if (!deve && raf) { cancelAnimationFrame(raf); raf = 0; }
   }
 
   var img = new Image();
-  img.onload = function () { maskImg = img; maskReady = true; rebuild(); apply(tNow); };
+  img.onload = function () {
+    maskImg = img; maskReady = true; rebuild(); apply(tNow);
+    /* Avisa o invólucro de que a palavra está no canvas: é o sinal que libera
+       a entrada. Sem allow-same-origin o iframe é origem opaca e o "*" é o
+       único alvo possível; a mensagem não carrega nada além de um nome. */
+    try { window.parent.postMessage(${JSON.stringify(SINAL_PRONTA)}, "*"); } catch (e) {}
+  };
   img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(WORDMARK);
 
   rebuild();
   apply(0);
-  raf = requestAnimationFrame(tick);
+  sincronizar();
 
   window.addEventListener("resize", function () { rebuild(); apply(tNow); });
 
@@ -269,23 +341,25 @@ function documentoDoIframe() {
     }).observe(host);
   }
 
-  /* Fora da tela o rAF continua sendo agendado, mas não desenha nada. */
   if (typeof IntersectionObserver !== "undefined") {
     new IntersectionObserver(function (entries) {
-      var on = entries[0] && entries[0].isIntersecting;
+      var on = !!(entries[0] && entries[0].isIntersecting);
       if (on === visible) return;
-      visible = !!on;
-      if (visible) t0 = performance.now() - tNow * 1000;
+      visible = on;
+      sincronizar();
     }, { rootMargin: "120px" }).observe(canvas);
   }
 
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && playing) t0 = performance.now() - tNow * 1000;
-  });
+  document.addEventListener("visibilitychange", sincronizar);
 
-  /* Sondas de medição, usadas pela verificação de custo. */
-  window.__desenhadas = function () { return particles.filter(function (p) { return p.mask > 0.02; }).length; };
+  /* Sondas de medição, usadas pela verificação de custo e de contraste. */
+  window.__desenhadas = function () { return particles.filter(function (p) { return p.aceso; }).length; };
+  window.__centros = function () {
+    return particles.filter(function (p) { return p.aceso; }).map(function (p) { return [p.cx, p.cy, p.size]; });
+  };
   window.__visivel = function () { return visible; };
+  window.__rodando = function () { return raf !== 0; };
+  window.__quadros = function () { return quadros; };
   window.__tempo = function () { return tNow; };
 })();
 </script>
