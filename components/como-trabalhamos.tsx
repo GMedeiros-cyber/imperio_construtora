@@ -89,11 +89,18 @@ export function ComoTrabalhamos() {
         {/* `contents` no invólucro: sem ele os dois filhos abaixo virariam UM
             item do grid de 12 e perderiam as colocações. */}
         {/* ⚠ ENTRE 992 E 1079px A MANCHETE VAI ATÉ A COLUNA 7, e o parágrafo
-            começa na 8. A 64px a palavra "responsabilidade" mede 501px e não
-            cabe em 5 colunas: ela invade a calha e, MEDIDO, termina em x=533
-            enquanto o parágrafo começava em x=502 (992px) e x=532 (1053px) —
-            seis caixas de linha em colisão. A partir de 1080px a coluna 7 já
-            começa depois dela e a grade volta ao 5 + 4 de sempre.
+            ocupa a 8 à 11. A 64px a palavra "responsabilidade" mede 501px e
+            não cabe em 5 colunas: ela invade a calha e, MEDIDO, termina em
+            x=533 enquanto o parágrafo começava em x=502 (992px) e x=532
+            (1053px) — seis caixas de linha em colisão. A partir de 1080px a
+            coluna 7 já começa depois dela e a grade volta ao 5 + 4 de sempre.
+            ⚠ O PARÁGRAFO CONTINUA COM QUATRO COLUNAS (8 à 11), e por isso o
+            col-end anda junto com o col-start. MEDIDO, contando caractere a
+            caractere por caixa de linha: em três colunas a medida caía para
+            20 a 24 caracteres por linha, mais estreita do que a 390px (36) e
+            do que a 1080 (30) — um parágrafo mais apertado numa tela MAIOR se
+            enxerga. Com quatro, 27,5 a 30, que é a mesma medida de 1080.
+            Quem deslocar a coluna desloca as duas pontas.
             max-[1080px], e não 1079: o Tailwind gera `width < N`, então 1080
             é o primeiro pixel FORA. Pelo mesmo motivo o mobile é
             max-[768px]: com 767 a largura 767 ficava sem regra nenhuma. */}
@@ -110,7 +117,7 @@ export function ComoTrabalhamos() {
               desta pela base da manchete. */}
           <p
             data-revelar
-            className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-ash max-[768px]:col-start-1 max-[768px]:col-end-13 max-[768px]:mt-6 min-[992px]:max-[1080px]:col-start-8"
+            className="col-start-7 col-end-11 max-w-[50ch] text-body-lg text-ash max-[768px]:col-start-1 max-[768px]:col-end-13 max-[768px]:mt-6 min-[992px]:max-[1080px]:col-start-8 min-[992px]:max-[1080px]:col-end-12"
           >
             {comoTrabalhamos.subline}
           </p>
