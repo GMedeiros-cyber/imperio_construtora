@@ -43,15 +43,20 @@ import { whatsappUrl } from "@/lib/dados";
 
    ══ ELE SAI DA FRENTE DO MENU ABERTO — E ISTO NÃO EXISTIA NA LDF ══
 
-   A `.transicao-rota` (app/globals.css) anima opacidade com fill `both`, e
-   isso prende um contexto de empilhamento na rota inteira. O overlay do menu
-   mora DENTRO dele; este botão mora fora, no layout. Resultado: qualquer
-   z-index daqui fica ACIMA do overlay aberto, por maior que seja o z-50 de lá
-   — e o canto inferior direito do overlay é justamente o CTA "Falar com a
-   Império".
+   Havia uma `.transicao-rota` com fill `both` envolvendo cada página, e o
+   fill prendia um contexto de empilhamento na rota inteira: o overlay do menu
+   mora DENTRO dele e este botão mora fora, no layout, então qualquer z-index
+   daqui ficava ACIMA do overlay aberto, por maior que fosse o z-50 de lá — e o
+   canto inferior direito do overlay é justamente o CTA "Falar com a Império".
 
-   Por isso o botão lê o estado do overlay e se esconde enquanto ele está na
-   tela. A leitura é pelo contrato ARIA do menu — o botão com `aria-controls`
+   ESSA CLASSE SAIU. O fade agora é só o do app/template.tsx, que usa
+   `backwards` e solta o elemento ao terminar, então o z-[45] daqui volta a
+   perder do z-50 do overlay, como sempre devia.
+
+   O botão continua lendo o estado do overlay e se escondendo enquanto ele
+   está na tela — agora por intenção, não por contorno: botão flutuante por
+   cima de menu aberto é errado mesmo quando o z-index funciona, e durante os
+   250ms de animação do template o contexto de empilhamento ainda existe. A leitura é pelo contrato ARIA do menu — o botão com `aria-controls`
    aponta o overlay — e não por classe. E é pelo `display` calculado, não pelo
    `aria-expanded`: o `aria-expanded` vira `false` no começo do fechamento, e
    o overlay ainda leva mais de um segundo recolhendo os painéis. Pelo
@@ -73,9 +78,8 @@ import { whatsappUrl } from "@/lib/dados";
      polegar procura sem olhar. A borda entra na caixa, então o alvo é 56. */
 
 /* O canto e a pele. z-[45]: acima do z-40 mais alto da página e abaixo do
-   z-50 da navegação fixa — que hoje não vale por causa do contexto de
-   empilhamento descrito acima, mas passa a valer se a `.transicao-rota`
-   perder o fill. */
+   z-50 da navegação fixa. Com a `.transicao-rota` fora, esse "abaixo" voltou
+   a ser verdade — ver o contexto de empilhamento no topo do arquivo. */
 const BOTAO =
   "fixed bottom-gutter right-gutter z-[45] grid size-14 place-items-center " +
   "rounded-pill border border-ink bg-gold text-ink hover:bg-gold-lt " +

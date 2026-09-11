@@ -101,6 +101,64 @@ export function LiquidMetalButton({
     [height, width],
   );
 
+  /* ⚠ A COMPILAÇÃO DO SHADER ESPERA O BOTÃO SE APROXIMAR — MAS COM FOLGA.
+     Há dois destes na home: o da hero, a 808px, e o da chamada final, a
+     7.995px de uma página de 9.192. O de baixo compilava junto com o de cima,
+     em toda montagem, para um botão a 8,9 telas de distância — medido, 337ms
+     de tarefa longa na volta para a home vinham dos dois.
+
+     ⚠ A MARGEM É DE DUAS TELAS E MEIA, E NÃO ZERO. Compilar só quando o botão
+     ENTRA em quadro trocaria 186ms de tarefa longa por um pop visível na
+     chegada, que é pior porque aparece. O número saiu de medição, não de
+     gosto: rolando a home do topo ao fim em quatro velocidades e comparando
+     QUANDO o shader compila com QUANDO o botão entra em quadro —
+
+       velocidade    dianteira    sobra sobre os 186ms da compilação
+       1.200 px/s     2.144 ms          +1.958
+       2.400 px/s     1.062 ms          +876
+       4.000 px/s       628 ms          +442
+       8.000 px/s       294 ms          +108
+
+     — 8.000 px/s é um empurrão que atravessa os 9.192px da página em 1,1s.
+     Com 150% essa última linha dava +10ms, no fio; por isso 250%.
+
+     A margem não custa o ganho: o botão de baixo está a 8,9 telas da chegada,
+     então 2,5 telas de aviso continuam deixando a compilação inteira fora da
+     troca de rota.
+
+     O botão da hero não precisa de exceção: a 808px ele já está dentro da
+     primeira tela, então o observador dispara na primeira leitura e ele
+     compila na hora, como antes.
+
+     O rAF NÃO precisa de nada aqui. O ShaderMount tem IntersectionObserver
+     próprio e dá cancelAnimationFrame quando o elemento sai da viewport ou a
+     aba fica oculta (shader-mount.js, updateCurrentSpeed). Medido: 61
+     desenhos/s com o botão na tela, ZERO com ele fora. */
+  const [perto, setPerto] = useState(false);
+
+  useEffect(() => {
+    const alvo = shaderRef.current;
+    if (!alvo) return;
+    /* Sem IntersectionObserver compila assim mesmo, mas no quadro seguinte:
+       setState síncrono dentro do efeito encadeia renderização, e o lint do
+       React reprova. Mesmo desvio da assinatura-particulas. */
+    if (typeof IntersectionObserver === "undefined") {
+      const quadro = requestAnimationFrame(() => setPerto(true));
+      return () => cancelAnimationFrame(quadro);
+    }
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((entrada) => entrada.isIntersecting)) {
+          setPerto(true);
+          observador.disconnect();
+        }
+      },
+      { rootMargin: "250% 0px" },
+    );
+    observador.observe(alvo);
+    return () => observador.disconnect();
+  }, []);
+
   useEffect(() => {
     const styleId = "shader-canvas-style-imperio";
     if (!document.getElementById(styleId)) {
@@ -125,7 +183,7 @@ export function LiquidMetalButton({
     }
 
     const alvo = shaderRef.current;
-    if (!alvo) return;
+    if (!alvo || !perto) return;
 
     /* O shader sobe fora do caminho crítico: a foto da hero é o LCP e não
        pode esperar a compilação do WebGL. */
@@ -160,7 +218,7 @@ export function LiquidMetalButton({
       shaderMount.current?.dispose?.();
       shaderMount.current = null;
     };
-  }, []);
+  }, [perto]);
 
   const aoEntrar = () => {
     setIsHovered(true);

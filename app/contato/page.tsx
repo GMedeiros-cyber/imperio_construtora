@@ -64,9 +64,10 @@ const CANAIS = [
 
 export default function PaginaContato() {
   return (
-    /* transicao-rota: o mesmo fade de 240ms da home, para a ida e a volta pelo
-       menu terem o mesmo gesto. */
-    <div className="transicao-rota">
+    /* Sem fade próprio: o app/template.tsx já faz o de 250ms em todas as
+       rotas, e os dois aninhados multiplicavam as opacidades. Ver o comentário
+       em app/page.tsx. */
+    <>
       {/* O MESMO botão e o MESMO overlay da home. Antes desta rota ganhar
           menu, quem entrava aqui só saía pelo botão do navegador: não havia
           nenhum caminho de volta além da logo. */}
@@ -119,6 +120,6 @@ export default function PaginaContato() {
         </div>
       </main>
       <SiteFooter />
-    </div>
+    </>
   );
 }

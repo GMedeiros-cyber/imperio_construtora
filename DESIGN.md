@@ -872,3 +872,104 @@ brotli, não conteúdo novo. **O número que se compara entre rodadas é o do fi
 A carga inicial não mudou — 1 KB, ruído — e não há um único `residencia-*` no
 HTML servido. As nove fotos custaram 27 KB a 1440 e 41 KB a 390 no fio, todas
 depois de a faixa chegar a uma tela de distância.
+
+### 11. O fade de entrada era um só, e estava aplicado duas vezes
+
+**O desvio:** `app/page.tsx` e `app/contato/page.tsx` envolviam o próprio
+conteúdo num `.transicao-rota` — fade de 240ms, `fill: both`. O
+`app/template.tsx` já fazia o MESMO fade, de 250ms, em todas as rotas. Os dois
+aninhados, e a tela mostra o PRODUTO das duas opacidades. A classe e a regra de
+`globals.css` saíram; ficou só o template.
+
+**O que a repetição fazia, medido quadro a quadro** (1440px, produção, opacidade
+computada dos dois elementos a cada quadro depois do clique):
+
+| depois do commit | dois fades | um fade |
+|---|---|---|
+| +37 ms | 0,012 | **0,109** |
+| +81 ms | 0,247 | **0,446** |
+| +97 ms | 0,338 | **0,500** |
+| +142 ms | 0,500 | **0,731** |
+| +242 ms | 0,991 | 1,000 |
+
+⚠ **O FIM DA ANIMAÇÃO QUASE NÃO SE MOVE — 242ms viram 250.** As duas animações
+rodavam em PARALELO e tinham a mesma duração; a segunda não somava tempo, ela
+afundava o MEIO da curva. O ganho é de forma, não de duração: a rota nova cruza
+os 50% de opacidade em 97ms em vez de 142, e aos 37ms está nove vezes mais
+visível. Quem estimou "cai para ~130ms" antes de medir estava errado.
+
+**Ponta a ponta, mediana de 5, produção, 1440px:**
+
+| | / → /contato | | /contato → / | |
+|---|---|---|---|---|
+| | antes | depois | antes | depois |
+| clique → router assume | 64 ms | **36 ms** | 31 ms | 26 ms |
+| clique → DOM da rota nova | 146 ms | 108 ms | 79 ms | 72 ms |
+| clique → primeiro pixel | 195 ms | 141 ms | 187 ms | 143 ms |
+| clique → tela estável | 449 ms | **370 ms** | 384 ms | **344 ms** |
+| tarefas longas | 0 | 0 | 3 / 427 ms | **1 / 184 ms** |
+
+**Busca de rota depois do clique: NENHUMA, antes e depois.** As duas rotas já
+estão prefetchadas — o atraso nunca foi rede. Os únicos `_rsc` que aparecem são
+prefetch de `/privacidade` a partir do link do rodapé.
+
+**O que dependia do `fill: both` — nada, e isso foi verificado.** O
+`components/whatsapp-flutuante.tsx` documentava que o fill prendia um contexto
+de empilhamento na rota inteira, pondo o botão flutuante (z-[45], no layout)
+ACIMA do overlay do menu (z-50, dentro da rota). Ele não DEPENDIA disso: ele
+contornava, escondendo-se enquanto o overlay está na tela. Medido antes e
+depois, idêntico nas duas: em repouso o botão é `hidden` em `/` e `visible` em
+`/contato`; com o menu aberto é `hidden` nas duas, e quem ocupa o ponto dele é o
+CTA "Falar com a Império" do overlay. Com a classe fora, o z-[45] volta a perder
+do z-50 de verdade, e o esconder virou intenção em vez de contorno.
+
+### 12. O shader do botão espera o botão se aproximar
+
+**O desvio:** o `ShaderMount` do `components/ui/liquid-metal-button.tsx` subia
+em `requestIdleCallback` assim que o componente montava. Agora espera um
+`IntersectionObserver` com `rootMargin: "250% 0px"`.
+
+**Por quê.** Há dois botões destes na home: o da hero, a 808px, e o da chamada
+final, a **7.995px de uma página de 9.192** — 8,9 telas abaixo. O de baixo
+compilava WebGL em toda montagem, para ninguém. Medido por ablação (negando
+`getContext` para webgl, que o componente já trata caindo no estado de repouso),
+na volta `/contato → /`:
+
+| | tarefas longas | contextos WebGL criados |
+|---|---|---|
+| antes | 3 / 427 ms | 2, em +216 ms e +533 ms |
+| antes, sem WebGL | 1 / 90 ms | 0 |
+| **depois** | **1 / 184 ms** | **1** (o da hero, em +145 ms) |
+
+Uma compilação custa ~186ms de tarefa longa. Elas caem DEPOIS do primeiro pixel
+— não atrasam a chegada, janktam o primeiro segundo.
+
+**⚠ A MARGEM É 250%, E O NÚMERO É MEDIDO.** Compilar só quando o botão entra em
+quadro trocaria 186ms de tarefa longa por um pop visível na chegada, que é pior
+porque aparece. Rolando a home do topo ao fim em quatro velocidades, comparando
+quando o shader compila com quando o botão entra em quadro:
+
+| velocidade | dianteira | sobra sobre os 186 ms |
+|---|---|---|
+| 1.200 px/s | 2.144 ms | +1.958 |
+| 2.400 px/s | 1.062 ms | +876 |
+| 4.000 px/s | 628 ms | +442 |
+| 8.000 px/s | 294 ms | +108 |
+
+8.000 px/s é um empurrão que atravessa os 9.192px em 1,1s. Com 150% a última
+linha dava **+10 ms**, no fio — por isso 250%. A margem não custa o ganho: o
+botão de baixo está a 8,9 telas da chegada, então 2,5 telas de aviso continuam
+deixando a compilação inteira fora da troca de rota.
+
+**O botão da hero não precisa de exceção:** a 808px ele já está dentro da
+primeira tela, o observador dispara na primeira leitura e ele compila na hora.
+
+**⚠ PAUSAR O rAF FORA DA TELA NÃO FOI FEITO, PORQUE JÁ ESTAVA FEITO.** O
+`ShaderMount` traz `IntersectionObserver` próprio e dá `cancelAnimationFrame`
+quando o elemento sai da viewport ou a aba fica oculta — `shader-mount.js`,
+`updateCurrentSpeed`/`setCurrentSpeed`. Medido contando `drawArrays` por
+canvas: **61 desenhos/s com o botão na tela, ZERO com ele fora**, nas duas
+posições da página. Um segundo observador aqui seria código morto.
+
+O que sobra de latência de clique na home — 36ms contra 25ms com o WebGL negado
+— é o shader da HERO, que está na tela e é legítimo.

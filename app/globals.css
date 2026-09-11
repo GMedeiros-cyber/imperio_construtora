@@ -332,16 +332,6 @@
   }
 }
 
-.transicao-rota {
-  animation: entrada-rota 240ms ease-out both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .transicao-rota {
-    animation: none;
-  }
-}
-
 /* ==========================================================================
    CARROSSEL DE MARCAS
    ========================================================================== */

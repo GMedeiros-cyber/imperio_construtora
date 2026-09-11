@@ -37,10 +37,14 @@ import { SiteFooter } from "@/components/site-footer";
    inversão de volta ao claro está no miolo, na seção de obras. */
 export default function Home() {
   return (
-    /* transicao-rota: fade de 240ms na entrada, o par do mesmo fade em
-       /contato. Só opacidade — ver o comentário em app/globals.css: transform
-       aqui tiraria a coluna fixa do lugar e quebraria o pin da paralaxe. */
-    <div className="transicao-rota">
+    /* ⚠ AQUI NÃO HÁ FADE, E É DE PROPÓSITO. Havia um `.transicao-rota` de
+       240ms envolvendo esta página, e o app/template.tsx já faz o mesmo fade
+       de 250ms em TODAS as rotas — os dois aninhados, e a tela mostra o
+       PRODUTO das duas opacidades. Medido quadro a quadro: a rota nova só
+       passava de 50% de opacidade 142ms depois do commit, e só fechava em
+       242ms; com um fade só, 130ms. O fade da página saiu, o do template
+       ficou: ele cobre a 404 e funciona sem JavaScript. */
+    <>
       {/* Fora da hero de propósito: a coluna é fixa e acompanha a rolagem da
           página inteira. Ver components/navegacao-fixa.tsx. */}
       <NavegacaoFixa />
@@ -100,6 +104,6 @@ export default function Home() {
       <ChamadaFinal />
 
       <SiteFooter />
-    </div>
+    </>
   );
 }

@@ -88,10 +88,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         {children}
         {/* No layout, e não em cada página: é a mesma peça em todas as rotas.
-            Fica DEPOIS das rotas no DOM e fora do fade de entrada — o de
-            app/template.tsx e a `.transicao-rota` das páginas —, então não
-            pisca junto com a troca de rota. Ver o topo do componente sobre o
-            que isso implica com o menu aberto. */}
+            Fica DEPOIS das rotas no DOM e fora do fade de entrada do
+            app/template.tsx, então não pisca junto com a troca de rota. Ver o
+            topo do componente sobre o que isso implica com o menu aberto. */}
         <WhatsappFlutuante />
       </body>
     </html>
