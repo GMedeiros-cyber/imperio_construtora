@@ -1,8 +1,8 @@
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 import fotoCta from "@/public/cta/canteiro-noturno.jpg";
 import logoMarca from "@/public/hero/logo-imperio-nav.png";
+import { BotaoContato } from "@/components/ui/botao-contato";
 import { chamadaFinal } from "@/lib/dados";
 import { ROTA_CONTATO } from "@/lib/rotas";
 
@@ -30,8 +30,9 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  * ~297px. ⚠ NÃO CABIA SÓ ENCOLHENDO A CAIXA: o conteúdo empilhado somava 328px
  * e o texto vazaria. Por isso SAIU A LINHA DE APOIO — o <p> com
  * chamadaFinal.apoio. As referências pedidas têm três coisas: logo, manchete e
- * botão. Sem ela o empilhado mede 268px medidos (logo 48 + 32 + manchete de
- * duas linhas 108 + 32 + botão 48) e sobra folga.
+ * botão. Sem ela o empilhado mede 281px medidos (logo 48 + 32 + manchete de
+ * duas linhas ~113 + 32 + botão 56 — o botão da hero, desde que os dois
+ * foram unificados; com a pílula de 48px de antes eram 268).
  *
  * ⚠ chamadaFinal.apoio CONTINUA EM lib/dados.ts, só não é renderizado. Não
  * apague de lá — o texto não é lixo, é decisão de composição desta faixa.
@@ -41,9 +42,11 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  *   min-h  18,5rem   = 296px, o piso de 768px até ~1434px, onde o aspect passa
  *
  * ⚠ O min-h TEM DE FICAR ABAIXO DOS 297px, senão ele vence o aspect a 1440 e o
- * alvo se perde; e ACIMA dos 268px do conteúdo, senão o texto vaza pelo
+ * alvo se perde; e ACIMA dos 281px do conteúdo, senão o texto vaza pelo
  * overflow-hidden entre 768 e 1200, onde o aspect sozinho daria 158 a 247px.
- * A janela inteira é de 268 a 297: mexeu num, remeça o outro.
+ * A janela inteira é de 281 a 297 — MEDIDO, sobram 7px em cima e 7 embaixo
+ * de 768 a 1440px. Mexeu num, remeça o outro; e o botão é o de
+ * components/ui/botao-contato.tsx: mudou a altura dele, esta conta muda junto.
  *
  * ⚠ E O w-full EXISTE POR CAUSA DO min-h. Com aspect-ratio e uma altura mínima
  * que o supere, o elemento cresce em LARGURA para manter a proporção: medido,
@@ -74,9 +77,9 @@ import { ROTA_CONTATO } from "@/lib/rotas";
  * ⚠ É o logo-imperio-nav.png, dourado #B79653, porque o fundo é escuro. O
  * logo-imperio-rodape.png é o gold-dk e existe para superfície clara.
  *
- * O botão é cheio, ao contrário do contorno da referência e do da hero: aquele
- * flutua sobre a foto da capa e não pode dominá-la, este é o fim da linha.
- * Contorno convida, cheio conclui.
+ * O botão é O MESMO da hero — components/ui/botao-contato.tsx. Aqui ele já
+ * foi uma pílula dourada cheia com seta; foi unificado a pedido, com o da hero
+ * como referência. Não recrie um botão local nesta faixa.
  */
 export function ChamadaFinal() {
   return (
@@ -102,13 +105,11 @@ export function ChamadaFinal() {
         {chamadaFinal.statement}
       </h2>
 
-      <a
-        href={ROTA_CONTATO}
-        className="mt-8 inline-flex h-12 items-center justify-center gap-3 rounded-pill bg-gold px-7 text-body-sm uppercase tracking-[0.1em] text-ink transition-colors hover:bg-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone"
-      >
-        {chamadaFinal.botao}
-        <ArrowRight aria-hidden className="size-4 shrink-0" strokeWidth={1} />
-      </a>
+      {/* O MESMO botão da hero — components/ui/botao-contato.tsx. O div
+          isolate prende as camadas internas dele (z-30, z-40) aqui dentro. */}
+      <div className="isolate mt-8">
+        <BotaoContato href={ROTA_CONTATO} rotulo={chamadaFinal.botao} />
+      </div>
     </section>
   );
 }

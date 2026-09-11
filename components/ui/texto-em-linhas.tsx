@@ -72,6 +72,26 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * espaçamento entre linhas sairia errado. Com margem negativa só de um lado a
  * vizinha é zero, e o colapso devolve o valor cheio.
  *
+ * ══ A MÁSCARA CORTA SÓ NA VERTICAL ══
+ *
+ * O efeito é a linha SUBINDO de baixo: quem precisa de recorte é o eixo y. O
+ * `overflow: hidden` de antes cortava os dois, e uma palavra mais larga que a
+ * coluna perdia o fim — MEDIDO em "responsabilidade", na manchete do "Como
+ * trabalhamos": 313px numa coluna de 286 a 768px e 501px numa de 380 a
+ * 992px, com o fim da palavra comido pela máscara.
+ *
+ * Agora é `overflow-x: visible` + `overflow-y: clip`. Tem de ser `clip`, e não
+ * `hidden`: com `hidden` num eixo, o `visible` do outro vira `auto` pela regra
+ * do CSS, e a máscara viraria um contêiner de rolagem que corta igual. `clip`
+ * não cria contêiner de rolagem e deixa o outro eixo em paz. Onde `clip` não
+ * existe (Safari antes do 16), fica o `overflow: hidden` de antes — o texto
+ * volta a ser cortado lá, mas a revelação continua funcionando.
+ *
+ * ⚠ ISTO NÃO QUEBRA PALAVRA. A palavra longa continua numa linha só e
+ * TRANSBORDA a coluna, visível, como transbordaria sem a revelação. Se ela
+ * colidir com o que está ao lado, o conserto é a largura da coluna de quem usa
+ * o componente, não a máscara.
+ *
  * O `display: flow-root` na raiz do split existe pelo passo 3: sem um contexto
  * de formatação de bloco, a margem negativa da última máscara colapsaria para
  * fora do <h2> e a altura da seção mudaria. Visualmente flow-root e block são
@@ -94,16 +114,25 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * evitar sem abrir mão da máscara por linha, que é o efeito inteiro.
  */
 
-const DURACAO = 0.6;
-const ESCALONAMENTO = 0.4;
-const SUAVIZACAO = "power1.out";
-const INICIO = "top 75%";
+/* Exportados a pedido do agente C: a entrada do wordmark do rodapé
+   (components/ui/assinatura-particulas.tsx) reproduz esta revelação num
+   iframe, que não tem linhas de texto, e precisa dos MESMOS valores. Mudou
+   aqui, muda lá por construção. */
+export const DURACAO = 0.6;
+export const ESCALONAMENTO = 0.4;
+export const SUAVIZACAO = "power1.out";
+export const INICIO = "top 75%";
 
 /* Em em, não em px: cada alvo tem seu corpo, e o glifo cresce com ele. Medido
    a 64px o transbordo é de 7,5px por lado, ou 0,117em; 0,14em cobre com sobra
    sem que a folga vire espaço visível. */
 const FOLGA = "0.14em";
 const FOLGA_DOBRO = "0.28em";
+
+/* Lido só no navegador: o arquivo é "use client" e a máscara nasce dentro de
+   um efeito, nunca na renderização do servidor. */
+const CORTE_SO_VERTICAL =
+  typeof CSS !== "undefined" && CSS.supports("overflow-y", "clip");
 
 const CLASSE_LINHA = "revelacao-linha";
 const CLASSE_MASCARA = "revelacao-mascara";
@@ -207,7 +236,13 @@ export function TextoEmLinhas({
           const mascara = document.createElement("span");
           mascara.className = CLASSE_MASCARA;
           mascara.style.display = "block";
-          mascara.style.overflow = "hidden";
+          /* Corte só na vertical — ver "A MÁSCARA CORTA SÓ NA VERTICAL". */
+          if (CORTE_SO_VERTICAL) {
+            mascara.style.overflowX = "visible";
+            mascara.style.overflowY = "clip";
+          } else {
+            mascara.style.overflow = "hidden";
+          }
           mascara.style.position = "relative";
           mascara.style.top = "-" + FOLGA;
           mascara.style.marginBottom = "-" + FOLGA_DOBRO;

@@ -183,16 +183,21 @@ export function SiteFooter() {
               {/* O e-mail NÃO mora aqui: ele é canal de contato, não rede
                   social, e já está no <address> de "Onde estamos". Nesta
                   coluna ficam só os perfis. */}
-              <li>
-                {/* ⚠ PENDENTE: a página de Facebook da Império não existe no
-                    projeto. O "#" é literal e provisório — inventar uma URL
-                    mandaria o visitante para o perfil de outra pessoa. Quando
-                    o endereço chegar, ele entra aqui com target="_blank" e
-                    rel="noopener", como o Instagram. */}
-                <a href="#" className={LINK}>
-                  Facebook
-                </a>
-              </li>
+
+              {/* ⚠ O FACEBOOK SAIU, E VOLTA QUANDO A URL CHEGAR. A página da
+                  Império não existe no projeto, e inventar uma mandaria o
+                  visitante para o perfil de outra pessoa. Enquanto isso:
+
+                  - `href="#"` não serve: medido, o Enter no link rolava a
+                    página inteira de volta ao topo (scrollY 10785 -> 0 a
+                    390px) com o foco preso num link fora da tela;
+                  - rótulo sem link também não: numa lista de links, um item
+                    que não clica é affordance quebrada — a pessoa tenta e
+                    nada acontece.
+
+                  Quando o endereço chegar, o item volta aqui como <li> com
+                  <a href={FACEBOOK} target="_blank" rel="noopener"
+                  className={LINK}>, igual ao Instagram acima. */}
             </ul>
           </div>
 

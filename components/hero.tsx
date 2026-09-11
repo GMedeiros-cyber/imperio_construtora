@@ -1,23 +1,22 @@
 import { getImageProps } from "next/image";
 
 import { hero } from "@/lib/dados";
-import { BotaoContatoHero } from "@/components/botao-contato-hero";
+import { BotaoContato } from "@/components/ui/botao-contato";
+import { ROTA_CONTATO } from "@/lib/rotas";
 import { LogoTopo } from "@/components/logo-topo";
 import { SociaisHero } from "@/components/sociais-hero";
-import { DiaText } from "@/components/ui/dia-text";
 
 /**
  * BLOCO 1 — Hero
  * Seção full-bleed de 100vh: a foto cobre tudo, a navegação fica no topo
- * dentro dela e manchete e parágrafo se apoiam na base.
+ * dentro dela e manchete e a fila do CTA se apoiam na base. Não há frase de
+ * apoio: saiu e não volta.
  *
  * REQUISITO DA FOTO DE FUNDO — não trocar sem conferir:
  * a imagem precisa ter o TERÇO INFERIOR ESCURO EM TODA A LARGURA, porque a
- * manchete e o parágrafo ficam em cima dele, em bone. Foto com base clara
- * reprova em contraste e não serve, por mais bonita que seja. Ao receber a
- * foto real, medir o contraste do texto bone sobre ela em 360, 390, 768,
- * 1440 e 1920px ANTES de aprovar — o mínimo é 4,5:1 para o parágrafo de
- * 16px e 3:1 para a manchete, que é texto grande.
+ * manchete fica em cima dele. Ao trocar a foto ou a cor da manchete, medir o
+ * contraste dela sobre a foto composta, por caixa de linha, nas 7 larguras
+ * ANTES de aprovar — 3:1 para texto grande.
  */
 export function Hero() {
   const comum = { alt: hero.fundoAlt, sizes: "100vw", priority: true, quality: 80 };
@@ -36,10 +35,14 @@ export function Hero() {
           <source media> escolhe o enquadramento. A larga (16:9) entra de
           768px para cima; a alta (4:5) é o padrão do mobile.
 
-          O tratamento está GRAVADO NOS ARQUIVOS, não em CSS: escurecimento na
-          base, sem véu no topo porque o céu de crepúsculo já dá contraste.
+          O tratamento está GRAVADO NOS ARQUIVOS, não em CSS, e agora tem
+          script: scripts/trata-foto-hero.mjs, a partir do original de
+          7952x5304 que mora FORA do repositório. São duas camadas — a rampa
+          da base, que já existia, e um véu UNIFORME de 0,16 sobre a foto
+          inteira, acrescentado nesta rodada porque o que reprovava não era a
+          base: era a parede clara da garagem, no meio do quadro.
           NÃO acrescentar gradiente, overlay ou filter por CSS. Se a foto for
-          trocada, refaça o tratamento no arquivo e remeça o contraste. */}
+          trocada, rode o script de novo e remeça o contraste. */}
       <picture>
         <source media="(min-width: 768px)" srcSet={larga} />
         <img
@@ -59,58 +62,58 @@ export function Hero() {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
-        {/* Uma instância de DiaText por linha. A varredura acontece uma vez,
-            na entrada: triggerOnView com once e sem repeat — nada de loop na
-            hero. As cores são o dourado da marca; o texto em repouso é bone.
+        {/* ⚠ A MANCHETE É BONE CHAPADO, SEM VARREDURA, E ISSO FOI MEDIDO.
+            Aqui havia uma instância de DiaText por linha, com uma banda
+            dourada varrendo o texto na entrada. A banda pinta o glifo de
+            #B79653, #D4B872 e #8A6D2F, e nenhum dos três se sustenta sobre
+            esta foto: medido em pixel composto, por caixa de linha, no pior
+            quadro de ~100 amostrados dos 3,4s, a pior fatia ficava entre
+            1,12 e 2,08:1 contra os 3:1 de texto grande. Com a paleta cortada
+            só ao tom mais claro, 1,98:1. O que decide não é a base escura da
+            foto: é a PAREDE CLARA da garagem, no meio do quadro — dourado
+            sobre claro.
 
-            Ritmo: 3,4s por linha em vez do padrão de 1,5s, e 0,35s de defasagem
-            entre linhas em vez de 0,12s. A varredura estava rápida demais para
-            ser lida como gesto. */}
-        {/* Os três degraus da manchete são 18% maiores que a escala geral do
+            Para a banda passar, a foto teria de escurecer até um véu de ~0,28
+            (só #D4B872) ou ~0,41 (dourado cheio), contra os 0,16 que o texto
+            em repouso pede. Isso apagaria a fachada, que é o assunto. A
+            varredura é decorativa; a manchete ser lida não é.
+
+            components/ui/dia-text.tsx continua no repositório, sem uso: se a
+            foto da hero mudar, remeça antes de trazer a banda de volta.
+
+            Os três degraus da manchete são 18% maiores que a escala geral do
             site: text-hero-sm / md / lg, e não heading-sm / heading / display.
             Ver os tokens em app/globals.css e o registro em lib/utils.ts. */}
         <h1 className="text-hero-sm leading-none text-bone md:text-hero-md xl:text-hero-lg">
-          {hero.manchete.map((linha, indice) => (
+          {hero.manchete.map((linha) => (
             <span key={linha} className="block">
-              <DiaText
-                text={linha}
-                colors={["#B79653", "#D4B872", "#8A6D2F", "#B79653"]}
-                textColor="#FAF8F2"
-                triggerOnView
-                once
-                repeat={false}
-                duration={3.4}
-                delay={indice * 0.35}
-              />
+              {linha}
             </span>
           ))}
         </h1>
 
         <div className="lg:shrink-0">
-          <p className="text-body text-bone lg:max-w-md">{hero.paragrafo}</p>
-
           {/* ══ A FILA DO CTA ══
               Ícones sociais primeiro, CTA fechando à direita, na mesma linha —
               o arranjo da hero da LDF. Os ícones voltaram para cá da coluna
               fixa: eles não acompanham a rolagem.
 
-              ⚠ O max-w-md FICOU NO PARÁGRAFO, E NÃO NA COLUNA. Três ícones de
-              48 com 2rem entre si somam 208px, mais 2rem até o CTA de 232px:
-              472px. A coluna tinha teto de 448 e a fila estourava por ela. Com
-              o teto só no parágrafo, a coluna cresce até a fila e o CTA fecha
-              rente à borda direita.
+              A frase de apoio que ficava acima desta fila SAIU e não volta. A
+              coluna agora é só a fila, e não tem teto de largura: três ícones
+              de 48 com 2rem entre si somam 208px, mais 2rem até o CTA, e com
+              teto a fila estouraria a coluna.
 
               ⚠ SUBIR A FILA NÃO RESOLVE COLISÃO COM A MANCHETE — joga o ícone
               para dentro do título. Aconteceu na LDF. Se a manchete e a fila
               encostarem, o conserto é na largura, não na altura. */}
-          <div className="mt-8 flex items-center gap-8">
+          <div className="flex items-center gap-8">
             <SociaisHero />
 
             {/* isolate cria contexto de empilhamento: o botão tem camadas em
                 z-30 e z-40 por dentro, e sem isso elas disputavam na raiz e
                 apareciam POR CIMA do overlay do menu, que está em z-9. */}
             <div className="isolate">
-              <BotaoContatoHero />
+              <BotaoContato href={ROTA_CONTATO} rotulo={hero.cta} />
             </div>
           </div>
         </div>
