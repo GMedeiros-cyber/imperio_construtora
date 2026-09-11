@@ -114,10 +114,14 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * evitar sem abrir mão da máscara por linha, que é o efeito inteiro.
  */
 
-const DURACAO = 0.6;
-const ESCALONAMENTO = 0.4;
-const SUAVIZACAO = "power1.out";
-const INICIO = "top 75%";
+/* Exportados a pedido do agente C: a entrada do wordmark do rodapé
+   (components/ui/assinatura-particulas.tsx) reproduz esta revelação num
+   iframe, que não tem linhas de texto, e precisa dos MESMOS valores. Mudou
+   aqui, muda lá por construção. */
+export const DURACAO = 0.6;
+export const ESCALONAMENTO = 0.4;
+export const SUAVIZACAO = "power1.out";
+export const INICIO = "top 75%";
 
 /* Em em, não em px: cada alvo tem seu corpo, e o glifo cresce com ele. Medido
    a 64px o transbordo é de 7,5px por lado, ou 0,117em; 0,14em cobre com sobra
