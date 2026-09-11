@@ -5,7 +5,6 @@ import { BotaoContato } from "@/components/ui/botao-contato";
 import { ROTA_CONTATO } from "@/lib/rotas";
 import { LogoTopo } from "@/components/logo-topo";
 import { SociaisHero } from "@/components/sociais-hero";
-import { DiaText } from "@/components/ui/dia-text";
 
 /**
  * BLOCO 1 — Hero
@@ -36,10 +35,14 @@ export function Hero() {
           <source media> escolhe o enquadramento. A larga (16:9) entra de
           768px para cima; a alta (4:5) é o padrão do mobile.
 
-          O tratamento está GRAVADO NOS ARQUIVOS, não em CSS: escurecimento na
-          base, sem véu no topo porque o céu de crepúsculo já dá contraste.
+          O tratamento está GRAVADO NOS ARQUIVOS, não em CSS, e agora tem
+          script: scripts/trata-foto-hero.mjs, a partir do original de
+          7952x5304 que mora FORA do repositório. São duas camadas — a rampa
+          da base, que já existia, e um véu UNIFORME de 0,16 sobre a foto
+          inteira, acrescentado nesta rodada porque o que reprovava não era a
+          base: era a parede clara da garagem, no meio do quadro.
           NÃO acrescentar gradiente, overlay ou filter por CSS. Se a foto for
-          trocada, refaça o tratamento no arquivo e remeça o contraste. */}
+          trocada, rode o script de novo e remeça o contraste. */}
       <picture>
         <source media="(min-width: 768px)" srcSet={larga} />
         <img
@@ -59,29 +62,32 @@ export function Hero() {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-12 p-8 lg:flex-row lg:items-end lg:justify-between">
-        {/* Uma instância de DiaText por linha. A varredura acontece uma vez,
-            na entrada: triggerOnView com once e sem repeat — nada de loop na
-            hero. As cores são o dourado da marca; o texto em repouso é bone.
+        {/* ⚠ A MANCHETE É BONE CHAPADO, SEM VARREDURA, E ISSO FOI MEDIDO.
+            Aqui havia uma instância de DiaText por linha, com uma banda
+            dourada varrendo o texto na entrada. A banda pinta o glifo de
+            #B79653, #D4B872 e #8A6D2F, e nenhum dos três se sustenta sobre
+            esta foto: medido em pixel composto, por caixa de linha, no pior
+            quadro de ~100 amostrados dos 3,4s, a pior fatia ficava entre
+            1,12 e 2,08:1 contra os 3:1 de texto grande. Com a paleta cortada
+            só ao tom mais claro, 1,98:1. O que decide não é a base escura da
+            foto: é a PAREDE CLARA da garagem, no meio do quadro — dourado
+            sobre claro.
 
-            Ritmo: 3,4s por linha em vez do padrão de 1,5s, e 0,35s de defasagem
-            entre linhas em vez de 0,12s. A varredura estava rápida demais para
-            ser lida como gesto. */}
-        {/* Os três degraus da manchete são 18% maiores que a escala geral do
+            Para a banda passar, a foto teria de escurecer até um véu de ~0,28
+            (só #D4B872) ou ~0,41 (dourado cheio), contra os 0,16 que o texto
+            em repouso pede. Isso apagaria a fachada, que é o assunto. A
+            varredura é decorativa; a manchete ser lida não é.
+
+            components/ui/dia-text.tsx continua no repositório, sem uso: se a
+            foto da hero mudar, remeça antes de trazer a banda de volta.
+
+            Os três degraus da manchete são 18% maiores que a escala geral do
             site: text-hero-sm / md / lg, e não heading-sm / heading / display.
             Ver os tokens em app/globals.css e o registro em lib/utils.ts. */}
         <h1 className="text-hero-sm leading-none text-bone md:text-hero-md xl:text-hero-lg">
-          {hero.manchete.map((linha, indice) => (
+          {hero.manchete.map((linha) => (
             <span key={linha} className="block">
-              <DiaText
-                text={linha}
-                colors={["#B79653", "#D4B872", "#8A6D2F", "#B79653"]}
-                textColor="#FAF8F2"
-                triggerOnView
-                once
-                repeat={false}
-                duration={3.4}
-                delay={indice * 0.35}
-              />
+              {linha}
             </span>
           ))}
         </h1>

@@ -561,3 +561,42 @@ começa é o rótulo acima e o anel de foco em bone, medido em 18,64:1.
 A borda do campo existe o tempo todo, transparente em repouso, e só ganha cor
 no erro — assim a validação não muda o tamanho da caixa. Nenhum elemento do
 formulário usa `box-shadow`.
+
+### 8. Tratamento novo da foto da hero, e a varredura que saiu dela
+
+**A regra:** a manchete da hero é texto grande sobre foto, e texto grande pede
+3:1 de contraste. O AGENTS.md proíbe overlay, gradiente e filter por CSS sobre
+foto: o contraste se resolve no arquivo.
+
+**O que mudou:** a foto da hero ganhou um **véu uniforme de 0,16** por cima da
+rampa da base que já existia, gravado no arquivo por
+`scripts/trata-foto-hero.mjs` a partir do original de 7952×5304 (que mora fora
+do repositório). E a **varredura dourada do DiaText saiu da manchete**, que
+passou a ser bone chapado.
+
+**Por que o véu é uniforme e não uma rampa maior:** o que reprovava não era a
+base escura. Medido em pixel composto, por caixa de linha real, o pior ponto
+era a **parede clara da garagem, no meio do quadro**, onde a rampa não chega:
+o bone dava **2,89:1 a 1440px**. Rampa não resolve meio de foto.
+
+**Medido depois, bone em repouso, nas 7 larguras** (limite 3:1, fonte de 40 a
+99px, sempre texto grande):
+
+| largura | 360 | 390 | 414 | 768 | 992 | 1440 | 1920 |
+|---|---|---|---|---|---|---|---|
+| pior fatia | 4,80 | 4,80 | 4,79 | 4,79 | 4,66 | 4,05 | 5,15 |
+
+**Por que a varredura saiu.** A banda pintava o glifo de #B79653, #D4B872 e
+#8A6D2F. Amostrando ~100 quadros dos 3,4s por largura e medindo só as fatias
+com o glifo já pintado (a borda de fade passa por 1:1 em qualquer revelação, e
+não conta), a pior fatia ficava em **1,12 a 2,08:1** já com o véu de 0,16 — e
+em **1,98:1** com a paleta cortada só ao tom mais claro. O par frágil é
+**dourado sobre a parede clara**, não o dourado sobre a base escura.
+
+Para a banda fechar 3:1 a foto teria de ir a um véu de **~0,28** (só #D4B872)
+ou **~0,41** (dourado cheio), contra os 0,16 que o texto em repouso pede — o
+que apaga a fachada, que é o assunto da foto. A varredura é decorativa; a
+manchete ser lida não é. Nessa ordem.
+
+`components/ui/dia-text.tsx` fica no repositório sem uso. Trocou a foto da
+hero: rode o script, remeça as duas tabelas e só então decida se a banda volta.
