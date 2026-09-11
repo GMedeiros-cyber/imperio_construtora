@@ -90,6 +90,12 @@ globals.css e lib/utils.ts naquela rodada.
 Commits em português. Autor GMedeiros-cyber <donboymedeiros@gmail.com>.
 
 ## Pendências conhecidas
+- ⚠ FORA DO CÓDIGO: o apex `construtoraimperio.com` tem DOIS registros A —
+  216.198.79.1 (Vercel) e 2.57.91.91 (Hostinger). Metade das visitas cai no
+  site, a outra metade numa página estacionada. Conserto é no registrador:
+  tirar o A da Hostinger. Enquanto isso o canônico é o www, e é por medição,
+  não por gosto. `imperioconstrutora.com.br` é só o domínio do e-mail: devolve
+  503 e certificado inválido. Os números estão no comentário de `app/site.ts`.
 - Telefone: (11) 92777-9559. Fonte única em `telefone` de lib/dados.ts —
   não escreva o número à mão em nenhum outro arquivo.
 - Depoimentos não existem — não gere texto fictício de cliente.
