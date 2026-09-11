@@ -1,7 +1,8 @@
 import { getImageProps } from "next/image";
 
 import { hero } from "@/lib/dados";
-import { BotaoContatoHero } from "@/components/botao-contato-hero";
+import { BotaoContato } from "@/components/ui/botao-contato";
+import { ROTA_CONTATO } from "@/lib/rotas";
 import { LogoTopo } from "@/components/logo-topo";
 import { SociaisHero } from "@/components/sociais-hero";
 import { DiaText } from "@/components/ui/dia-text";
@@ -106,7 +107,7 @@ export function Hero() {
                 z-30 e z-40 por dentro, e sem isso elas disputavam na raiz e
                 apareciam POR CIMA do overlay do menu, que está em z-9. */}
             <div className="isolate">
-              <BotaoContatoHero />
+              <BotaoContato href={ROTA_CONTATO} rotulo={hero.cta} />
             </div>
           </div>
         </div>
