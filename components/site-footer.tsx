@@ -10,6 +10,7 @@ import {
   whatsappUrl,
 } from "@/lib/dados";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
+import { controlador } from "@/app/privacidade/dados-politica";
 
 /* BLOCO 11 — Full-Bleed Footer
    Estrutura copiada do rodapé do projeto LDF: bloco de identificação à
@@ -229,11 +230,23 @@ export function SiteFooter() {
               Legal
             </h3>
             <ul aria-labelledby="rodape-legal" className="mt-2 flex flex-col">
-              {/* ⚠ NÃO HÁ CNPJ NO PROJETO, e inventar um é falsificar registro
-                  público. Fica o literal, na mesma convenção que o telefone
-                  seguiu até ter número. Quando o CNPJ chegar, ele entra aqui;
-                  se a decisão for não publicar, a coluna inteira sai. */}
-              <li className={`${ALVO} text-body-sm text-ash`}>CNPJ (em definição)</li>
+              {/* O CNPJ vem de app/privacidade/dados-politica.ts, a fonte única
+                  do dado cadastral — não escreva o número à mão aqui. Ele é
+                  texto, não link: identifica a empresa, não leva a lugar
+                  nenhum. */}
+              <li className={`${ALVO} text-body-sm text-ash`}>
+                CNPJ {controlador.cnpj}
+              </li>
+              {/* ⚠ ATÉ ESTA RODADA A POLÍTICA SÓ ERA ALCANÇÁVEL PELO
+                  FORMULÁRIO de /contato. Quem não preenchesse o formulário não
+                  tinha como chegar nela — e política de privacidade que só
+                  aparece na hora de consentir não é acessível. O lugar dela é
+                  aqui, na coluna Legal, em toda rota. */}
+              <li>
+                <Link href="/privacidade" className={LINK}>
+                  Política de Privacidade
+                </Link>
+              </li>
             </ul>
           </div>
         </nav>

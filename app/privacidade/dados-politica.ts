@@ -33,7 +33,10 @@ export const controlador = {
   /* Como a empresa está registrada na Receita — não é o nome fantasia. */
   razaoSocial: PENDENTE,
   nomeFantasia: "Império Construtora",
-  cnpj: PENDENTE,
+  /* Informado pelo cliente em 2026-09-11. É o único campo cadastral que existe
+     de verdade até agora — os outros três continuam PENDENTE, e enquanto
+     estiverem a rota não cumpre o art. 9º (ver o aviso no topo do arquivo). */
+  cnpj: "69.064.563/0001-40",
   /* Endereço completo do estabelecimento. Hoje o site só afirma a praça,
      "Guarulhos, SP", que não basta para identificar o controlador. */
   endereco: PENDENTE,
