@@ -242,6 +242,11 @@ export function MenuHero() {
            text-menu em 14,875px. O ícone é size-[1em] e acompanha a fonte
            sozinho; conferido por medição nas duas mudanças.
 
+           ⚠ ABAIXO DE 768px o botão é ~30% menor, a pedido: 152,9×46,4 vira
+           105,3×44 — px 16, gap 8, fonte 12px. A LARGURA caiu 31%; a ALTURA
+           parou em 44px (−5%), porque 30% daria 32px e o alvo de toque tem
+           piso de 44. É o h-11 que segura esse piso: não troque por py.
+
            cursor-pointer porque <button> não ganha a mãozinha do navegador.
 
            ⚠ O FUNDO INK NÃO É ENFEITE. Fixo, o botão atravessa a página
@@ -259,7 +264,7 @@ export function MenuHero() {
            fotos das obras e da galeria). Quem identifica o botão é o rótulo.
            Não devolva a borda nem acrescente sombra para "resolver" — está
            reportado e é decisão do cliente. */
-        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
+        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone max-[768px]:h-11 max-[768px]:gap-2 max-[768px]:px-4 max-[768px]:py-0 max-[768px]:text-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
       >
         <span
           ref={textos}

@@ -31,6 +31,10 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * menu fixo, que divide a mesma linha do topo. Medido a 360px, a mais estreita:
  * logo de 32 a 132px, botão de 173 a 328px — 41px de folga. Se o botão crescer,
  * ou a logo, é ESTA folga que some primeiro; abaixo de zero, desce para h-16.
+ *
+ * ⚠ ABAIXO DE 768px É h-14, 56px — 30% menor, a pedido; desktop continua
+ * h-20. Com o botão de menu também 30% menor no celular (105×44), a folga
+ * medida a 360px subiu para 121px. Alvo da logo: 70×56, acima dos 44px.
  */
 export function LogoTopo() {
   const reduzido = useMovimentoReduzido();
@@ -44,7 +48,7 @@ export function LogoTopo() {
       }
       className="block cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-lt"
     >
-      <Image src={hero.logo} alt="" priority className="h-20 w-auto" />
+      <Image src={hero.logo} alt="" priority className="h-20 w-auto max-[768px]:h-14" />
     </button>
   );
 }

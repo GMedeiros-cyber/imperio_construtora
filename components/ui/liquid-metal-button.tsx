@@ -73,6 +73,8 @@ interface LiquidMetalButtonProps {
   onClick?: () => void;
   width?: number;
   height?: number;
+  /** Corpo do rótulo em px. 14 é o do desktop; o celular usa 12. */
+  tamanhoRotulo?: number;
   className?: string;
 }
 
@@ -82,6 +84,7 @@ export function LiquidMetalButton({
   onClick,
   width = 232,
   height = 56,
+  tamanhoRotulo = 14,
   className,
 }: LiquidMetalButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -253,7 +256,7 @@ export function LiquidMetalButton({
       >
         <span
           style={{
-            fontSize: "14px",
+            fontSize: `${tamanhoRotulo}px`,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "#FAF8F2",

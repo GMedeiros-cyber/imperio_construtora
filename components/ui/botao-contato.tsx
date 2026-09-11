@@ -34,6 +34,19 @@ import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
  * servidor e na hidratação `noCliente` é false e sai o estático; o
  * LiquidMetalButton só é importado depois, no cliente, e não disputa com a
  * foto da hero, que é o LCP.
+ *
+ * ══ MENOR NO CELULAR, E ONDE PAROU ══
+ *
+ * Abaixo de 768px o botão encolhe, a pedido, "em torno de 30%": 232×56 no
+ * desktop, 172×44 no celular. Nenhum dos dois eixos chegou aos 30%, e cada
+ * um parou num piso diferente:
+ *   - ALTURA, 56 -> 44 (−21%): 30% seriam 39px, abaixo do alvo de toque de
+ *     44px, que é inegociável.
+ *   - LARGURA, 232 -> 172 (−26%): 30% seriam 162px, e o rótulo "FALAR COM A
+ *     IMPÉRIO" só cabe ali abaixo de 12px, o menor corpo da escala do site
+ *     (text-caption). A 12px ele mede 148,5px; 172 deixa 12px de cada lado.
+ * Desktop não muda. Vale para as DUAS chamadas — a da chamada final encolhe
+ * junto, porque é o mesmo botão.
  */
 
 type Props = {
@@ -47,6 +60,23 @@ const LiquidMetalButton = lazy(() =>
   })),
 );
 
+/* Medidas por largura. O estático usa as MESMAS em classe, para não haver
+   salto quando o shader entra. */
+const DESKTOP = { largura: 232, altura: 56, rotulo: 14 };
+const CELULAR = { largura: 172, altura: 44, rotulo: 12 };
+/* A MESMA fronteira do max-[768px] do Tailwind, que gera "not (min-width:
+   768px)": com "(max-width: 767px)" aqui, a 767,5px o CSS e o JS discordariam. */
+const CONSULTA_CELULAR = "not all and (min-width: 768px)";
+
+/* Lida de forma síncrona no cliente: o LiquidMetalButton já nasce com a
+   medida certa, sem montar grande e encolher. */
+function assinarCelular(aviso: () => void) {
+  const mq = window.matchMedia(CONSULTA_CELULAR);
+  mq.addEventListener("change", aviso);
+  return () => mq.removeEventListener("change", aviso);
+}
+const celularAgora = () => window.matchMedia(CONSULTA_CELULAR).matches;
+
 /* false no servidor e na hidratação, true depois — sem setState em efeito. */
 const assinarNada = () => () => {};
 const noClienteAgora = () => true;
@@ -57,7 +87,7 @@ function PillEstatico({ href, rotulo }: Props) {
     <a
       href={href}
       style={{ background: "linear-gradient(180deg, #1a1a1a 0%, #0A0A0A 100%)" }}
-      className="inline-flex h-14 w-[232px] items-center justify-center rounded-pill border border-gold text-[14px] font-normal uppercase tracking-[0.1em] text-bone transition-colors hover:border-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
+      className="inline-flex h-14 w-[232px] items-center justify-center rounded-pill border border-gold text-[14px] font-normal max-[768px]:h-11 max-[768px]:w-[172px] max-[768px]:text-[12px] uppercase tracking-[0.1em] text-bone transition-colors hover:border-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
     >
       {rotulo}
     </a>
@@ -67,13 +97,21 @@ function PillEstatico({ href, rotulo }: Props) {
 export function BotaoContato({ href, rotulo }: Props) {
   const reduzido = useMovimentoReduzido();
   const noCliente = useSyncExternalStore(assinarNada, noClienteAgora, noServidor);
+  const celular = useSyncExternalStore(assinarCelular, celularAgora, noServidor);
+  const medida = celular ? CELULAR : DESKTOP;
 
   /* Com movimento reduzido não há shader nem canvas: só o estático. */
   if (reduzido || !noCliente) return <PillEstatico href={href} rotulo={rotulo} />;
 
   return (
     <Suspense fallback={<PillEstatico href={href} rotulo={rotulo} />}>
-      <LiquidMetalButton href={href} label={rotulo} />
+      <LiquidMetalButton
+        href={href}
+        label={rotulo}
+        width={medida.largura}
+        height={medida.altura}
+        tamanhoRotulo={medida.rotulo}
+      />
     </Suspense>
   );
 }
