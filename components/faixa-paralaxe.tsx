@@ -63,37 +63,59 @@ export function FaixaParalaxe() {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const contexto = gsap.context(() => {
-      wraps.current.forEach((wrap, indice) => {
-        if (!wrap) return;
-        const gatilho = {
-          trigger: wrap,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.3,
-        } as const;
+    /* matchMedia e não uma leitura única da largura: o multiplicador muda com
+       a vertente, e quem gira o aparelho ou arrasta a janela através de 768px
+       precisa dos tweens refeitos. O revert() devolve tudo ao sair. */
+    const mm = gsap.matchMedia(secao);
 
-        gsap.to(wrap, {
-          yPercent: colunasParalaxe[indice].velocidade * -50,
-          ease: "none",
-          scrollTrigger: gatilho,
+    mm.add(
+      {
+        /* 767.98 e não 767: o Tailwind emite "not (min-width: 768px)", que
+           pega qualquer largura fracionária abaixo de 768. */
+        estreito: "(max-width: 767.98px)",
+        largo: "(min-width: 768px)",
+      },
+      (contexto) => {
+        const estreito = Boolean(contexto.conditions?.estreito);
+        /* Abaixo de 768px a coluna é 2,2x mais larga e a mídia, alta: com o
+           -50 do desktop as colunas rápidas percorriam seis vezes a própria
+           altura e sumiam no primeiro quarto da trilha. Medido a 390px antes:
+           2,34% da tela em mídia e 25% das posições sem nenhuma. */
+        const fator = estreito ? -12 : -50;
+        /* O deslocamento interno da mídia também sai no mobile: ele soma ao
+           da coluna e antecipa a saída pelo topo. */
+        const interno = estreito ? 0 : -30;
+
+        wraps.current.forEach((wrap, indice) => {
+          if (!wrap) return;
+          const gatilho = {
+            trigger: wrap,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.3,
+          } as const;
+
+          gsap.to(wrap, {
+            yPercent: colunasParalaxe[indice].velocidade * fator,
+            ease: "none",
+            scrollTrigger: gatilho,
+          });
+
+          /* "img, video": o slot pode trazer qualquer um dos dois, e o
+             deslocamento interno da mídia é o mesmo nos dois casos. */
+          const midia = wrap.querySelector("img, video");
+          if (midia && interno !== 0) {
+            gsap.fromTo(
+              midia,
+              { yPercent: 0 },
+              { yPercent: interno, ease: "none", scrollTrigger: gatilho },
+            );
+          }
         });
+      },
+    );
 
-        /* "img, video": o slot pode trazer qualquer um dos dois, e o
-           deslocamento interno da mídia é o mesmo nos dois casos. */
-        const midia = wrap.querySelector("img, video");
-        if (midia) {
-          gsap.fromTo(
-            midia,
-            { yPercent: 0 },
-            { yPercent: -30, ease: "none", scrollTrigger: gatilho },
-          );
-        }
-      });
-
-    }, secao);
-
-    return () => contexto.revert();
+    return () => mm.revert();
   }, [reduzido]);
 
   /* O useMediaQuery começa em false no servidor e no primeiro render do
@@ -127,36 +149,53 @@ export function FaixaParalaxe() {
          mais uma listra na emenda. */
       className="bg-ink"
     >
-      {/* max-[480px] e não max-[479px]: o Tailwind gera
-          "@media not (min-width: N)", que é exclusivo. Com 479 as regras não
-          aplicavam justamente em 479px de largura; com 480 o intervalo fica
-          idêntico ao "max-width: 479px" do original. */}
+      {/* max-[N] e não max-[N-1]: o Tailwind gera "@media not (min-width: N)",
+          que é exclusivo — max-[768px] pega até 767,98px. O padding continua
+          virando em 480px porque é regra de página (2rem, 1rem abaixo de
+          479px); a VERTENTE da faixa é que passou a virar em 768px, junto com
+          o resto do site. */}
       <div className="px-8 max-[480px]:px-4">
         <div className="mx-auto w-full max-w-[120rem]">
-          <div className="relative h-[250vh] max-[480px]:h-[125rem]">
+          {/* 400vw, e não uma altura em rem: abaixo de 768px a altura de cada
+              mídia vem da proporção sobre a largura da coluna, então a trilha
+              tem de escalar junto — em rem a composição se desmontava a 767px,
+              onde a mídia mede o dobro da de 390px. */}
+          <div className="relative h-[250vh] max-[768px]:h-[400vw]">
             {/* As colunas somam até 330vh (150vh de altura mais até 130vh de
                 margem) dentro de uma grade de 250vh, então elas e os divisores
                 vazavam por cima da seção seguinte. O recorte fica nesta camada,
                 e não na seção, para não transformar a seção em contêiner de
                 rolagem — isso quebraria o position:sticky do texto. */}
-            <div className="grid h-full grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr] gap-2 overflow-hidden max-[480px]:grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr]">
+            {/* relative não é decoração: abaixo de 768px as colunas são
+                absolutas, e sem um contêiner posicionado AQUI o bloco de
+                referência delas passa a ser a camada de cima — que está fora
+                deste overflow-hidden, e o recorte deixaria de valer. */}
+            <div className="relative grid h-full grid-cols-[1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr_1px_1fr] gap-2 overflow-hidden">
+            {/* Abaixo de 768px são duas colunas, então os cinco divisores da
+                grade dão lugar a um só, no meio, em posição absoluta como as
+                colunas. O -0.5px centra o fio de 1px na calha de 17px. */}
+            <div
+              aria-hidden
+              className="absolute inset-y-0 left-[calc(50%_-_0.5px)] z-40 hidden w-px bg-[linear-gradient(#fff0,#fff3_20%_80%,#fff0)] mix-blend-difference max-[768px]:block"
+            />
+
             {colunasParalaxe.map((coluna, indice) => (
               <Fragment key={coluna.midia.src}>
                 {indice > 0 ? (
                   <div
                     aria-hidden
-                    className={cn(
-                      "relative z-40 h-full w-px bg-[linear-gradient(#fff0,#fff3_20%_80%,#fff0)] mix-blend-difference",
-                      indice >= 4 && "max-[480px]:hidden",
-                    )}
+                    className="relative z-40 h-full w-px bg-[linear-gradient(#fff0,#fff3_20%_80%,#fff0)] mix-blend-difference max-[768px]:hidden"
                   />
                 ) : null}
 
                 <div
                   className={cn(
-                    "mb-[50vh] h-[150vh] max-[480px]:mb-[25rem] max-[480px]:h-[50rem]",
+                    /* No mobile a coluna sai do fluxo: quem manda na posição
+                       é o top do classeColuna, não a margem nem a altura de
+                       trilha do desktop. */
+                    "mb-[50vh] h-[150vh] max-[768px]:mb-0 max-[768px]:mt-0 max-[768px]:h-auto",
                     coluna.classeColuna,
-                    coluna.escondeMobile && "max-[480px]:hidden",
+                    coluna.escondeMobile && "max-[768px]:hidden",
                   )}
                 >
                   <div
@@ -193,7 +232,10 @@ export function FaixaParalaxe() {
                         fill
                         /* SVG passa longe do otimizador; foto real, não. */
                         unoptimized={coluna.midia.src.endsWith(".svg")}
-                        sizes="(max-width: 479px) 25vw, 17vw"
+                        /* 45vw abaixo de 768: na vertente de duas colunas a
+                           mídia mede ~44vw, e os 25vw antigos serviam a uma
+                           coluna de 77px que não existe mais. */
+                        sizes="(max-width: 767.98px) 45vw, 17vw"
                         className="z-[2] object-cover"
                       />
                     )}
@@ -203,8 +245,11 @@ export function FaixaParalaxe() {
             ))}
             </div>
 
-            <div className="pointer-events-none absolute inset-0 z-[6] flex h-[250vh] flex-col items-center justify-start text-center mix-blend-difference max-[480px]:h-[125rem]">
-              <div className="sticky top-0 z-[9] flex h-screen flex-col items-center justify-center overflow-hidden max-[480px]:h-[50rem]">
+            <div className="pointer-events-none absolute inset-0 z-[6] flex h-[250vh] flex-col items-center justify-start text-center mix-blend-difference max-[768px]:h-[400vw]">
+              {/* h-screen também no mobile: a caixa de 50rem fixos deixava a
+                  manchete acima do centro nas telas altas e a soltava cedo
+                  demais numa trilha que agora escala com a largura. */}
+              <div className="sticky top-0 z-[9] flex h-screen flex-col items-center justify-center overflow-hidden">
                 {/* Só a manchete: o eyebrow saiu por completo.
                     Breakpoints todos em min-[Npx]: misturar com os nomeados
                     (md:) inverte a ordem na cascata, porque o Tailwind emite

@@ -600,3 +600,67 @@ manchete ser lida não é. Nessa ordem.
 
 `components/ui/dia-text.tsx` fica no repositório sem uso. Trocou a foto da
 hero: rode o script, remeça as duas tabelas e só então decida se a banda volta.
+
+### 9. Toda a mídia da faixa de paralaxe escurecida no arquivo
+
+**A regra:** o DESIGN.md e o AGENTS.md proíbem gradiente, overlay e filter por
+CSS sobre foto — o contraste se resolve na origem, gravado no arquivo. Esta
+seção registra o tratamento da faixa, que faltava.
+
+**O desvio:** as três fotos, os dois pôsteres, os dois vídeos e o placeholder
+da faixa passaram por uma curva de tom uniforme, gravada no arquivo:
+
+```
+saida = 72 * (entrada / 255) ^ 0,75      scripts/trata-fotos-faixa.mjs
+```
+
+**O motivo, medido.** A manchete da faixa lê por `mix-blend-difference`: o
+texto composto vale |bone − fundo|. Contra o ink ela mede 17:1, contra branco
+20:1 — e contra MEIO-TOM as duas cores convergem e o texto some. Com o bone
+`#FAF8F2`, o contraste fica **abaixo de 3:1 para todo fundo com canal entre 85
+e 163**. A manchete é sticky e a mídia atravessa a tela inteira, então cada
+pixel de cada mídia passa atrás dos glifos em algum ponto da rolagem.
+
+Medido antes (percentual da ÁREA DOS GLIFOS abaixo de 3:1, na pior posição de
+rolagem de cada largura; texto grande, exigência 3:1):
+
+| largura | 360 | 390 | 414 | 768 | 992 | 1440 | 1920 |
+|---|---|---|---|---|---|---|---|
+| antes | 15,3 | 35,4 | 19,9 | — | — | **12,3** | — |
+| depois | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
+
+Os 12,3% a 1440px já estavam no ar antes desta rodada: a causa é a mesma, foto
+sem tratamento atrás de texto grande. O pior PIXEL de glifo em toda a varredura
+— 146 posições de rolagem somando as sete larguras — passou a **3,92:1**.
+
+**Por que 72, e não 84.** 84 é o teto teórico: com todo canal em 84 ou menos, o
+texto composto fica em 166 ou mais e o par mede 3,2:1. Só que a compressão com
+perda ESTOURA o teto — medido, jpeg e webp devolvem até 95 onde o pixel gravado
+era 84, e o h264 a crf 26 devolve até 109. Com teto 72, jpeg de qualidade 88 e
+croma 4:4:4, webp 88 e h264 a crf 20, o pixel DECODIFICADO não passa de 0,087
+de luminância contra o limite de 0,0887: zero pixels acima.
+
+**Por que uma curva, e não o véu multiplicativo dos outros dois scripts.** A
+gama de 0,75 levanta sombra e meio-tom dentro do teto. Com véu puro a
+`interior-obra`, que já era escura, caía para média 21 de 255 e virava mancha;
+com a curva ela fica em 25 e o vão da janela continua lendo. Médias depois do
+tratamento, em 255: analia-franco 47, casa-em-obra 44, interior-obra 25,
+pôsteres 52 e 47.
+
+**O placeholder também.** `placeholder-5.svg` teve a chapa e OS RÓTULOS
+escurecidos (`#5C5A55`→`#222120`, `#FAF8F2`→`#474745`). Os rótulos em bone eram
+o único ponto claro dentro da mídia, e toda borda entre claro e escuro atravessa
+a faixa de falha no antialias: 0,05% da área dos glifos a 1440px vinham dali. O
+preço é que "FOTO PENDENTE" e o "05" ficam fracos dentro do cartão — é marcação
+de trabalho, some quando a foto chegar.
+
+**O preço, e o que fica de regra.** A faixa ficou nitidamente mais escura: é o
+vale escuro entre os dois blooms dourados, e agora ela é isso de fato. As fotos
+continuam lendo como fotografia noturna, não como mancha, mas a `interior-obra`
+é o caso-limite — se o tratamento tiver de ficar mais forte um dia, ela é a
+primeira a quebrar.
+
+**Estas fotos não têm original.** Vieram de dentro de um PDF e de capturas de
+story; o que está em `imperio-originais/faixa` é a cópia do que estava
+versionado antes do tratamento. Quando o cliente mandar os originais, ponha-os
+lá, rode o script e remeça as sete larguras.
