@@ -9,15 +9,14 @@ import { DiaText } from "@/components/ui/dia-text";
 /**
  * BLOCO 1 — Hero
  * Seção full-bleed de 100vh: a foto cobre tudo, a navegação fica no topo
- * dentro dela e manchete e parágrafo se apoiam na base.
+ * dentro dela e manchete e a fila do CTA se apoiam na base. Não há frase de
+ * apoio: saiu e não volta.
  *
  * REQUISITO DA FOTO DE FUNDO — não trocar sem conferir:
  * a imagem precisa ter o TERÇO INFERIOR ESCURO EM TODA A LARGURA, porque a
- * manchete e o parágrafo ficam em cima dele, em bone. Foto com base clara
- * reprova em contraste e não serve, por mais bonita que seja. Ao receber a
- * foto real, medir o contraste do texto bone sobre ela em 360, 390, 768,
- * 1440 e 1920px ANTES de aprovar — o mínimo é 4,5:1 para o parágrafo de
- * 16px e 3:1 para a manchete, que é texto grande.
+ * manchete fica em cima dele. Ao trocar a foto ou a cor da manchete, medir o
+ * contraste dela sobre a foto composta, por caixa de linha, nas 7 larguras
+ * ANTES de aprovar — 3:1 para texto grande.
  */
 export function Hero() {
   const comum = { alt: hero.fundoAlt, sizes: "100vw", priority: true, quality: 80 };
@@ -87,23 +86,20 @@ export function Hero() {
         </h1>
 
         <div className="lg:shrink-0">
-          <p className="text-body text-bone lg:max-w-md">{hero.paragrafo}</p>
-
           {/* ══ A FILA DO CTA ══
               Ícones sociais primeiro, CTA fechando à direita, na mesma linha —
               o arranjo da hero da LDF. Os ícones voltaram para cá da coluna
               fixa: eles não acompanham a rolagem.
 
-              ⚠ O max-w-md FICOU NO PARÁGRAFO, E NÃO NA COLUNA. Três ícones de
-              48 com 2rem entre si somam 208px, mais 2rem até o CTA de 232px:
-              472px. A coluna tinha teto de 448 e a fila estourava por ela. Com
-              o teto só no parágrafo, a coluna cresce até a fila e o CTA fecha
-              rente à borda direita.
+              A frase de apoio que ficava acima desta fila SAIU e não volta. A
+              coluna agora é só a fila, e não tem teto de largura: três ícones
+              de 48 com 2rem entre si somam 208px, mais 2rem até o CTA, e com
+              teto a fila estouraria a coluna.
 
               ⚠ SUBIR A FILA NÃO RESOLVE COLISÃO COM A MANCHETE — joga o ícone
               para dentro do título. Aconteceu na LDF. Se a manchete e a fila
               encostarem, o conserto é na largura, não na altura. */}
-          <div className="mt-8 flex items-center gap-8">
+          <div className="flex items-center gap-8">
             <SociaisHero />
 
             {/* isolate cria contexto de empilhamento: o botão tem camadas em
