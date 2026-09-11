@@ -160,9 +160,8 @@ export default function PaginaPrivacidade() {
               <a href={`mailto:${email}`} className={`mt-4 ${LINK}`}>
                 {email}
               </a>
-              <a href={controlador.telefoneHref} className={LINK}>
-                {controlador.telefone}
-              </a>
+              {/* Texto puro, sem link — ver o comentário em dados-politica.ts. */}
+              <span>{controlador.telefone}</span>
             </address>
             <p className={P_SECUNDARIO}>
               Qualquer pedido sobre os seus dados — ver, corrigir, apagar,

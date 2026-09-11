@@ -14,16 +14,20 @@ import logoNav from "@/public/hero/logo-imperio-nav.png";
    Até 2026-09-10 esses mesmos lugares mostravam o marcador de pendência.
 
    Dois formatos, e cada um tem um uso só: `exibicao` é o que se lê na tela;
-   `e164` é o que vai no href. */
+   `e164` é de onde sai o link. */
 export const telefone = {
   exibicao: "(11) 92777-9559",
   e164: "+5511927779559",
 } as const;
 
-export const telefoneHref = `tel:${telefone.e164}`;
+/* ⚠ O NÚMERO É LINK DE WHATSAPP, NUNCA DO PROTOCOLO tel. No desktop ele não liga para
+   ninguém: abre o diálogo de "abrir aplicativo" do sistema. Todo lugar onde o
+   número aparece como link aponta para cá, com target _blank e
+   rel "noopener noreferrer". Única exceção: a política de privacidade mostra o
+   número como texto puro, sem link — documento jurídico não precisa de um.
 
-/* O wa.me quer só dígitos, com o DDI e sem o "+": derivado do mesmo número,
-   para o botão flutuante nunca divergir do telefone exibido. */
+   O wa.me quer só dígitos, com o DDI e sem o "+": derivado do mesmo número,
+   para o link nunca divergir do telefone exibido. */
 export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}`;
 
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
@@ -89,7 +93,7 @@ export const menuHero = {
       texto: "contato@imperioconstrutora.com.br",
       href: "mailto:contato@imperioconstrutora.com.br",
     },
-    { tipo: "telefone" as const, texto: telefone.exibicao, href: telefoneHref },
+    { tipo: "telefone" as const, texto: telefone.exibicao, href: whatsappUrl },
     {
       tipo: "instagram" as const,
       texto: "@_construtoraimperio",
@@ -456,7 +460,7 @@ export const rodape: ColunaRodape[] = [
   {
     titulo: "CONTATO",
     itens: [
-      { texto: telefone.exibicao, href: telefoneHref },
+      { texto: telefone.exibicao, href: whatsappUrl },
       { texto: "contato@imperioconstrutora.com.br", href: "mailto:contato@imperioconstrutora.com.br" },
       { texto: "Guarulhos, SP" },
     ],

@@ -23,7 +23,7 @@
 
    Ou os campos são preenchidos antes de publicar, ou a rota não sobe. */
 
-import { telefone, telefoneHref } from "@/lib/dados";
+import { telefone } from "@/lib/dados";
 
 /** Marcador literal dos campos que dependem do cliente. Não substituir por
     texto plausível: ou vem o dado real, ou fica isto. */
@@ -39,9 +39,10 @@ export const controlador = {
   endereco: PENDENTE,
   municipio: "Guarulhos, SP",
   email: "contato@imperioconstrutora.com.br",
-  /* Lido de lib/dados.ts, a fonte única do número — não copiar para cá. */
+  /* Lido de lib/dados.ts, a fonte única do número — não copiar para cá.
+     Aqui ele é TEXTO PURO, sem link: canal de contato do titular num documento
+     jurídico não precisa de WhatsApp, e o protocolo tel é proibido no site. */
   telefone: telefone.exibicao,
-  telefoneHref,
   /* Encarregado pelo tratamento de dados (art. 41 da LGPD): a pessoa ou canal
      que atende titular e autoridade. Pode ser o próprio e-mail acima, mas é
      decisão do cliente — e precisa estar declarada. */

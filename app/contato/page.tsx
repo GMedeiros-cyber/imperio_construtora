@@ -6,7 +6,7 @@ import logoImperio from "@/public/hero/logo-imperio-nav.png";
 import { FormularioContato } from "@/components/formulario-contato";
 import { NavegacaoFixa } from "@/components/navegacao-fixa";
 import { SiteFooter } from "@/components/site-footer";
-import { telefone, telefoneHref } from "@/lib/dados";
+import { telefone, whatsappUrl } from "@/lib/dados";
 
 export const metadata: Metadata = {
   title: "Contato — Império Construtora",
@@ -35,7 +35,8 @@ export const metadata: Metadata = {
    ⚠ O DOURADO SÓ EXISTE NESTA ROTA PORQUE O FUNDO É ESCURO. A regra do
    AGENTS.md é literal: #B79653 só sobre fundo escuro; sobre o creme, só o
    #8A6D2F. Se o fundo desta seção clarear, todo o dourado daqui — pastilha
-   marcada, borda de erro, botão — sai junto.
+   marcada, botão — sai junto, e a cor de erro também: --color-erro reprova
+   sobre o creme (3,58:1).
 
    ══ DUAS COLUNAS ACIMA DE 900px, NA ORDEM DO DOM ══
 
@@ -57,7 +58,8 @@ const CANAIS = [
     href: "https://www.instagram.com/_construtoraimperio",
   },
   { rotulo: "Local", valor: "Guarulhos, SP" },
-  { rotulo: "Telefone", valor: telefone.exibicao, href: telefoneHref },
+  /* WhatsApp, e não o protocolo tel — ver o comentário de `whatsappUrl` em lib/dados.ts. */
+  { rotulo: "Telefone", valor: telefone.exibicao, href: whatsappUrl },
 ];
 
 export default function PaginaContato() {
@@ -97,7 +99,7 @@ export default function PaginaContato() {
                       <a
                         href={canal.href}
                         target={canal.href.startsWith("http") ? "_blank" : undefined}
-                        rel={canal.href.startsWith("http") ? "noreferrer" : undefined}
+                        rel={canal.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="underline decoration-ash underline-offset-4 transition-colors hover:decoration-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
                       >
                         {canal.valor}

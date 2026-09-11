@@ -7,7 +7,7 @@ import {
   menuHero,
   sociaisHero,
   telefone,
-  telefoneHref,
+  whatsappUrl,
 } from "@/lib/dados";
 import { AssinaturaParticulas } from "@/components/ui/assinatura-particulas";
 
@@ -123,7 +123,13 @@ export function SiteFooter() {
               aria-labelledby="rodape-onde"
               className="mt-4 flex flex-col gap-element not-italic"
             >
-              <a href={telefoneHref} className={LINK}>
+              {/* WhatsApp, e não o protocolo tel — ver `whatsappUrl` em lib/dados.ts. */}
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={LINK}
+              >
                 {telefone.exibicao}
               </a>
               <a href={`mailto:${EMAIL}`} className={LINK}>

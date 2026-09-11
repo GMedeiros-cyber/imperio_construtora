@@ -341,7 +341,7 @@ export function MenuHero() {
                         href={linha.href}
                         onClick={fechar}
                         target={linha.href.startsWith("http") ? "_blank" : undefined}
-                        rel={linha.href.startsWith("http") ? "noreferrer" : undefined}
+                        rel={linha.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="flex items-center gap-3 transition-colors hover:text-gold-lt"
                       >
                         {conteudo}

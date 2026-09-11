@@ -169,7 +169,7 @@ export function WhatsappFlutuante() {
       data-sob-menu={sobMenu ? "" : undefined}
       href={whatsappUrl}
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
       aria-label="Falar com a Império no WhatsApp"
     >
       <IconeWhatsApp />
