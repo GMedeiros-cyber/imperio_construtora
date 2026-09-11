@@ -33,11 +33,19 @@ const SOMBRA = "[filter:drop-shadow(0_1px_6px_rgba(0,0,0,0.55))]";
  * (1,00:1). Parados sobre a foto escura da hero, o problema não existe; quem
  * resolve os trechos claros da foto é a sombra.
  *
- * Abaixo de 768px a fila continua escondida.
+ * ⚠ ABAIXO DE 768px A FILA APARECE, EM LINHA PRÓPRIA ACIMA DO CTA. Ela ficou
+ * escondida enquanto dividia a linha com o botão: três ícones de 48 com 2rem
+ * entre si somam 208px, mais 2rem até o CTA de 172px — 412px contra 296 úteis
+ * a 360px. Em linha própria a conta é só a da fila, 208px, e sobra.
+ *
+ * ⚠ OS ÍCONES FICAM EM 48px, e não em 44. Foram medidas as duas opções: na
+ * mesma linha do CTA, mesmo a 44px (o piso de toque), a fila somava 328px e o
+ * botão saía cortado a 360 e a 390px. Encolher abaixo de 44 não está em
+ * discussão. Quem cede é o arranjo, não o alvo.
  */
 export function SociaisHero() {
   return (
-    <ul className="hidden items-center gap-8 md:flex">
+    <ul className="flex items-center gap-8">
       {sociaisHero.map((item) => {
         const externo = item.href?.startsWith("http");
 

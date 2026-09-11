@@ -103,10 +103,17 @@ export function Hero() {
               de 48 com 2rem entre si somam 208px, mais 2rem até o CTA, e com
               teto a fila estouraria a coluna.
 
+              ⚠ ABAIXO DE 768px A FILA SOBE PARA UMA LINHA PRÓPRIA, acima do
+              CTA — os dois lado a lado não cabem: 412px contra 296 úteis a
+              360px, e mesmo com os ícones no piso de 44 a conta dava 328.
+              MEDIDO depois da troca: o bloco vai de 49 para 117px e empurra a
+              manchete 68px para cima (topo em 486 a 390px), que continua a
+              398px da logo — não encosta. De 768px para cima nada muda.
+
               ⚠ SUBIR A FILA NÃO RESOLVE COLISÃO COM A MANCHETE — joga o ícone
               para dentro do título. Aconteceu na LDF. Se a manchete e a fila
               encostarem, o conserto é na largura, não na altura. */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 max-[768px]:flex-col max-[768px]:items-start max-[768px]:gap-5">
             <SociaisHero />
 
             {/* isolate cria contexto de empilhamento: o botão tem camadas em
