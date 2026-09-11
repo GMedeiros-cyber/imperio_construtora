@@ -495,49 +495,69 @@ paradas, meça o eyebrow primeiro.
 escuros; pintura direta levanta o `#0A0A0A` para `rgb(26,25,25)`, e aí o preto
 deixa de ser preto e nasce um degrau contra o bloco seguinte.
 
-### 5. O formulário de contato foi COPIADO da LDF
+### 5. Raio de 14px no formulário de contato
 
 **A regra:** o DESIGN.md manda canto reto em card e imagem, e só permite o raio
-de 1440px em botão, pastilha e tag. O AGENTS.md proíbe `box-shadow` em qualquer
-elemento.
+de 1440px em botão, pastilha e tag.
 
-**O desvio:** o formulário de `/contato` — e só ele — usa **raio de 14px** nos
-campos de texto e na área de mensagem (token `--radius-campo`), e usa
-**`inset box-shadow`** em dois lugares: a régua de erro dentro do campo e o
-sublinhado do link da nota de privacidade.
+**O desvio:** o formulário de `/contato` — e só ele — usa **raio de 14px**
+(token `--radius-campo`) nos campos de texto, na área de mensagem, no resumo de
+erros e no bloco de confirmação que entra no lugar do formulário.
 
 **O motivo:** o formulário inteiro foi copiado do projeto LDF por decisão de
-projeto — componente e classes `.form__*`, valor a valor. A troca central é a
-superfície: lá o campo é **preenchido e sem borda**, e aqui era borda de 1px em
-ash sobre fundo transparente. Borda desenha uma linha que compete com o texto;
-preenchimento não. Com a caixa preenchida, misturar canto reto com a pastilha
-arredondada logo abaixo, no mesmo bloco, fica incoerente — ou tudo macio, ou
-tudo reto, e a pastilha não pode ser reta porque a regra do raio 1440px vale
-para ela.
+projeto — componente e classes `.form__*`, valor a valor —, e copiar o
+componente inteiro implicava aceitar o raio. Lá o campo é **preenchido**, e com
+a caixa preenchida, misturar canto reto com a pastilha arredondada logo abaixo,
+no mesmo bloco, fica incoerente — ou tudo macio, ou tudo reto, e a pastilha não
+pode ser reta porque a regra do raio 1440px vale para ela.
 
 Campo de formulário também não é card: ele não é superfície editorial, é
-controle. O raio de 14px fica restrito a ele.
+controle.
 
-Sobre a sombra: a proibição do AGENTS.md é contra **elevação** — e aqui não há
-deslocamento nem desfoque. `inset 0 0 0 1px` é uma régua de 1px DENTRO da
-caixa, que não empurra o layout como uma borda empurraria e não projeta nada
-para fora. O mesmo vale para o sublinhado do link, que por `box-shadow` fica
-afastado da base das letras e não corta as descendentes. Nenhuma das duas
-declarações cria sombra no sentido que a regra proíbe.
+**O escopo:** os quatro elementos acima, dentro de `.form`. Card e imagem
+continuam em 0px em todo o site, e nenhum outro controle herda os 14px.
 
-**O que não pôde ser copiado literal**, e está medido no cabeçalho da seção
-"FORMULÁRIO DE CONTATO" do `app/globals.css`:
+### 6. Cor de erro — `--color-erro` (#D1614A)
 
-- **Rótulo, placeholder, ajuda, aceite e nota saem em ash, não em graphite.**
-  A tradução direta do `--ink-3` da LDF seria o nosso graphite, e ela reprova:
-  2,31:1 sobre a placa e 2,87:1 sobre o ink, contra os 4,5:1 exigidos. Em ash
-  os mesmos pares medem 8,77:1 e 10,90:1.
-- **Pastilha com `min-height` de 44px.** Só com o padding copiado ela fechava
-  em 36px, abaixo do alvo mínimo de toque.
-- **Corpo do campo em 16px onde o ponteiro é grosso.** O valor da origem é
-  .95rem (15,2px), e abaixo de 16px o iOS dá zoom ao focar o campo.
+**A regra:** a paleta do AGENTS.md não tem cor de estado.
 
-**A superfície nova:** `--color-placa` (#222221), o fundo dos campos e das
-pastilhas. Ela NÃO é cor de marca e não entra em seção nem em card — é a placa
-do controle. Contra a página ink ela mede 1,24:1: sem borda, quem diz onde o
-campo começa é o rótulo acima e o anel de foco em bone, medido em 18,64:1.
+**O desvio:** acréscimo à paleta de **`--color-erro: #D1614A`**, terracota
+apagado da família quente do gold. Usado no formulário de `/contato`: borda do
+campo inválido, borda das pastilhas de um grupo inválido, borda do resumo de
+erros, outline do aceite inválido e texto do motivo.
+
+**Medido:**
+
+- sobre o ink `#0A0A0A`: **5,20:1** — passa como texto e como borda;
+- sobre a placa `#222221`: **4,19:1** — passa como borda (3:1), NÃO como texto
+  normal. Por isso o texto de erro fica sobre o ink e o do resumo, que mora na
+  placa, é bone.
+
+**O escopo:** **só sobre superfície escura**, igual ao gold. Sobre o bone ela
+mede 3,58:1 e reprova como texto. Se um dia precisar de erro sobre o creme,
+meça e crie o par escuro — não reuse este.
+
+**O motivo de não ser o gold-lt, que a LDF usava:** o gold já é o estado da
+pastilha MARCADA neste mesmo formulário. A mesma cor para "escolhido" e
+"errado" é ambígua.
+
+**A cor nunca é o único sinal.** Sob deuteranopia terracota e dourado
+convergem, então:
+
+- seleção é **preenchimento** (pastilha gold com ink); erro é **borda + texto**;
+- todo campo inválido tem o motivo escrito e visível, não só a borda;
+- `aria-invalid` no campo e `aria-describedby` apontando para a mensagem, e o
+  resumo do topo é `role="alert"` e recebe foco no envio falho.
+
+### 7. Superfície de controle — `--color-placa` (#222221)
+
+**O desvio:** acréscimo à paleta, o fundo dos campos e das pastilhas do
+formulário de `/contato`, um degrau acima do ink. Veio com o formulário da LDF.
+
+**O escopo:** ela NÃO é cor de marca e não entra em seção nem em card — é a
+placa do controle. Contra a página ink ela mede 1,24:1: quem diz onde o campo
+começa é o rótulo acima e o anel de foco em bone, medido em 18,64:1.
+
+A borda do campo existe o tempo todo, transparente em repouso, e só ganha cor
+no erro — assim a validação não muda o tamanho da caixa. Nenhum elemento do
+formulário usa `box-shadow`.

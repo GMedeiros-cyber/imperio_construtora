@@ -31,6 +31,23 @@
   --color-placa: #222221;
 
   /* ---------------------------------------------------------------------
+     ERRO
+     Terracota apagado, da família quente do gold. Acréscimo à paleta — ver os
+     Desvios do DESIGN.md.
+       #D1614A sobre #0A0A0A = 5,20:1 -> passa como texto e como borda.
+       #D1614A sobre #222221 = 4,19:1 -> passa como borda (3:1), NÃO como
+                                         texto normal: texto de erro vai
+                                         sobre o ink, nunca sobre a placa.
+       #D1614A sobre #FAF8F2 = 3,58:1 -> REPROVA. Só sobre superfície
+                                         escura, igual ao gold. Se um dia
+                                         precisar no creme, meça e crie o par
+                                         escuro.
+     ⚠ NUNCA É O ÚNICO SINAL: sob deuteranopia terracota e dourado convergem.
+     Erro é BORDA + TEXTO; seleção é PREENCHIMENTO.
+     --------------------------------------------------------------------- */
+  --color-erro: #d1614a;
+
+  /* ---------------------------------------------------------------------
      TIPOGRAFIA — família
      Switzer via Fontshare (não auto-hospedar: licença ITF não permite).
      --------------------------------------------------------------------- */
@@ -380,9 +397,9 @@
    caixa se separa do fundo pela própria placa (--color-placa sobre o ink da
    rota), e em repouso não existe nenhuma linha.
 
-   ⚠ SEM BORDA EM REPOUSO, O FOCO É A ÚNICA MARCA DE ESTADO. O anel de 2px em
-   bone deixa de ser decoração e vira obrigação. Não troque por borda colorida
-   "para ficar mais discreto".
+   ⚠ SEM LINHA VISÍVEL EM REPOUSO, O FOCO É A ÚNICA MARCA DE ESTADO. O anel de
+   2px em bone deixa de ser decoração e vira obrigação. Não troque por borda
+   colorida "para ficar mais discreto".
 
    ══ O QUE NÃO PÔDE SER COPIADO LITERAL, E POR QUÊ ══
 
@@ -402,18 +419,32 @@
       estava registrado no componente antigo. Em ponteiro fino fica .95rem,
       como na origem; em toque, 1rem.
 
-   4. O ERRO E O SUBLINHADO DO LINK SÃO inset box-shadow. O AGENTS.md proíbe
-      box-shadow, e a proibição é sobre ELEVAÇÃO — aqui não há deslocamento nem
-      desfoque: é uma régua de 1px dentro da própria caixa, que não desloca
-      layout como uma borda deslocaria. Está registrado nos Desvios do
-      DESIGN.md.
+   4. ZERO box-shadow, COMO MANDA O AGENTS.md. Na LDF a régua de erro, o
+      contorno do resumo e o sublinhado do link eram inset box-shadow. Aqui:
+
+      - Campo e pastilha têm `border: 1px solid transparent` EM REPOUSO, e o
+        erro troca SÓ a cor da borda. A borda existe o tempo todo, então a
+        caixa não muda de tamanho na validação. NÃO compense padding: se
+        precisar compensar, é porque a borda passou a existir só no erro.
+      - O resumo tem borda de 1px em --color-erro, fixa: ele só existe no erro.
+      - O link da nota é text-decoration com text-underline-offset. Ele pode
+        quebrar em duas linhas no celular, e o sublinhado tem de acompanhar
+        cada caixa de linha — medido no bloco da nota, mais abaixo.
 
    ══ ERRO NUNCA É SÓ COR ══
 
-   Todo campo inválido ganha três coisas ao mesmo tempo: a régua em gold-lt, o
-   `aria-invalid` no elemento e um parágrafo de texto ligado por
-   aria-describedby. Quem não distingue as cores lê a frase; quem usa leitor de
-   tela ouve o campo se anunciar inválido e em seguida o motivo.
+   Sob deuteranopia a terracota do erro e o dourado da seleção CONVERGEM. Por
+   isso a cor nunca é o sinal sozinha:
+
+   - SELEÇÃO É PREENCHIMENTO: a pastilha marcada vira placa gold com ink.
+   - ERRO É BORDA + TEXTO: borda de 1px em --color-erro no campo (ou em cada
+     pastilha do grupo inválido) E um parágrafo com o motivo, sempre visível.
+   - Para o leitor de tela: `aria-invalid` no campo e `aria-describedby`
+     apontando para o parágrafo do motivo. O resumo do topo é role="alert" e
+     recebe foco no envio falho.
+
+   Quem não distingue as cores lê a frase; quem usa leitor de tela ouve o campo
+   se anunciar inválido e em seguida o motivo.
 
    ══ TODO :hover ESTÁ EM @media (hover: hover) ══
 
@@ -430,7 +461,9 @@
    placeholder (ash) / placa ..................  8,77:1
    pastilha em repouso (ash) / placa ..........  8,77:1
    rótulo, ajuda, aceite e nota (ash) / ink ... 10,90:1
-   texto de erro (gold-lt) / ink .............. 10,27:1
+   texto de erro (erro) / ink .................  5,20:1
+   borda de erro (erro) / placa ...............  4,19:1 (gráfico: 3:1)
+   borda de erro (erro) / ink .................  5,20:1
    pastilha MARCADA (ink) / gold ..............  7,07:1
    pastilha marcada em hover (ink) / gold-lt .. 10,27:1
    link da nota (bone) / ink .................. 18,64:1
@@ -444,8 +477,8 @@
    borda, a caixa mal se separa do fundo — quem diz onde o campo começa é o
    rótulo acima dele e, ao chegar nele, o anel de foco. É o preço do
    acabamento preenchido, e é o mesmo da origem. Se um dia a decisão for
-   reforçar a borda do campo, ela volta como régua inset, nunca como borda
-   que desloque layout. */
+   reforçar a borda do campo, é só dar cor à borda transparente que já existe
+   — o tamanho da caixa não muda. */
 
 .form {
   display: grid;
@@ -467,9 +500,11 @@
 /* ── O resumo de erros ──────────────────────────────────────────────────── */
 .form__resumo {
   padding: 1rem 1.25rem;
+  /* Borda fixa: o resumo só existe no erro. O texto dele é bone, não erro —
+     a terracota sobre a placa passa como borda, não como texto. */
+  border: 1px solid var(--color-erro);
   border-radius: var(--radius-campo);
   background: var(--color-placa);
-  box-shadow: inset 0 0 0 1px var(--color-gold-lt);
   color: var(--color-bone);
   font-size: 1rem;
   line-height: 1.5;
@@ -525,7 +560,9 @@
 .form__entrada {
   width: 100%;
   padding: 1rem;
-  border: 0;
+  /* Transparente EM REPOUSO, e o erro troca só a cor. Ver o item 4 do
+     cabeçalho: a borda existe sempre, então a validação não mexe no tamanho. */
+  border: 1px solid transparent;
   border-radius: var(--radius-campo);
   background: var(--color-placa);
   color: var(--color-bone);
@@ -536,7 +573,7 @@
   line-height: 1.5;
   transition:
     background 220ms ease,
-    box-shadow 220ms ease;
+    border-color 220ms ease;
 }
 
 /* Ver o item 3 do cabeçalho: 16px onde o toque manda, para o iOS não dar zoom
@@ -570,17 +607,19 @@
   min-height: 7rem;
 }
 
-/* A régua de erro é INSET: por dentro da caixa, sem deslocar o layout como uma
-   borda deslocaria, e sem virar elevação. */
+/* Erro é BORDA + TEXTO: aqui a borda; o texto é o .form__erro logo abaixo,
+   que o componente sempre renderiza junto com o aria-invalid. */
 .form__entrada[aria-invalid="true"] {
-  box-shadow: inset 0 0 0 1px var(--color-gold-lt);
+  border-color: var(--color-erro);
 }
 
+/* Sobre o ink da rota (5,20:1), nunca sobre a placa (4,19:1 não passa como
+   texto). */
 .form__erro {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.45;
-  color: var(--color-gold-lt);
+  color: var(--color-erro);
 }
 
 /* ── Pastilhas ──────────────────────────────────────────────────────────── */
@@ -604,6 +643,8 @@
   /* Piso de alvo de toque; o padding copiado continua embaixo dele. */
   min-height: 2.75rem;
   padding: 0.5rem 1rem;
+  /* Mesma regra do campo: transparente em repouso, cor só no erro do grupo. */
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: var(--color-placa);
   color: var(--color-ash);
@@ -612,7 +653,15 @@
   cursor: pointer;
   transition:
     background 220ms ease,
-    color 220ms ease;
+    color 220ms ease,
+    border-color 220ms ease;
+}
+
+/* GRUPO INVÁLIDO: cada pastilha ganha a borda de erro, e o motivo aparece no
+   .form__erro do fim do grupo. O erro de grupo é "nenhuma marcada", então
+   borda de erro e preenchimento de seleção nunca aparecem na mesma pastilha. */
+.form__grupo[aria-invalid="true"] .form__pastilha {
+  border-color: var(--color-erro);
 }
 
 .form__pastilha input {
@@ -685,8 +734,12 @@
   outline-offset: 3px;
 }
 
-.form__aceite input[aria-invalid="true"] {
-  outline: 2px solid var(--color-gold-lt);
+/* Checkbox nativo não aceita borda própria sem appearance: none, e refazer a
+   caixa inteira à mão não entra por um estado de erro. Fica o outline, na cor
+   de erro, sobre o ink (5,20:1). Com foco, o anel bone de cima prevalece — o
+   motivo continua escrito no .form__erro logo abaixo. */
+.form__aceite input[aria-invalid="true"]:not(:focus-visible) {
+  outline: 2px solid var(--color-erro);
   outline-offset: 2px;
 }
 
@@ -695,9 +748,9 @@
    components/formulario-contato.tsx. Sem ela o checkbox pede autorização sem
    dizer para quê, e o consentimento deixa de ser informado.
 
-   O sublinhado é inset box-shadow, e não text-decoration: ele fica afastado da
-   base das letras e não corta as descendentes. Ver o item 4 do cabeçalho desta
-   seção sobre a proibição de sombra. */
+   O sublinhado é text-decoration, e não box-shadow (proibido pelo AGENTS.md).
+   O offset afasta a linha da base das letras e o skip-ink abre a linha nas
+   descendentes, que era o que a sombra da LDF resolvia. */
 .form__nota-politica {
   margin: 0.75rem 0 0;
   font-size: 0.875rem;
@@ -705,13 +758,17 @@
 }
 .form__nota-politica a {
   color: var(--color-bone);
-  text-decoration: none;
-  box-shadow: inset 0 -1px 0 0 var(--color-ash);
-  transition: box-shadow 220ms ease;
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-ash);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-skip-ink: auto;
+  transition: text-decoration-color 220ms ease;
 }
 @media (hover: hover) {
   .form__nota-politica a:hover {
-    box-shadow: inset 0 -2px 0 0 var(--color-gold-lt);
+    text-decoration-color: var(--color-gold-lt);
+    text-decoration-thickness: 2px;
   }
 }
 .form__nota-politica a:focus-visible {
