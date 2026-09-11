@@ -37,13 +37,33 @@ if (!origem) {
   process.exit(1);
 }
 
-const RECORTE = { left: 0, top: 1350, width: 3024, height: 890 }; // 3,4:1
-const LARGURA = 1920;
+/* ⚠ A FAIXA SUBIU: top 910, e não mais 1350.
 
-/* Alfa do véu preto sobre a foto inteira. 0,74 foi o valor em que o pixel mais
-   claro da faixa desceu de L=0,80 para dentro do teto de 0,161 que o texto bone
-   exige. Mexeu na foto ou no recorte, remeça: este número é desta imagem. */
-const VEU = 0.74;
+   A de 1350 pegava a fachada de janelas acesas — 5,7% da área acima de L=0,5 e
+   p99,9 em 0,923 —, e altas-luzes assim obrigam um véu que esmaga o resto da
+   foto. A de 910 tem o guindaste, a laje em obra e a torre ao fundo: mesmo
+   assunto, canteiro noturno, com 0,2% acima de 0,5 e p99,9 em 0,844. */
+const RECORTE = { left: 0, top: 910, width: 3024, height: 889 }; // 3,4:1
+
+/* ⚠ SAÍDA NA LARGURA NATIVA DO RECORTE, 3024. Era 1920, e o resize jogava
+   resolução fora: a faixa é servida com sizes="100vw", então a 1440px em DPR 2
+   o navegador pede 2880 e recebia 1920 — ampliação de 1,5x, medida, e é dela
+   que vinha o aspecto de borrão. Com 3024 o pedido de 2880 é atendido sem
+   esticar. */
+const LARGURA = 3024;
+
+/* Alfa do véu preto sobre a foto inteira.
+
+   ⚠ 0,64, E NÃO MAIS 0,74. O valor antigo era do recorte antigo. A conta: o
+   bone #FAF8F2 precisa de fundo com L <= 0,1611 para os 4,5:1, e o véu
+   escurece por (1-a)^2,4; com o pixel mais claro da faixa em L=1,0 — uma
+   lâmpada estourada — o cálculo dá 0,533. Só que o arquivo CODIFICADO devolve
+   mais do que o cálculo: com 0,54 o jpeg decodificado sobe a 0,223 (3,48:1) e
+   com 0,62 o webp ainda fica em 4,43:1. Em 0,64 os dois fecham: zero pixels
+   acima de 0,1611, e o pior pixel dá 5,16:1 no jpg e 4,97:1 no webp.
+
+   ⚠ Trocou a foto ou o recorte, remeça. Este número é desta faixa. */
+const VEU = 0.64;
 
 const base = sharp(origem).extract(RECORTE).resize(LARGURA);
 const { width, height } = await base.clone().toBuffer({ resolveWithObject: true })
