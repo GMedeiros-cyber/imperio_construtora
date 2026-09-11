@@ -342,7 +342,13 @@ function ProgressoObras({
 
             <a
               href={obrasScroll.verTodasHref}
-              className="flex items-center gap-2 py-1 text-body-sm leading-none text-bone transition-colors hover:text-gold-lt"
+              /* py-3.5 e não py-1: o alvo de toque tem de medir 44px, e o
+                 conteúdo (texto de 14px com leading-none e seta de 16px) dá
+                 16px — 16 + 2 x 14 = 44. A margem negativa devolve os 20px
+                 extras ao fluxo, então a linha continua com 24px e o texto
+                 não sai do lugar em relação ao trilho nem ao contador. A área
+                 clicável avança 10px para cima, ainda 6px abaixo do trilho. */
+              className="-my-2.5 flex items-center gap-2 py-3.5 text-body-sm leading-none text-bone transition-colors hover:text-gold-lt"
             >
               {obrasScroll.verTodas}
               <ArrowUpRight aria-hidden className="size-4 shrink-0" strokeWidth={1} />
