@@ -28,7 +28,21 @@ export const telefone = {
 
    O wa.me quer só dígitos, com o DDI e sem o "+": derivado do mesmo número,
    para o link nunca divergir do telefone exibido. */
-export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}`;
+
+/* A conversa abre COM TEXTO ESCRITO. Chegar num campo vazio é o ponto em que
+   a pessoa trava e fecha; a primeira frase pronta tira esse atrito e já diz de
+   onde ela veio, o que ajuda quem atende.
+
+   ⚠ ESTE TEXTO É SÓ DOS LINKS DIRETOS — rodapé, menu, canais de /contato e
+   botão flutuante. O formulário de /contato NÃO passa por aqui: ele entrega
+   pela Server Action e não compõe mensagem de WhatsApp nenhuma (ver a seção
+   da ENTREGA em app/contato/actions.ts). Se um dia ele voltar a compor, a
+   mensagem dele é OUTRA, com os dados de quem preencheu — não esta, e nunca
+   as duas concatenadas. */
+export const whatsappMensagem =
+  "Olá! Vi o site da Império Construtora e tenho interesse em conhecer o trabalho de vocês. Podemos conversar sobre a minha obra?";
+
+export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}?text=${encodeURIComponent(whatsappMensagem)}`;
 
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 
