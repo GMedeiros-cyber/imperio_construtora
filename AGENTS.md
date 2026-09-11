@@ -40,6 +40,31 @@ por CSS sobre foto — o DESIGN.md proíbe overlay e o contraste já está
 resolvido na origem. Se trocar a foto, refaça o tratamento no arquivo e meça
 de novo.
 
+Todo tratamento é SCRIPT, nunca edição à mão, e lê de `imperio-originais/`,
+fora do repositório:
+- `scripts/trata-foto-hero.mjs` — as duas fotos da hero
+- `scripts/trata-fotos-faixa.mjs` — toda a mídia da faixa de paralaxe
+- `scripts/trata-foto-cta.mjs` — a foto da chamada final
+
+## Mídia da faixa de paralaxe — passa pelo script ANTES do commit
+⚠ Toda foto, pôster ou vídeo que for para `public/faixa/` tem de passar por
+`scripts/trata-fotos-faixa.mjs` antes de ser commitado. A manchete da faixa lê
+por `mix-blend-difference` e some contra meio-tom: mídia sem tratamento põe
+texto ilegível num site que está no ar.
+
+- **O alvo é ZERO**, não "melhorar": 0% da área dos glifos da manchete abaixo
+  de 3:1, na pior posição de rolagem, nas sete larguras. 8% é reprovado.
+- A curva é a do script e é uniforme: `saida = 72*(entrada/255)^0,75`.
+- ⚠ Os dois mp4 de hoje já foram re-codificados uma vez (eram WhatsApp 480p).
+  Quando chegar filmagem boa, trate O ORIGINAL — nunca re-trate o arquivo do
+  repositório.
+- `ffmpeg` NÃO é dependência do projeto. Para tratar vídeo, aponte o binário:
+  `FFMPEG=<caminho> node scripts/trata-fotos-faixa.mjs`.
+- O branch `midia-e-mobile` traz fotos novas da faixa SEM tratamento: quem
+  mesclar roda o script antes e remede.
+
+O porquê, com os números medidos, está no Desvio 9 do DESIGN.md.
+
 ## Verificação obrigatória
 Toda mudança visual é medida, não estimada:
 - contraste em 360, 390, 768, 1440 e 1920 — 4,5:1 para texto normal, 3:1 para

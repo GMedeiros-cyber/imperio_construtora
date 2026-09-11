@@ -5,8 +5,39 @@
  *   node scripts/trata-fotos-faixa.mjs [pasta-de-origem] [teto] [gama]
  *   (padrão: C:/Users/gabri/OneDrive/Desktop/imperio-originais/faixa, 72, 0.75)
  *
- * Os vídeos precisam de um ffmpeg; o caminho vem de FFMPEG no ambiente, ou do
- * `ffmpeg` do PATH. Sem ele o script trata as imagens, avisa e sai com erro.
+ * ══ REGRA, E NÃO SUGESTÃO ══
+ *
+ * ⚠ TODA foto, pôster ou vídeo que for entrar em public/faixa/ passa por aqui
+ * ANTES de ser commitado. Mídia sem tratamento devolve a manchete da faixa
+ * para dentro da zona de falha do mix-blend-difference, num site que está no
+ * ar. O alvo de aceite é ZERO: 0% da área dos glifos da manchete abaixo de
+ * 3:1, na pior posição de rolagem, nas sete larguras de verificação. "Caiu de
+ * 35% para 8%" é reprovado. Ver o Desvio 9 do DESIGN.md e a seção de mídia da
+ * faixa no AGENTS.md.
+ *
+ * ══ DE ONDE ELE LÊ ══
+ *
+ * Da pasta de ORIGINAIS, fora do repositório:
+ * C:/Users/gabri/OneDrive/Desktop/imperio-originais/faixa. É de propósito: se
+ * lesse de public/faixa/, cada execução escureceria o arquivo já escuro e o
+ * resultado não voltaria atrás. O que está lá hoje é a cópia do que estava
+ * versionado ANTES do tratamento — estas mídias não têm original de verdade
+ * (as fotos vieram de dentro de um PDF, os vídeos são WhatsApp a 480p).
+ *
+ * ⚠ QUANDO CHEGAR MÍDIA BOA, ponha o arquivo bruto naquela pasta e rode o
+ * script a partir dele. NUNCA re-trate o que já está em public/faixa/: os dois
+ * mp4 de hoje já carregam duas gerações de perda (compressão do WhatsApp mais
+ * esta recodificação), e uma terceira não se desfaz.
+ *
+ * ══ ffmpeg NÃO É DEPENDÊNCIA DO PROJETO ══
+ *
+ * Ele não está no package.json e não precisa estar: só os vídeos passam por
+ * ele. Quem for tratar vídeo aponta o binário —
+ *
+ *   FFMPEG=<caminho do ffmpeg> node scripts/trata-fotos-faixa.mjs
+ *
+ * — ou deixa um `ffmpeg` no PATH. Sem isso o script trata as imagens, avisa e
+ * sai com erro, em vez de deixar vídeo claro passando por trás do texto.
  *
  * ══ POR QUE ESTE SCRIPT EXISTE ══
  *

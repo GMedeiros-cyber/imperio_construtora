@@ -664,3 +664,39 @@ primeira a quebrar.
 story; o que está em `imperio-originais/faixa` é a cópia do que estava
 versionado antes do tratamento. Quando o cliente mandar os originais, ponha-os
 lá, rode o script e remeça as sete larguras.
+
+#### A REGRA QUE FICA: nenhuma mídia entra na faixa sem passar pelo script
+
+⚠ **Toda foto, pôster ou vídeo que for entrar em `public/faixa/` passa por
+`scripts/trata-fotos-faixa.mjs` ANTES de ser commitado.** Não é recomendação: a
+manchete sticky atravessa toda a mídia da faixa, e mídia sem tratamento traz o
+texto de volta para dentro da zona de falha do `mix-blend-difference` — num site
+que está no ar.
+
+Três coisas valem junto com isso:
+
+1. **O alvo é ZERO, não "melhorar".** A medição é o percentual da ÁREA DOS
+   GLIFOS da manchete abaixo de 3:1, na pior posição de rolagem de cada uma das
+   sete larguras. O critério de aceite é 0% nas sete. "Caiu de 35% para 8%" é
+   reprovado.
+2. **A curva é a do script, uniforme:** `saida = 72 * (entrada/255)^0,75`, por
+   canal, gravada no arquivo. Nada de overlay, gradiente ou filter por CSS —
+   nem "só nesta foto".
+3. **O branch `midia-e-mobile` traz fotos novas para a faixa.** Elas NÃO estão
+   tratadas. Quem mesclar aquele branch roda o script sobre elas antes, e
+   remede.
+
+#### ⚠ OS DOIS VÍDEOS JÁ PERDERAM DUAS GERAÇÕES
+
+`obra-video-1.mp4` e `obra-video-2.mp4` são arquivos de WhatsApp a 480p — já
+comprimidos na origem — e o tratamento os RE-CODIFICOU. São duas gerações de
+perda sobre uma resolução que já amplia mais de 2x no celular (a coluna do
+mobile mede 171px e o arquivo tem 480px de largura; a 767px em DPR 3 a
+ampliação chega a 2,14x). O `crf 20` do script não é desperdício de bytes: é o
+que impede a decodificação de estourar o teto de 72 e devolver o texto à zona
+de falha.
+
+**Quando a filmagem boa chegar, trate O ORIGINAL.** Ponha o arquivo bruto em
+`imperio-originais/faixa/` e rode o script a partir dele. NUNCA re-trate os
+mp4 que estão no repositório hoje: seria a terceira geração de perda sobre a
+segunda, e o resultado não volta atrás. O mesmo vale para as três fotos.
