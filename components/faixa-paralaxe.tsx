@@ -3,7 +3,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { colunasParalaxe, faixaParalaxe } from "@/lib/dados";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
@@ -30,6 +30,31 @@ export function FaixaParalaxe() {
   const secao = useRef<HTMLElement>(null);
   const wraps = useRef<(HTMLDivElement | null)[]>([]);
   const reduzido = useMovimentoReduzido();
+  /* O src dos vídeos só entra quando a seção chega a uma tela de distância.
+     Com o src no HTML, o autoPlay passava por cima do preload="metadata" e a
+     home baixava os dois vídeos inteiros (1.626 KB, medidos) antes de o leitor
+     sair da hero. Até aqui, o pôster é o cartão: <video> sem src mostra o
+     pôster, então não fica buraco no lugar enquanto o arquivo chega. */
+  const [perto, setPerto] = useState(false);
+
+  useEffect(() => {
+    const raiz = secao.current;
+    if (!raiz) return;
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((entrada) => entrada.isIntersecting)) {
+          setPerto(true);
+          observador.disconnect();
+        }
+      },
+      /* Uma tela inteira de antecedência nos dois sentidos: quem desce chega
+         com o vídeo já tocando, e quem cai no meio da página por âncora
+         também dispara. */
+      { rootMargin: "100% 0px" },
+    );
+    observador.observe(raiz);
+    return () => observador.disconnect();
+  }, []);
 
   useEffect(() => {
     /* Com a preferência ativa não se cria gatilho nenhum: as colunas ficam na
@@ -145,9 +170,13 @@ export function FaixaParalaxe() {
                          mp4: só handler "vide", nenhum "soun". O muted fica
                          assim mesmo, porque é ele que as políticas de
                          autoplay dos navegadores exigem, não a ausência da
-                         trilha. */
+                         trilha.
+
+                         Com movimento reduzido o src nunca entra: o pôster
+                         é o primeiro quadro, e baixar um vídeo que vai ficar
+                         parado nele é peso à toa. */
                       <video
-                        src={coluna.midia.src}
+                        src={perto && !reduzido ? coluna.midia.src : undefined}
                         poster={coluna.midia.poster}
                         autoPlay={!reduzido}
                         loop
