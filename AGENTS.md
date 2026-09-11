@@ -54,14 +54,19 @@ texto ilegível num site que está no ar.
 
 - **O alvo é ZERO**, não "melhorar": 0% da área dos glifos da manchete abaixo
   de 3:1, na pior posição de rolagem, nas sete larguras. 8% é reprovado.
+- **Slot com ciclo: o alvo vale para CADA QUADRO**, não para o primeiro. E
+  "área do glifo" é pixel com cobertura >= 0,95 — medir por diferença bruta põe
+  a franja do antialias na conta e devolve 19% a 31% de uma tela que passa.
+  Ver o Desvio 10 do DESIGN.md.
 - A curva é a do script e é uniforme: `saida = 72*(entrada/255)^0,75`.
 - ⚠ Os dois mp4 de hoje já foram re-codificados uma vez (eram WhatsApp 480p).
   Quando chegar filmagem boa, trate O ORIGINAL — nunca re-trate o arquivo do
   repositório.
 - `ffmpeg` NÃO é dependência do projeto. Para tratar vídeo, aponte o binário:
   `FFMPEG=<caminho> node scripts/trata-fotos-faixa.mjs`.
-- O branch `midia-e-mobile` traz fotos novas da faixa SEM tratamento: quem
-  mesclar roda o script antes e remede.
+- As nove fotos novas da faixa já entraram, tratadas. O branch
+  `midia-e-mobile` continua com as versões CRUAS — não mescle: ele
+  sobrescreveria as tratadas com as originais.
 
 O porquê, com os números medidos, está no Desvio 9 do DESIGN.md.
 

@@ -1,6 +1,6 @@
 /**
- * Escurece TODA a mídia da faixa de paralaxe — as três fotos, os dois pôsteres,
- * os dois vídeos e o placeholder — gravando o tratamento NO ARQUIVO.
+ * Escurece TODA a mídia da faixa de paralaxe — as doze fotos, os dois pôsteres
+ * e os dois vídeos — gravando o tratamento NO ARQUIVO.
  *
  *   node scripts/trata-fotos-faixa.mjs [pasta-de-origem] [teto] [gama]
  *   (padrão: C:/Users/gabri/OneDrive/Desktop/imperio-originais/faixa, 72, 0.75)
@@ -114,6 +114,14 @@ if (!fs.existsSync(origem)) {
    canais, e assim imagem e vídeo aplicam exatamente o mesmo número. */
 const CURVA = Array.from({ length: 256 }, (_, v) => Math.round(TETO * Math.pow(v / 255, GAMA)));
 
+/* ⚠ A LISTA É A FONTE DA VERDADE DO QUE ESTÁ TRATADO. Entrou foto nova em
+   public/faixa/, o nome entra aqui no MESMO commit — é este arquivo que
+   responde "esta mídia passou pelo script?".
+
+   webp: true só nas cinco que já vinham assim. O next/image converte sozinho
+   (serve /_next/image?url=…jpg&…), e nada no projeto aponta para um .webp de
+   /faixa — os que existem são resto de antes do otimizador. As fotos novas
+   saem só em jpg para não somar arquivo morto ao repositório. */
 const FOTOS = [
   { arquivo: "analia-franco.jpg", webp: true },
   { arquivo: "casa-em-obra.jpg", webp: true },
@@ -122,14 +130,32 @@ const FOTOS = [
      arquivo não chega — têm de receber o mesmo tratamento. */
   { arquivo: "obra-video-1-poster.jpg", webp: false },
   { arquivo: "obra-video-2-poster.jpg", webp: false },
+
+  /* ── As nove que entraram com o ciclo dentro do slot ────────────────────
+     Oito são da MESMA residência e uma é a loja de São Mateus. O agrupamento
+     por assunto está em lib/dados.ts, junto de cada slot. Todas passam pela
+     mesma curva: quem cicla atrás da manchete tem de passar no alvo de 0% em
+     TODO quadro, não só no primeiro. */
+  { arquivo: "residencia-corredor.jpg", webp: false },
+  { arquivo: "residencia-fachada-noite.jpg", webp: false },
+  { arquivo: "residencia-entrada-noite.jpg", webp: false },
+  { arquivo: "residencia-garagem.jpg", webp: false },
+  { arquivo: "residencia-fundos.jpg", webp: false },
+  { arquivo: "residencia-porta.jpg", webp: false },
+  { arquivo: "residencia-escada-noite.jpg", webp: false },
+  { arquivo: "residencia-cozinha.jpg", webp: false },
+  { arquivo: "authentic-feet-sao-mateus.jpg", webp: false },
 ];
 
 const VIDEOS = ["obra-video-1.mp4", "obra-video-2.mp4"];
 
-/* O placeholder é gráfico, não foto: a chapa graphite é o que passa atrás da
-   manchete, e os rótulos em bone continuam bone (escurecê-los só pioraria a
-   leitura dentro do próprio cartão). */
-const PLACEHOLDER = "placeholder-5.svg";
+/* ⚠ O PLACEHOLDER SAIU. placeholder-5.svg era a marcação do slot 5, que hoje
+   tem a foto da loja de São Mateus. O arquivo foi apagado de public/faixa/ e
+   continua na pasta de originais, caso algum slot volte a ficar sem foto: o
+   tratamento dele era a curva aplicada a TODAS as cores do SVG, inclusive os
+   rótulos em bone — toda borda entre claro e escuro atravessa a faixa de
+   falha no antialias, e eram 0,05% da área dos glifos a 1440px. Está no
+   Desvio 9 do DESIGN.md. */
 
 function aplica(dados, canais) {
   for (let i = 0; i < dados.length; i += canais) {
@@ -166,25 +192,6 @@ for (const foto of FOTOS) {
   }
   relatorio.push({ arquivo: foto.arquivo, px: `${info.width}x${info.height}`, maxCanal: max, medio: Math.round(soma / n) });
 }
-
-/* Placeholder: a curva vai em TODAS as cores, não só na chapa.
-   Os rótulos em bone eram o único ponto claro dentro da mídia, e toda borda
-   entre claro e escuro ATRAVESSA a faixa de falha no antialias — medido, 0,05%
-   da área dos glifos da manchete a 1440px vinham exatamente daí. Com tudo
-   abaixo do teto, o degrau some. O preço é que "FOTO PENDENTE" e o "05" ficam
-   fracos dentro do cartão; é marcação de trabalho, some quando a foto chegar. */
-const svg = fs.readFileSync(path.join(origem, PLACEHOLDER), "utf8");
-const trocas = [];
-const svgTratado = svg.replace(/fill="#([0-9A-Fa-f]{6})"/g, (_, hex) => {
-  const novo = hex
-    .match(/../g)
-    .map((h) => CURVA[parseInt(h, 16)].toString(16).padStart(2, "0").toUpperCase())
-    .join("");
-  trocas.push(`#${hex}->#${novo}`);
-  return `fill="#${novo}"`;
-});
-fs.writeFileSync(path.join(destino, PLACEHOLDER), svgTratado);
-relatorio.push({ arquivo: PLACEHOLDER, px: "213x266", chapa: trocas.join(" ") });
 
 /* ── Vídeos ──────────────────────────────────────────────────────────────
    lutrgb com a MESMA curva das fotos. -an porque os arquivos da faixa não têm

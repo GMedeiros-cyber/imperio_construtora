@@ -9,6 +9,80 @@ import { colunasParalaxe, faixaParalaxe } from "@/lib/dados";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
 import { cn } from "@/lib/utils";
 
+/** Tempo de cada quadro do ciclo. */
+const INTERVALO = 2000;
+/** Duração da fusão entre um quadro e o seguinte. */
+const FUSAO = 700;
+
+/**
+ * O ciclo de fotos DENTRO de um slot.
+ *
+ * Os quadros ficam todos empilhados em absoluto e só a opacidade muda: trocar
+ * o src de uma <img> só daria um piscar de fundo enquanto o arquivo novo
+ * chega, e aqui o fundo é a manchete lendo por difference.
+ *
+ * ⚠ A FUSÃO NÃO ABRE BURACO CLARO. Durante os 700ms o pixel composto é uma
+ * mistura entre dois quadros e o ink — e o script de tratamento põe TODO canal
+ * de TODO quadro em 72 ou menos. Mistura de valores ≤72 com o ink (10) nunca
+ * sobe acima de 72, então o alvo de 0% vale também no meio da transição, não
+ * só nos quadros parados.
+ *
+ * ⚠ O QUADRO 1 É O ÚNICO QUE EXISTE NO HTML INICIAL. Os demais só entram na
+ * árvore quando "carrega" vira true, a uma tela de distância — a mesma
+ * condição do src dos vídeos. Sem isso o navegador baixaria nove fotos ainda
+ * na hero. Com movimento reduzido "carrega" nunca vira true: não adianta não
+ * ciclar se o peso das fotos do ciclo desce do mesmo jeito.
+ */
+function CicloDeFotos({
+  quadros,
+  carrega,
+  ativo,
+}: {
+  quadros: readonly string[];
+  carrega: boolean;
+  ativo: boolean;
+}) {
+  const [indice, setIndice] = useState(0);
+
+  useEffect(() => {
+    if (!ativo || quadros.length < 2) return;
+    const id = setInterval(
+      () => setIndice((anterior) => (anterior + 1) % quadros.length),
+      INTERVALO,
+    );
+    return () => clearInterval(id);
+  }, [ativo, quadros.length]);
+
+  /* Com movimento reduzido, ou com a seção fora da tela, o ciclo para ONDE
+     ESTÁ; quem nunca viu a faixa continua no quadro 1. Voltar ao 0 no
+     "ativo=false" faria a foto pular para quem só passou o dedo. */
+  return (
+    <div data-midia aria-hidden className="absolute inset-0 z-[2]">
+      {quadros.map((src, posicao) =>
+        posicao === 0 || carrega ? (
+          <Image
+            key={src}
+            src={src}
+            alt=""
+            fill
+            /* SVG passa longe do otimizador; foto real, não. */
+            unoptimized={src.endsWith(".svg")}
+            /* 45vw abaixo de 768: na vertente de duas colunas a mídia mede
+               ~44vw, e os 25vw antigos serviam a uma coluna de 77px que não
+               existe mais. */
+            sizes="(max-width: 767.98px) 45vw, 17vw"
+            style={{ transitionDuration: `${FUSAO}ms` }}
+            className={cn(
+              "object-cover transition-opacity ease-linear",
+              posicao === indice ? "opacity-100" : "opacity-0",
+            )}
+          />
+        ) : null,
+      )}
+    </div>
+  );
+}
+
 /**
  * BLOCO 5b — Faixa de paralaxe
  * Seis colunas de imagem alternando com cinco divisores de 1px, cada coluna
@@ -36,6 +110,11 @@ export function FaixaParalaxe() {
      sair da hero. Até aqui, o pôster é o cartão: <video> sem src mostra o
      pôster, então não fica buraco no lugar enquanto o arquivo chega. */
   const [perto, setPerto] = useState(false);
+  /* Separado do "perto": aquele é de UMA TELA de antecedência e nunca volta a
+     false; este é a seção realmente na tela, e liga e desliga. É ele que
+     manda no ciclo — timer rodando com a faixa fora de vista é bateria e
+     re-render por nada. */
+  const [naTela, setNaTela] = useState(false);
 
   useEffect(() => {
     const raiz = secao.current;
@@ -51,6 +130,16 @@ export function FaixaParalaxe() {
          com o vídeo já tocando, e quem cai no meio da página por âncora
          também dispara. */
       { rootMargin: "100% 0px" },
+    );
+    observador.observe(raiz);
+    return () => observador.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const raiz = secao.current;
+    if (!raiz) return;
+    const observador = new IntersectionObserver(
+      (entradas) => setNaTela(entradas.some((entrada) => entrada.isIntersecting)),
     );
     observador.observe(raiz);
     return () => observador.disconnect();
@@ -101,9 +190,11 @@ export function FaixaParalaxe() {
             scrollTrigger: gatilho,
           });
 
-          /* "img, video": o slot pode trazer qualquer um dos dois, e o
-             deslocamento interno da mídia é o mesmo nos dois casos. */
-          const midia = wrap.querySelector("img, video");
+          /* [data-midia] e não "img, video": com o ciclo, o slot tem VÁRIAS
+             <img> empilhadas, e querySelector pegaria só a primeira — as
+             outras ficariam paradas enquanto a de baixo desliza. O atributo
+             marca o contêiner único, que existe nos dois casos. */
+          const midia = wrap.querySelector<HTMLElement>("[data-midia]");
           if (midia && interno !== 0) {
             gsap.fromTo(
               midia,
@@ -215,6 +306,7 @@ export function FaixaParalaxe() {
                          é o primeiro quadro, e baixar um vídeo que vai ficar
                          parado nele é peso à toa. */
                       <video
+                        data-midia
                         src={perto && !reduzido ? coluna.midia.src : undefined}
                         poster={coluna.midia.poster}
                         autoPlay={!reduzido}
@@ -226,17 +318,16 @@ export function FaixaParalaxe() {
                         className="absolute inset-0 z-[2] size-full object-cover"
                       />
                     ) : (
-                      <Image
-                        src={coluna.midia.src}
-                        alt=""
-                        fill
-                        /* SVG passa longe do otimizador; foto real, não. */
-                        unoptimized={coluna.midia.src.endsWith(".svg")}
-                        /* 45vw abaixo de 768: na vertente de duas colunas a
-                           mídia mede ~44vw, e os 25vw antigos serviam a uma
-                           coluna de 77px que não existe mais. */
-                        sizes="(max-width: 767.98px) 45vw, 17vw"
-                        className="z-[2] object-cover"
+                      <CicloDeFotos
+                        quadros={[coluna.midia.src, ...(coluna.midia.ciclo ?? [])]}
+                        /* !reduzido também no CARREGA, e não só no ativo:
+                           com a preferência ligada o ciclo já não andava, mas
+                           os quadros 2 em diante entravam na árvore assim
+                           mesmo e o navegador baixava as nove — medido. Quem
+                           pediu movimento reduzido vê o quadro 1 e só paga
+                           por ele. */
+                        carrega={perto && !reduzido}
+                        ativo={naTela && !reduzido}
                       />
                     )}
                   </div>

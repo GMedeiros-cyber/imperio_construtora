@@ -647,12 +647,13 @@ com a curva ela fica em 25 e o vão da janela continua lendo. Médias depois do
 tratamento, em 255: analia-franco 47, casa-em-obra 44, interior-obra 25,
 pôsteres 52 e 47.
 
-**O placeholder também.** `placeholder-5.svg` teve a chapa e OS RÓTULOS
-escurecidos (`#5C5A55`→`#222120`, `#FAF8F2`→`#474745`). Os rótulos em bone eram
-o único ponto claro dentro da mídia, e toda borda entre claro e escuro atravessa
-a faixa de falha no antialias: 0,05% da área dos glifos a 1440px vinham dali. O
-preço é que "FOTO PENDENTE" e o "05" ficam fracos dentro do cartão — é marcação
-de trabalho, some quando a foto chegar.
+**O placeholder também — e ele já saiu.** `placeholder-5.svg` teve a chapa e OS
+RÓTULOS escurecidos (`#5C5A55`→`#222120`, `#FAF8F2`→`#474745`). Os rótulos em
+bone eram o único ponto claro dentro da mídia, e toda borda entre claro e escuro
+atravessa a faixa de falha no antialias: 0,05% da área dos glifos a 1440px
+vinham dali. O arquivo foi apagado de `public/faixa/` no Desvio 10, quando o
+slot 5 ganhou a foto da loja; continua em `imperio-originais/faixa` caso algum
+slot volte a ficar sem foto.
 
 **O preço, e o que fica de regra.** A faixa ficou nitidamente mais escura: é o
 vale escuro entre os dois blooms dourados, e agora ela é isso de fato. As fotos
@@ -682,9 +683,10 @@ Três coisas valem junto com isso:
 2. **A curva é a do script, uniforme:** `saida = 72 * (entrada/255)^0,75`, por
    canal, gravada no arquivo. Nada de overlay, gradiente ou filter por CSS —
    nem "só nesta foto".
-3. **O branch `midia-e-mobile` traz fotos novas para a faixa.** Elas NÃO estão
-   tratadas. Quem mesclar aquele branch roda o script sobre elas antes, e
-   remede.
+3. **As nove fotos novas vieram do branch `midia-e-mobile` SEM tratamento** e
+   entraram por aqui: foram copiadas para `imperio-originais/faixa`, passaram
+   pelo script e só então foram para `public/faixa/`. O branch continua com as
+   versões cruas — não mescle aquele branch, ele sobrescreveria as tratadas.
 
 #### ⚠ OS DOIS VÍDEOS JÁ PERDERAM DUAS GERAÇÕES
 
@@ -700,3 +702,149 @@ de falha.
 `imperio-originais/faixa/` e rode o script a partir dele. NUNCA re-trate os
 mp4 que estão no repositório hoje: seria a terceira geração de perda sobre a
 segunda, e o resultado não volta atrás. O mesmo vale para as três fotos.
+
+### 10. Cada slot de foto da faixa vira um ciclo de fotos
+
+**O desvio:** cada coluna de FOTO da faixa de paralaxe deixou de ser uma imagem
+parada e passa a alternar entre as fotos daquele assunto, 2s por quadro, com
+fusão de 700ms. Não é um slot novo: a coluna, a proporção e a velocidade são as
+mesmas, muda o que está dentro dela. Os dois slots de VÍDEO continuam vídeo.
+
+**Por que os vídeos ficam vídeo.** Alternar filme com foto parada no mesmo
+retângulo não lê como edição, lê como falha de carregamento: o movimento para
+por 2s e volta. Além disso o `<video>` é `loop` e `autoPlay` — escondê-lo por
+2s o deixa tocando por trás sem ninguém ver, ou obriga a pausar e retomar, e o
+retomar re-busca buffer. E os dois vídeos são o único assunto "obra em
+andamento" em movimento que a faixa tem.
+
+**O agrupamento.** Nove fotos entraram; oito são da MESMA residência e uma é a
+loja de São Mateus. O assunto de cada slot é o par ANTES/DEPOIS do mesmo tipo de
+espaço — é o que a faixa conta:
+
+| slot | proporção | assunto | quadros |
+|---|---|---|---|
+| 1 | 213/352 | obra em andamento | `obra-video-2` — **vídeo, sem ciclo** |
+| 2 | 213/435 | obra em andamento | `obra-video-1` — **vídeo, sem ciclo** |
+| 3 | 213/261 | a casa por fora | `casa-em-obra` · `residencia-corredor` · `residencia-fachada-noite` · `residencia-entrada-noite` |
+| 4 | 213/132 | quadro largo, área externa | `analia-franco` · `residencia-garagem` · `residencia-fundos` |
+| 5 | 213/132 | a loja | `authentic-feet-sao-mateus` — **quadro único** |
+| 6 | 213/287 | por dentro | `interior-obra` · `residencia-porta` · `residencia-escada-noite` · `residencia-cozinha` |
+
+**Por que a loja não entra em ciclo.** `authentic-feet-sao-mateus` é outro
+cliente e outro tipo de obra. Alternando com a residência, as duas passariam a
+ler como a mesma obra. Ela é quadro único — e é ela que tira o
+`placeholder-5.svg` do ar, o último slot sem foto real. A proporção do slot 5
+mudou de 213/266 para 213/132 por causa dela: a foto é 828x512, paisagem 1,62, e
+recortada para os 0,80 da caixa antiga sairia com 410px de largura contra os 430
+que a coluna de 215px pede em DPR 2 a 1440px. Mudar a caixa não custa nada
+porque o slot 5 é `escondeMobile` — a geometria de duas colunas do celular não
+sente.
+
+**A proporção manda na lista.** Todo quadro de um mesmo slot cai na mesma caixa
+com `object-cover`: só entram fotos com a proporção do `classeWrap`, ±1%. Foto de
+outra proporção não "cabe com um recortinho" — ela perde de 20% a 40% do quadro
+e vira outra foto.
+
+**⚠ O ALVO DE 0% VALE PARA CADA QUADRO, NÃO PARA O PRIMEIRO.** A manchete é
+sticky e cada quadro atravessa a tela inteira por baixo dela. Medido com cada
+quadro forçado na tela, em 9 posições de rolagem por largura, nas sete larguras
+— 252 amostras, cada uma com dois prints (com e sem a manchete):
+
+| quadro | 360 | 390 | 414 | 768 | 992 | 1440 | 1920 |
+|---|---|---|---|---|---|---|---|
+| 1 | 0% | 0% | 0% | 0% | 0% | 0% | 0% |
+| 2 | 0% | 0% | 0% | 0% | 0% | 0% | 0% |
+| 3 | 0% | 0% | 0% | 0% | 0% | 0% | 0% |
+| 4 | 0% | 0% | 0% | 0% | 0% | 0% | 0% |
+
+Pior razão de um pixel de glifo em toda a varredura: **4,78:1** (360px, quadro
+4), contra os 3:1 exigidos.
+
+**⚠ ÁREA DO GLIFO É COBERTURA >= 0,95, E NÃO DIFERENÇA BRUTA.** Com
+`mix-blend-difference` o pixel vale `fg = bg*(1−a) + |bone−bg|*a`, onde `a` é a
+cobertura do glifo naquele pixel. Medindo por diferença bruta, toda a franja do
+antialias entra como "área do glifo" — e franja é quase fundo, então ela mede
+perto de 1:1 sozinha. Medido nas mesmas amostras: com limiar de diferença bruta,
+19% a 31%; com cobertura >= 0,5, de 0,11% a 2,53%; com cobertura >= 0,95, 0%. Os
+três números descrevem a mesma tela. **O que conta é a cor que o texto pinta, não
+a rampa do antialias** — é o que a WCAG mede.
+
+**⚠ QUEM ESTOURA O TETO É O OTIMIZADOR, NÃO O SCRIPT.** O script grava 72 de
+canal máximo. O arquivo que a rede ENTREGA, redimensionado e re-codificado pelo
+`/_next/image`, chega a 92. Acima de 84 o texto composto cai de 3:1. Medido na
+área de cada arquivo entregue, no pior caso de largura e DPR:
+
+| foto | canal máx | área acima de 84 |
+|---|---|---|
+| `authentic-feet-sao-mateus` | 90 | 0,0063% |
+| `analia-franco` | 92 | 0,0059% |
+| `casa-em-obra` | 87 | 0,0022% |
+| `residencia-porta` | 90 | 0,0022% |
+| `residencia-garagem` | 89 | 0,0012% |
+| `residencia-fachada-noite` | 88 | 0,0011% |
+| `residencia-fundos` | 85 | 0,0007% |
+| `interior-obra` | 88 | 0,0002% |
+| as outras quatro | <= 84 | 0% |
+
+São pixels isolados de ringing em borda dura — dezenas de pixels num arquivo de
+750x464 — e nenhum deles caiu sob um glifo nas 252 amostras. Não é falha medida,
+é a margem que sobrou. Não é novidade desta rodada: `analia-franco` com 92 já
+estava no ar. Fechar isso pede baixar o TETO do script de 72 para ~64 e
+re-tratar TUDO, vídeos inclusive — e re-tratar vídeo é a terceira geração de
+perda que o Desvio 9 proíbe. Fica registrado, não aplicado.
+
+**⚠ RESOLUÇÃO: DUAS FOTOS AMPLIAM, E ENTRAM ASSIM MESMO.** A coluna mede 215px
+a 1440px, o que pede 430px de origem em DPR 2. Medido lendo os BYTES que a rede
+entregou (`naturalWidth` mente quando o srcset usa descritores `w`):
+
+| foto | origem | 1440/DPR2 (pede 430) | 1920/DPR2 (pede 590) | 390/DPR3 (pede 513) |
+|---|---|---|---|---|
+| `residencia-corredor` | 400px | amplia 1,07x | amplia 1,48x | amplia 1,28x |
+| `residencia-cozinha` | 414px | amplia 1,04x | amplia 1,43x | amplia 1,24x |
+| `casa-em-obra` | 469px | 1,09 | amplia 1,26x | amplia 1,09x |
+| `residencia-porta` | 488px | 1,13 | amplia 1,21x | 0,95 |
+| `residencia-garagem` | 628px | 1,46 | 1,06 | 1,22 |
+
+As duas entram. A 1440px em DPR 2 — o caso que a instrução citou — a ampliação é
+de 1,07x e 1,04x, uma ordem de grandeza abaixo do 1,5x que fez a foto do CTA ler
+como borrão. O caso ruim é 1920px em DPR 2, onde chega a 1,48x — mas lá
+`casa-em-obra`, que já estava no ar, amplia 1,26x pelo mesmo motivo. **Nada foi
+ampliado no arquivo para caber.** O conserto é original de verdade, não
+`resize`: estas fotos são captura de story.
+
+**O ciclo não disputa com o pin/scrub do GSAP.** Medido rolando a faixa inteira
+por `requestAnimationFrame` em 5s, 10 corridas ALTERNADAS com o ciclo rodando e
+com os timers mortos (no projeto só a faixa usa `setInterval`):
+
+| 1440px | quadros | perdidos | % |
+|---|---|---|---|
+| ciclo rodando | 2.966 | 34 | 1,13% |
+| ciclo parado | 2.944 | 56 | 1,87% |
+
+A diferença troca de sinal entre baterias — é ruído. A 390px em emulação, 23,5%
+contra 23,9%: o custo ali é o scrub, não o ciclo. **Nenhuma pausa durante a
+rolagem foi aplicada**, porque não há o que pausar: o timer dispara uma vez a
+cada 2s e a transição é de `opacity`, que roda no compositor.
+
+⚠ Uma bateria anterior, com as 5 corridas de A todas antes das 5 de B, deu 2,67%
+contra 1,20% e sugeriu contenção. Era deriva da máquina ao longo da bateria.
+**Teste A/B de desempenho se mede alternado**, nunca em bloco.
+
+**Pausa e movimento reduzido.** O ciclo só anda com a seção na viewport
+(`IntersectionObserver` separado do que libera o vídeo, porque aquele tem uma
+tela de antecedência e nunca volta a false). Com `prefers-reduced-motion` não há
+ciclo E os quadros 2 em diante nem entram na árvore: medido, sem essa segunda
+trava as nove fotos eram baixadas do mesmo jeito por quem nunca as veria.
+
+**Peso da home, produção, medido em bytes de rede:**
+
+| | antes | depois |
+|---|---|---|
+| 1440 inicial | 1.510 KB (419 de imagem) | 1.513 KB (419 de imagem) |
+| 1440 até o fim | 3.839 KB (887 de imagem) | 3.865 KB (910 de imagem) |
+| 390 inicial | 1.484 KB (393 de imagem) | 1.487 KB (393 de imagem) |
+| 390 até o fim | 3.752 KB (799 de imagem) | 3.791 KB (836 de imagem) |
+
+A carga inicial não mudou: os bytes de imagem são os mesmos e não há um único
+`residencia-*` no HTML servido. Nove fotos custaram de 23 a 37 KB no total,
+todas depois de a faixa chegar a uma tela de distância.

@@ -208,7 +208,14 @@ export const faixaParalaxe = {
 /* União discriminada, e não um campo "poster" opcional solto: assim o
    componente não tem como renderizar <video> sem pôster nem <img> com ele. */
 export type MidiaColuna =
-  | { tipo: "imagem"; src: string }
+  | {
+      tipo: "imagem";
+      /** Primeiro quadro. É o único que existe no HTML inicial. */
+      src: string;
+      /** Os DEMAIS quadros do ciclo, na ordem. Sem esta chave o slot é uma
+       *  foto parada. Ver o comentário do ciclo logo acima de colunasParalaxe. */
+      ciclo?: readonly string[];
+    }
   | { tipo: "video"; src: string; poster: string };
 
 export type ColunaParalaxe = {
@@ -220,7 +227,8 @@ export type ColunaParalaxe = {
   /** Velocidade do deslocamento; vira yPercent = velocidade * -50 no desktop
    *  e * -12 abaixo de 768px, onde a coluna é 2,2x mais larga. */
   velocidade: number;
-  /** Some abaixo de 768px. Só o slot sem foto real: no mobile são 5 mídias. */
+  /** Some abaixo de 768px: no celular a faixa são duas colunas e 5 mídias,
+   *  não 6. Hoje cai no slot da loja — o único assunto que não é da obra. */
   escondeMobile?: boolean;
 };
 
@@ -241,6 +249,43 @@ export type ColunaParalaxe = {
 
    As classes continuam escritas por extenso em cada slot, e não montadas a
    partir de constantes: o Tailwind lê o arquivo como texto. */
+
+/* ── O CICLO DENTRO DO SLOT ──────────────────────────────────────────────
+   Cada slot de FOTO troca de imagem a cada 2s, com fusão. Não é um slot novo:
+   a coluna, a proporção e a velocidade continuam as mesmas, muda o que está
+   dentro dela.
+
+   ⚠ O AGRUPAMENTO É POR ASSUNTO, e o assunto de cada slot é o par
+   ANTES/DEPOIS do mesmo tipo de espaço — é o que a faixa conta. Oito das nove
+   fotos novas são da MESMA residência; os nomes de arquivo dão o recorte:
+
+     slot 3 · a casa por fora     casa-em-obra (estrutura, laje crua)
+                                  residencia-corredor (a mesma fachada, de dia)
+                                  residencia-fachada-noite
+                                  residencia-entrada-noite
+     slot 4 · quadro largo, área externa
+                                  analia-franco (o terreno entre prédios)
+                                  residencia-garagem
+                                  residencia-fundos
+     slot 5 · a loja              authentic-feet-sao-mateus, SOZINHA
+     slot 6 · por dentro          interior-obra (contrapiso, vão cru)
+                                  residencia-porta
+                                  residencia-escada-noite
+                                  residencia-cozinha
+
+   ⚠ A LOJA NÃO ENTRA EM CICLO DE RESIDÊNCIA. authentic-feet-sao-mateus é
+   outro cliente e outro tipo de obra; alternar com a casa faria as duas
+   lerem como a mesma. Ela é quadro único — e é ela que tira o
+   placeholder-5.svg do ar, o último slot sem foto real.
+
+   ⚠ A PROPORÇÃO MANDA NA LISTA. Todo quadro de um mesmo slot cai na mesma
+   caixa com object-cover: só entram no ciclo fotos com a proporção do
+   classeWrap, ±1%. Foto de outra proporção não "cabe com um recortinho" —
+   ela perde 20% a 40% do quadro e vira outra foto.
+
+   ⚠ TODO QUADRO PASSA PELO scripts/trata-fotos-faixa.mjs. O alvo de 0% da
+   área dos glifos abaixo de 3:1 vale para CADA quadro, não para o primeiro:
+   a manchete é sticky e cada quadro atravessa a tela inteira por baixo dela. */
 
 export const colunasParalaxe: ColunaParalaxe[] = [
   {
@@ -266,29 +311,60 @@ export const colunasParalaxe: ColunaParalaxe[] = [
     velocidade: 7,
   },
   {
-    midia: { tipo: "imagem", src: "/faixa/casa-em-obra.jpg" },
+    /* A CASA POR FORA: a estrutura, e depois a mesma fachada pronta. */
+    midia: {
+      tipo: "imagem",
+      src: "/faixa/casa-em-obra.jpg",
+      ciclo: [
+        "/faixa/residencia-corredor.jpg",
+        "/faixa/residencia-fachada-noite.jpg",
+        "/faixa/residencia-entrada-noite.jpg",
+      ],
+    },
     classeColuna:
       "mt-[130vh] max-[768px]:absolute max-[768px]:left-0 max-[768px]:top-[180vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/261]",
     velocidade: 12,
   },
   {
-    midia: { tipo: "imagem", src: "/faixa/analia-franco.jpg" },
+    /* QUADRO LARGO: as áreas externas, o único slot em paisagem. */
+    midia: {
+      tipo: "imagem",
+      src: "/faixa/analia-franco.jpg",
+      ciclo: ["/faixa/residencia-garagem.jpg", "/faixa/residencia-fundos.jpg"],
+    },
     classeColuna:
       "mt-[80vh] max-[768px]:absolute max-[768px]:left-[calc(50%_+_8.5px)] max-[768px]:top-[230vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/132]",
     velocidade: 5,
   },
   {
-    /* Único slot ainda sem foto: placeholder graphite na proporção certa. */
-    midia: { tipo: "imagem", src: "/faixa/placeholder-5.svg" },
+    /* A LOJA. Era o último slot com placeholder. Quadro único: é outro
+       cliente, e alternar com a residência faria as duas lerem como uma só.
+
+       ⚠ A PROPORÇÃO MUDOU, de 213/266 para 213/132, e é por causa da foto:
+       a da loja é 828x512, paisagem 1,62. Recortada para os 0,80 da caixa
+       antiga ela sairia com 410px de largura, contra os 430 que a coluna de
+       215px pede em DPR 2 a 1440px e os 590 a 1920px — seria ampliação.
+       Mudar a caixa custa nada aqui: este slot é escondeMobile, então a
+       geometria de duas colunas do celular não sente. */
+    midia: { tipo: "imagem", src: "/faixa/authentic-feet-sao-mateus.jpg" },
     classeColuna: "mt-[110vh]",
-    classeWrap: "aspect-[213/266]",
+    classeWrap: "aspect-[213/132]",
     velocidade: 9,
     escondeMobile: true,
   },
   {
-    midia: { tipo: "imagem", src: "/faixa/interior-obra.jpg" },
+    /* POR DENTRO: o vão cru, e depois os mesmos ambientes acabados. */
+    midia: {
+      tipo: "imagem",
+      src: "/faixa/interior-obra.jpg",
+      ciclo: [
+        "/faixa/residencia-porta.jpg",
+        "/faixa/residencia-escada-noite.jpg",
+        "/faixa/residencia-cozinha.jpg",
+      ],
+    },
     classeColuna:
       "mt-[80vh] max-[768px]:absolute max-[768px]:left-0 max-[768px]:top-[330vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/287]",
