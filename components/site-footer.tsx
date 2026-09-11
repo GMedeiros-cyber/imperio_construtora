@@ -148,8 +148,31 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* ── Navegação: um landmark para as três colunas ───────────────── */}
-        <nav aria-label="Rodapé" className="grid grid-cols-2 gap-8 min-[600px]:grid-cols-3">
+        {/* ── Navegação: um landmark para as três colunas ─────────────────
+
+            ⚠ ABAIXO DE 640px AS COLUNAS EMPILHAM, E ABAIXO DE 768px O <nav>
+            TEM TETO DE LARGURA. Os dois existem pelo mesmo motivo: o botão
+            MENU é fixo no canto superior direito e, NO FIM DA ROLAGEM — que é
+            posição de repouso, não de trânsito —, a coluna Social parava
+            debaixo dele. MEDIDO: "SOCIAL" ficava 22px coberto e "Instagram"
+            35px a 360px, e 7 e 20px a 390px.
+
+            A reserva do botão é a largura dele mais o p-8 do invólucro fixo:
+            105,3 + 32 = 137,3px no celular. O teto de 9rem (144px) deixa
+            margem sobre esse número. Com uma coluna só, nenhum item precisa
+            quebrar para caber: "Como trabalhamos", o mais largo, mede 116px.
+
+            ⚠ AS TRÊS COLUNAS SÓ VOLTAM A 640px, E NÃO A 600. Dentro do teto,
+            a 600px cada coluna ficaria com 109px e "Como trabalhamos" (116px)
+            quebrava em duas linhas. A 640 sobram 122px por coluna e nada
+            quebra — MEDIDO em 600, 620, 639, 640, 767 e 768.
+
+            Não é padding-right global nem mexe no z-index do botão: o teto é
+            só deste <nav>, e as outras seções não se movem. */}
+        <nav
+          aria-label="Rodapé"
+          className="grid gap-8 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-3"
+        >
           <div>
             <h3 className={ROTULO} id="rodape-menu">
               Menu
