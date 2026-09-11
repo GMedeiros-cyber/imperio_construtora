@@ -81,8 +81,15 @@ function hrefDoRodape(href: string): string {
    O foco é `outline` e nunca `ring` — o `ring` do Tailwind é box-shadow, e o
    AGENTS.md proíbe box-shadow em qualquer elemento. */
 const ROTULO = "text-caption uppercase tracking-[0.1em] text-gold";
+
+/* ⚠ ALVO DE TOQUE DE 44px. O texto tem 18 a 20px de altura; sem piso, cada link
+   era um alvo de 18px no celular. `min-h-11 min-w-11` dá a caixa de 44×44 e o
+   items-center mantém o texto no meio dela. Por isso as listas daqui NÃO têm
+   gap: o respiro entre um item e outro já é a sobra da caixa de 44px, e somar
+   o gap-element de 8px esticaria a coluna à toa. */
+const ALVO = "inline-flex min-h-11 min-w-11 items-center";
 const LINK =
-  "text-body-sm text-bone transition-colors hover:text-gold-lt " +
+  `${ALVO} text-body-sm text-bone transition-colors hover:text-gold-lt ` +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk";
 
 export function SiteFooter() {
@@ -121,7 +128,7 @@ export function SiteFooter() {
                 o sistema não tem itálico. */}
             <address
               aria-labelledby="rodape-onde"
-              className="mt-4 flex flex-col gap-element not-italic"
+              className="mt-2 flex flex-col not-italic"
             >
               {/* WhatsApp, e não o protocolo tel — ver `whatsappUrl` em lib/dados.ts. */}
               <a
@@ -135,7 +142,8 @@ export function SiteFooter() {
               <a href={`mailto:${EMAIL}`} className={LINK}>
                 {EMAIL}
               </a>
-              <span className="text-body-sm text-ash">Guarulhos, SP</span>
+              {/* Não é link, mas mora na mesma pauta de 44px dos dois acima. */}
+              <span className={`${ALVO} text-body-sm text-ash`}>Guarulhos, SP</span>
             </address>
           </div>
         </div>
@@ -146,7 +154,7 @@ export function SiteFooter() {
             <h3 className={ROTULO} id="rodape-menu">
               Menu
             </h3>
-            <ul aria-labelledby="rodape-menu" className="mt-4 flex flex-col gap-element">
+            <ul aria-labelledby="rodape-menu" className="mt-2 flex flex-col">
               {MENU.map((item) => (
                 <li key={item.href}>
                   <Link href={hrefDoRodape(item.href)} className={LINK}>
@@ -161,7 +169,7 @@ export function SiteFooter() {
             <h3 className={ROTULO} id="rodape-social">
               Social
             </h3>
-            <ul aria-labelledby="rodape-social" className="mt-4 flex flex-col gap-element">
+            <ul aria-labelledby="rodape-social" className="mt-2 flex flex-col">
               <li>
                 <a
                   href={INSTAGRAM}
@@ -192,12 +200,12 @@ export function SiteFooter() {
             <h3 className={ROTULO} id="rodape-legal">
               Legal
             </h3>
-            <ul aria-labelledby="rodape-legal" className="mt-4 flex flex-col gap-element">
+            <ul aria-labelledby="rodape-legal" className="mt-2 flex flex-col">
               {/* ⚠ NÃO HÁ CNPJ NO PROJETO, e inventar um é falsificar registro
                   público. Fica o literal, na mesma convenção que o telefone
                   seguiu até ter número. Quando o CNPJ chegar, ele entra aqui;
                   se a decisão for não publicar, a coluna inteira sai. */}
-              <li className="text-body-sm text-ash">CNPJ (em definição)</li>
+              <li className={`${ALVO} text-body-sm text-ash`}>CNPJ (em definição)</li>
             </ul>
           </div>
         </nav>
@@ -222,7 +230,7 @@ export function SiteFooter() {
           href={creditos.url}
           target="_blank"
           rel="noopener"
-          className="text-caption text-ash transition-colors hover:text-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk"
+          className={`${ALVO} text-caption text-ash transition-colors hover:text-gold-lt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk`}
         >
           Desenvolvido por {creditos.autor}
         </a>
