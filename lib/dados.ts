@@ -49,8 +49,8 @@ export const hero = {
   logo: logoNav,
   logoAlt: "Império Construtora",
   manchete: ["Do plano ao detalhe.", "Do detalhe à", "excelência."],
-  paragrafo:
-    "Construção, reforma e gestão de obras com equipe própria, prazo fechado em contrato e orçamento blindado do início ao fim.",
+  /* A hero não tem frase de apoio: saiu a pedido e não volta. Manchete e
+     CTA bastam; o que a empresa faz está no "O que fazemos", logo abaixo. */
   cta: "Falar com a Império",
 } as const;
 

@@ -242,16 +242,29 @@ export function MenuHero() {
            text-menu em 14,875px. O ícone é size-[1em] e acompanha a fonte
            sozinho; conferido por medição nas duas mudanças.
 
+           ⚠ ABAIXO DE 768px o botão é ~30% menor, a pedido: 152,9×46,4 vira
+           105,3×44 — px 16, gap 8, fonte 12px. A LARGURA caiu 31%; a ALTURA
+           parou em 44px (−5%), porque 30% daria 32px e o alvo de toque tem
+           piso de 44. É o h-11 que segura esse piso: não troque por py.
+
            cursor-pointer porque <button> não ganha a mãozinha do navegador.
 
            ⚠ O FUNDO INK NÃO É ENFEITE. Fixo, o botão atravessa a página
            inteira, e a página tem faixas claras: medido atrás dele, o creme do
            carrossel de marcas e as fotos claras do "Como trabalhamos" dão
            1,00:1 contra o bone — o botão simplesmente sumia. Com a pastilha em
-           ink chapado o texto fica em 18,6:1 e a borda dourada em 7,0:1 em
-           qualquer ponto da rolagem. É também a paleta que o cliente pediu:
-           preto, dourado e a cor da letra. */
-        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill border border-gold bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
+           ink chapado o rótulo e o "+" ficam em 18,64:1 em qualquer ponto da
+           rolagem, medido em pixel.
+
+           ⚠ SEM ANEL DOURADO, A PEDIDO. O botão é ink chapado, sem borda. O
+           preço, MEDIDO nas 7 larguras com um anel de amostras a 2px fora da
+           pílula: o CONTORNO dá 1,00:1 sobre toda seção ink (obras, faixa,
+           "Como trabalhamos", rodapé) e fica abaixo de 3:1 na maior parte da
+           rolagem das outras; só se destaca sobre foto clara (céu da hero,
+           fotos das obras e da galeria). Quem identifica o botão é o rótulo.
+           Não devolva a borda nem acrescente sombra para "resolver" — está
+           reportado e é decisão do cliente. */
+        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone max-[768px]:h-11 max-[768px]:gap-2 max-[768px]:px-4 max-[768px]:py-0 max-[768px]:text-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
       >
         <span
           ref={textos}

@@ -61,12 +61,20 @@ const UNIFORMS_OURO = {
   u_offsetY: -0.1,
 };
 
+/* Anel de foco do alvo: o mesmo gold-lt com folga de 2px do estado estático
+   (components/ui/botao-contato.tsx), para o foco não mudar quando o shader
+   entra. */
+const FOCO =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt";
+
 interface LiquidMetalButtonProps {
   label?: string;
   href?: string;
   onClick?: () => void;
   width?: number;
   height?: number;
+  /** Corpo do rótulo em px. 14 é o do desktop; o celular usa 12. */
+  tamanhoRotulo?: number;
   className?: string;
 }
 
@@ -76,6 +84,7 @@ export function LiquidMetalButton({
   onClick,
   width = 232,
   height = 56,
+  tamanhoRotulo = 14,
   className,
 }: LiquidMetalButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -215,7 +224,9 @@ export function LiquidMetalButton({
     background: "transparent",
     border: "none",
     cursor: "pointer",
-    outline: "none",
+    /* SEM outline: "none" aqui. Ele sumia com o anel de foco do teclado — o
+       alvo é o único elemento focável do botão, e sem anel quem navega por
+       Tab não via onde estava. O anel vem da classe FOCO. */
     zIndex: 40,
     overflow: "hidden",
     borderRadius: "1440px",
@@ -245,7 +256,7 @@ export function LiquidMetalButton({
       >
         <span
           style={{
-            fontSize: "14px",
+            fontSize: `${tamanhoRotulo}px`,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "#FAF8F2",
@@ -301,6 +312,7 @@ export function LiquidMetalButton({
           onMouseEnter={aoEntrar}
           onMouseLeave={aoSair}
           style={estiloInterativo}
+          className={FOCO}
         >
           {conteudoInterativo}
         </a>
@@ -313,6 +325,7 @@ export function LiquidMetalButton({
           onMouseEnter={aoEntrar}
           onMouseLeave={aoSair}
           style={estiloInterativo}
+          className={FOCO}
         >
           {conteudoInterativo}
         </button>
