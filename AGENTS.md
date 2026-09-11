@@ -45,6 +45,7 @@ fora do repositório:
 - `scripts/trata-foto-hero.mjs` — as duas fotos da hero
 - `scripts/trata-fotos-faixa.mjs` — toda a mídia da faixa de paralaxe
 - `scripts/trata-foto-cta.mjs` — a foto da chamada final
+- `scripts/gera-icones.mjs` — favicon e apple-touch-icon, da logo do repo
 
 ## Mídia da faixa de paralaxe — passa pelo script ANTES do commit
 ⚠ Toda foto, pôster ou vídeo que for para `public/faixa/` tem de passar por

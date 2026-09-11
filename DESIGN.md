@@ -973,3 +973,104 @@ posições da página. Um segundo observador aqui seria código morto.
 
 O que sobra de latência de clique na home — 36ms contra 25ms com o WebGL negado
 — é o shader da HERO, que está na tela e é legítimo.
+
+### 13. O favicon é só a coroa, e o traço dela engorda nos tamanhos pequenos
+
+**O desvio:** o site não tinha ícone nenhum — sem `app/icon`, sem `favicon.ico`,
+sem `icons` no metadata. Agora tem, gerado da logo do repositório por
+`scripts/gera-icones.mjs`.
+
+**Só a coroa, não a palavra.** A logo é coroa + "IMPÉRIO" + "CONSTRUTORA". A
+palavra tem 7 letras em 160px: a 16px cada letra fica com 1,4px. A coroa é a
+parte que identifica a marca sem precisar ser lida.
+
+**⚠ A COROA SOZINHA TAMBÉM NÃO PASSAVA.** Medido no arquivo: ela mede 139x84 e
+o traço tem mediana de **7px — 5,0% da largura**. Reduzida a 16px com a margem
+do ladrilho, isso dá 0,63px de traço, e o resultado é que **nenhum pixel do
+ícone chega à cor cheia**:
+
+| tratamento | px de cor cheia a 16px | contraste do núcleo |
+|---|---|---|
+| a coroa como está na logo | **0 (0%)** | não existe núcleo |
+| engordada já no tamanho 16 | 20 (8%) | 6,61:1 — mas vira bolha |
+| silhueta cheia | 22 (9%) | 6,67:1 — perde o vão central |
+| **engordada na resolução grande** | **31 (12%)** | **7,01:1** |
+
+Tudo o que não tem pixel cheio é franja de antialias sobre o ink — e é
+exatamente isso que se lê como mancha.
+
+**A correção é engordar o traço NA RESOLUÇÃO GRANDE.** Um filtro de máximo
+sobre o alfa dos 139px, e só então a redução. Engordar já no tamanho pequeno
+fecha os vãos e a coroa vira bolha — testado, a 16px o vão central sumia.
+
+**O raio sai de conta, não de gosto:** quanto é preciso engordar para o traço
+final ter 1,4px cheios naquele tamanho. É espessura óptica — a mesma ideia de
+um tipo que engorda nos corpos pequenos:
+
+| tamanho | engorda | traço final | px de cor cheia | contraste |
+|---|---|---|---|---|
+| 16 | +4px | 1,45px | 31 (12%) | 7,01:1 |
+| 32 | +1px | 1,74px | 67 (7%) | 6,53:1 |
+| 48 | +0px | 2,03px | 95 (4%) | 6,69:1 |
+| 180 (apple) | +0px | 7,61px | 2.025 (6%) | 6,47:1 |
+| 192 | +0px | 8,12px | 2.292 (6%) | 6,47:1 |
+
+De 48px para cima o desenho é a coroa da logo, sem um pixel de alteração.
+
+**⚠ O LADRILHO É INK OPACO, E ISSO NÃO É GOSTO.** Dourado sobre transparente
+some numa das duas abas: `#B79653` sobre o creme de uma aba clara mede **2,7:1**,
+abaixo dos 3:1 de objeto gráfico — e a regra do projeto já diz que o dourado só
+vive sobre fundo escuro. Com o ladrilho `#0A0A0A` o ícone é o MESMO arquivo nas
+duas abas e a marca mede 6,5:1 sobre ele. Sem cantos arredondados de propósito:
+o iOS aplica a própria máscara no apple-touch-icon, e arredondar aqui deixaria
+borda dupla.
+
+**Onde ficam, e por que não pela convenção de arquivo.** O Next emite `<link>`
+tanto pelas convenções (`app/icon.png`, `app/apple-icon.png`) quanto pelo campo
+`icons` do metadata, e usar as duas duplica as tags. O campo no metadata é a
+fonte única; os arquivos ficam em `public/`. O `.ico` fica na RAIZ de `public/`
+porque é o caminho que o navegador pede sozinho quando não acha `<link>`.
+
+Conferido no build de produção, nas três rotas: quatro tags, sem duplicata, e
+os quatro arquivos respondem 200 com o content-type certo.
+
+**O manifest existe por causa do 192.** O `icone-192.png` é o tamanho que o
+Android usa no atalho da tela inicial, e quem o entrega é o web app manifest —
+sem manifest ele não tinha consumidor. As opções eram um `app/manifest.ts` de
+doze linhas ou tirar o 192; entrou o manifest, e por um motivo medido além do
+ícone: **sem `short_name`, o rótulo do atalho sai do `<title>` da home, que tem
+67 caracteres** e o Android corta em meia dúzia de letras. Com ele, o atalho
+chama "Império".
+
+**⚠ `display: "browser"`, e não `"standalone"`.** Com standalone o Chrome passa
+a oferecer "instalar aplicativo", e este é um site institucional de três
+páginas, não um app. Com "browser" o manifest continua dando nome, cor e ícone
+ao atalho, e nenhum navegador propõe instalação.
+
+**⚠ O `theme_color` do manifest NÃO virou `<meta name="theme-color">`.** O do
+manifest vale só no contexto do atalho; a meta tag pintaria a barra de endereço
+em toda visita. Medida a cor real dos 8px do topo de cada rota:
+
+| rota | topo |
+|---|---|
+| `/` | rgb(17, 60, 84) — o céu da foto da hero |
+| `/contato` | rgb(10, 10, 10) — ink |
+| `/privacidade` | rgb(250, 248, 242) — bone |
+
+As três discordam, então uma meta tag única erraria em pelo menos uma: na
+política, que é creme, a barra ficaria preta contra a página clara. O ink do
+manifest vale porque é a cor do atalho e da marca, não da barra de ninguém.
+
+**⚠ O ATALHO ABRE NA HOME, E ISSO FOI TESTADO, NÃO LIDO.** Quem respondeu foi o
+próprio Chrome, por `Page.getAppManifest`, visitando cada rota:
+
+| visitando | manifest que o Chrome resolveu | erros de parse | `start_url` resolvido |
+|---|---|---|---|
+| `/` | `/manifest.webmanifest` | 0 | a home |
+| `/contato` | `/manifest.webmanifest` | 0 | a home |
+| `/privacidade` | `/manifest.webmanifest` | 0 | a home |
+
+A coluna dos erros faz parte do teste: **manifest com erro de parse é
+descartado, e aí o atalho passa a abrir na URL corrente** — que é exatamente a
+falha que se queria descartar. O `scope` não é declarado de propósito: o padrão
+é o diretório do `start_url`, que aqui é `/` e cobre o site inteiro.

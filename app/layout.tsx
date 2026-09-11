@@ -29,6 +29,38 @@ export const metadata: Metadata = {
   alternates: { canonical: "./" },
   openGraph: { ...OPEN_GRAPH_BASE, url: "./" },
   twitter: { card: "summary_large_image" },
+
+  /* ══ ÍCONES ══
+
+     Declarados AQUI, e não pelas convenções de arquivo (app/icon.png,
+     app/apple-icon.png). As duas formas emitem <link>, e usar as duas ao mesmo
+     tempo duplica as tags; com o campo aqui, o metadata é a fonte única e os
+     arquivos ficam todos em public/, gerados por scripts/gera-icones.mjs.
+
+     O .ico fica na RAIZ de public/ de propósito: é o caminho que o navegador
+     pede sozinho quando não acha <link>, e assim ele responde nos dois
+     caminhos.
+
+     ⚠ O ÍCONE É SÓ A COROA, E COM O TRAÇO ENGORDADO NOS TAMANHOS PEQUENOS.
+     A logo inteira tem "IMPÉRIO" e "CONSTRUTORA": a 16px cada letra fica com
+     1,4px e vira ruído. E a coroa sozinha também não passava — o traço dela é
+     5,0% da largura, o que a 16px dá 0,63px e deixa ZERO pixels de cor cheia,
+     medido. O script engorda o traço na resolução grande, por tamanho, até o
+     traço final ter 1,4px. O porquê, com os números, está no cabeçalho do
+     script e no Desvio 13 do DESIGN.md.
+
+     ⚠ FUNDO INK OPACO, não transparente: dourado sobre o creme de uma aba
+     clara mede 2,7:1 e reprova os 3:1 de objeto gráfico — e o dourado só vive
+     sobre fundo escuro, que é regra do projeto. Com o ladrilho, o mesmo
+     arquivo serve aba clara e aba escura, e a marca mede 6,5:1 sobre ele. */
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/icones/icone-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icones/icone-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icones/apple-icon-180.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 /* ══ MARCAÇÃO DE NEGÓCIO LOCAL (JSON-LD) ══
