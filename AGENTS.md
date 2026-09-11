@@ -80,6 +80,11 @@ Toda mudança visual é medida, não estimada:
   navegador desenha e já custou uma rodada inteira de medição inválida
 - medir caixas de linha reais via Range.getClientRects, não o retângulo do
   parágrafo, que inclui área vazia
+- PESO é `encodedDataLength` (bytes no fio, comprimidos), e a LARGURA vai
+  junto do número. `body().length` mede o arquivo descomprimido e dá quase o
+  dobro: 785 KB no fio contra 1.513 KB decodificados na mesma home, a 1440px.
+  Trocar de métrica entre rodadas já fez o peso parecer dobrar sem nada ter
+  entrado. Ver o Desvio 10 do DESIGN.md.
 
 ## Trabalho em paralelo
 Quando houver duas sessões, cada uma é DONA EXCLUSIVA dos seus arquivos e não

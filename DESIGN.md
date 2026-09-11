@@ -688,6 +688,27 @@ Três coisas valem junto com isso:
    pelo script e só então foram para `public/faixa/`. O branch continua com as
    versões cruas — não mescle aquele branch, ele sobrescreveria as tratadas.
 
+#### ⚠ PESO SE MEDE NO FIO, E O NÚMERO VEM COM A LARGURA COLADA
+
+Duas rodadas reportaram o peso da home com métricas diferentes e o número
+pareceu dobrar sem nada ter entrado:
+
+| rodada | o que foi dito | o que era |
+|---|---|---|
+| vídeo sob demanda (`eb70ecc`) | "784 KB" | **390px**, `encodedDataLength` |
+| ciclo na faixa (`16f8166`) | "1.510 KB" | **1440px**, bytes decodificados |
+
+Os dois estavam certos e não se comparavam: larguras diferentes E métricas
+diferentes. Medido lado a lado no mesmo build, a 1440px: **785 KB no fio contra
+1.513 KB decodificado**. Na mesma métrica da rodada antiga, a home EMAGRECEU —
+854 KB para 785 a 1440px, e 784 para 759 a 390px, porque o motor de partículas
+saiu do bundle inicial e a mídia da faixa encolheu com o tratamento.
+
+**A regra: peso é `encodedDataLength`, e a largura vai junto do número.**
+`(await response.body()).length` mede o arquivo descomprimido e serve para
+outra coisa — saber o que o parser vai engolir —, nunca para dizer "a página
+pesa X".
+
 #### ⚠ OS DOIS VÍDEOS JÁ PERDERAM DUAS GERAÇÕES
 
 `obra-video-1.mp4` e `obra-video-2.mp4` são arquivos de WhatsApp a 480p — já
@@ -836,15 +857,18 @@ tela de antecedência e nunca volta a false). Com `prefers-reduced-motion` não 
 ciclo E os quadros 2 em diante nem entram na árvore: medido, sem essa segunda
 trava as nove fotos eram baixadas do mesmo jeito por quem nunca as veria.
 
-**Peso da home, produção, medido em bytes de rede:**
+**Peso da home, produção, sem cache.** ⚠ DUAS MÉTRICAS, e elas diferem por 2x:
+`encodedDataLength` é o que passou no fio (comprimido), `body().length` é o
+arquivo já descomprimido. Os 265 KB de script no fio são 815 KB decodificados —
+brotli, não conteúdo novo. **O número que se compara entre rodadas é o do fio.**
 
-| | antes | depois |
-|---|---|---|
-| 1440 inicial | 1.510 KB (419 de imagem) | 1.513 KB (419 de imagem) |
-| 1440 até o fim | 3.839 KB (887 de imagem) | 3.865 KB (910 de imagem) |
-| 390 inicial | 1.484 KB (393 de imagem) | 1.487 KB (393 de imagem) |
-| 390 até o fim | 3.752 KB (799 de imagem) | 3.791 KB (836 de imagem) |
+| | antes — fio | depois — fio | antes — decodif. | depois — decodif. |
+|---|---|---|---|---|
+| 1440 inicial | 784 KB | **785 KB** | 1.510 KB | 1.513 KB |
+| 1440 até o fim | 3.025 KB | 3.052 KB | 3.839 KB | 3.865 KB |
+| 390 inicial | 758 KB | **759 KB** | 1.484 KB | 1.487 KB |
+| 390 até o fim | 2.937 KB | 2.978 KB | 3.752 KB | 3.791 KB |
 
-A carga inicial não mudou: os bytes de imagem são os mesmos e não há um único
-`residencia-*` no HTML servido. Nove fotos custaram de 23 a 37 KB no total,
-todas depois de a faixa chegar a uma tela de distância.
+A carga inicial não mudou — 1 KB, ruído — e não há um único `residencia-*` no
+HTML servido. As nove fotos custaram 27 KB a 1440 e 41 KB a 390 no fio, todas
+depois de a faixa chegar a uma tela de distância.
