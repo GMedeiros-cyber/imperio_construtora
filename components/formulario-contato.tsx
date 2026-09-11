@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useId, useRef } from "react";
 
 import { enviarContato } from "@/app/contato/actions";
@@ -14,6 +15,20 @@ import {
 
 /* O formulário de /contato. Seis campos, um consentimento e um botão.
 
+   ══ ELE É CÓPIA DO FORMULÁRIO DA LDF ══
+
+   components/FormularioContato.tsx de lá, com as classes .form__* que moram na
+   seção "FORMULÁRIO DE CONTATO" do nosso app/globals.css. A estrutura do
+   markup é a mesma linha a linha; o que mudou foram os campos — Tipo de obra e
+   Estágio da obra no lugar de Ambiente —, a paleta e o que está listado no
+   cabeçalho daquela seção do CSS.
+
+   ⚠ O QUE NÃO VEIO DE LÁ, DE PROPÓSITO: o caminho de entrega por WhatsApp. Na
+   LDF, com JS, o botão intercepta o envio e abre o wa.me da empresa em vez de
+   postar na action. Aqui não: o pedido percorre um caminho só, a Server
+   Action, com e sem script. Ver o bloco da ENTREGA em app/contato/actions.ts.
+   Não reintroduza um `onSubmit` que desvie a action.
+
    ══ FUNCIONA SEM JAVASCRIPT, E ISSO É O EIXO DO ARQUIVO ══
 
    `useActionState` com uma Server Action é o único arranjo que dá as duas
@@ -21,19 +36,6 @@ import {
    devolve a página já com o resultado; com JS o mesmo estado volta sem
    navegação e sem recarregar. Não há dois caminhos de código — há um, e o
    script só melhora o que já funcionava.
-
-   É por isso que o componente é `"use client"` e mesmo assim não exige cliente
-   nenhum. O `"use client"` existe para o `useActionState` e para o carimbo de
-   tempo; tirar o script de cena não quebra nada, só apaga o estado "enviando".
-
-   ⚠ NÃO EXISTE `onSubmit` AQUI, e é a diferença mais importante em relação ao
-   projeto de origem. Lá, com JS, o botão interceptava o envio e abria o
-   WhatsApp da empresa em vez de postar na action. Aqui esse caminho saiu
-   inteiro quando ainda não havia número de telefone — hoje há, e ele NÃO foi
-   religado — e o formulário voltou a ser `<form action={acao}>` puro. Com e
-   sem script o pedido percorre exatamente o mesmo código, o que também
-   significa que o antispam do servidor cobre os dois. Não reintroduza um
-   `onSubmit` que desvie a action.
 
    ══ OS VALORES SOBREVIVEM AO ERRO ══
 
@@ -46,34 +48,20 @@ import {
 
    Tipo de obra e Estágio são GRUPOS de controles. Com `<fieldset><legend>`, o
    leitor de tela anuncia a pergunta do grupo antes de cada opção — "Tipo de
-   obra, Varejo e franquias, caixa de seleção, não marcada". Com um <p> por cima
-   de um monte de caixas, ele anuncia só "Varejo e franquias".
+   obra, Varejo e franquias, caixa de seleção, não marcada". Com um <p> por
+   cima de um monte de caixas, ele anuncia só "Varejo e franquias".
 
    E NÃO SÃO <select>. No celular, uma pastilha é um toque; um select é três —
    abrir, rolar, confirmar. Além disso o grupo de tipo é de múltipla escolha, e
    select múltiplo em telefone é dos piores controles que existem.
 
-   ══ FOCO É outline, NUNCA ring ══
+   ══ FOCO É outline, E O ANEL É OBRIGATÓRIO ══
 
-   O `ring` do Tailwind é implementado com box-shadow, e o AGENTS.md proíbe
-   box-shadow em qualquer elemento. Todo estado de foco daqui usa `outline`. */
+   Os campos não têm borda em repouso: quem preenche só sabe onde está pelo
+   anel de foco. Ele é `outline` em bone, o mesmo em campo, pastilha, aceite e
+   link da nota. */
 
 const ENVIANDO = "Enviando…";
-
-/* Campo de texto e área compartilham a mesma pele: fundo transparente sobre o
-   ink, hairline ash e canto reto — raio de 1440px é só de botão, pastilha e
-   tag. 16px no corpo do campo não é estética: abaixo disso o iOS dá zoom ao
-   focar o campo. */
-const PELE_CAMPO =
-  "w-full rounded-card border border-ash bg-transparent px-4 py-3 text-body text-bone " +
-  "placeholder:text-ash focus:border-gold-lt focus:outline-2 focus:outline-offset-2 " +
-  "focus:outline-gold-lt aria-[invalid=true]:border-gold-lt";
-
-const PELE_PASTILHA =
-  "cursor-pointer rounded-pill border border-ash px-4 py-2 text-body-sm text-bone " +
-  "transition-colors peer-hover:border-bone peer-checked:border-gold peer-checked:bg-gold " +
-  "peer-checked:text-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 " +
-  "peer-focus-visible:outline-gold-lt";
 
 export function FormularioContato() {
   const [estado, acao, pendente] = useActionState(enviarContato, ESTADO_INICIAL);
@@ -95,8 +83,7 @@ export function FormularioContato() {
      ⚠ ESCRITO NO DOM POR REF, e não por estado. `setState` dentro de efeito
      dispara render em cascata e o lint reprova (react-hooks/set-state-in-effect)
      — com razão: o valor não participa de render nenhum, só precisa estar no
-     campo na hora do POST. Mexer no valor de um input não controlado é
-     justamente o que um efeito deve fazer. */
+     campo na hora do POST. */
   const carimboRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (carimboRef.current) carimboRef.current.value = String(Date.now());
@@ -123,9 +110,9 @@ export function FormularioContato() {
      alert(), que é diálogo do navegador e não parte da página. */
   if (estado.estado === "sucesso") {
     return (
-      <div role="status" aria-live="polite" className="border border-gold px-6 py-8">
-        <p className="font-display text-heading-sm text-bone">Pedido recebido.</p>
-        <p className="mt-4 max-w-[46ch] text-body text-ash">
+      <div className="form__sucesso" role="status" aria-live="polite">
+        <p className="form__sucesso-titulo">Pedido recebido.</p>
+        <p className="form__sucesso-texto">
           A gente responde em até um dia útil com os próximos passos.
         </p>
       </div>
@@ -135,16 +122,14 @@ export function FormularioContato() {
   const falhou = estado.estado === "erro" || estado.estado === "falha";
 
   return (
-    <form action={acao} noValidate className="flex flex-col gap-8">
+    <form className="form" action={acao} noValidate>
       {/* ══ HONEYPOT ══
-          Fora da tela, invisível para leitor de tela pelo aria-hidden, fora do
-          Tab pelo tabIndex -1 e ignorado pelo preenchimento automático. Gente
-          não chega nele por caminho nenhum; robô que lê o HTML e completa tudo,
-          sim. A action descarta em silêncio — ver o comentário lá. */}
-      <div
-        aria-hidden="true"
-        className="absolute left-[-9999px] h-px w-px overflow-hidden"
-      >
+          Fora da tela pela classe, invisível para leitor de tela pelo
+          aria-hidden, fora do Tab pelo tabIndex -1 e ignorado pelo
+          preenchimento automático. Gente não chega nele por caminho nenhum;
+          robô que lê o HTML e completa tudo, sim. A action descarta em
+          silêncio — ver o comentário lá. */}
+      <div className="form__isca" aria-hidden="true">
         <label htmlFor={campo("site")}>Não preencha este campo</label>
         <input
           id={campo("site")}
@@ -162,22 +147,17 @@ export function FormularioContato() {
           notícia de que o envio falhou; sem ele, a única pista seria visual.
           `role="alert"` anuncia na hora. */}
       {falhou && estado.resumo ? (
-        <div
-          role="alert"
-          tabIndex={-1}
-          ref={resumoRef}
-          className="border border-gold-lt px-4 py-3 text-body text-gold-lt outline-none"
-        >
+        <div className="form__resumo" role="alert" tabIndex={-1} ref={resumoRef}>
           {estado.resumo}
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2">
-        <label className="text-body-sm text-bone" htmlFor={campo("nome")}>
+      <div className="form__campo">
+        <label className="form__rotulo" htmlFor={campo("nome")}>
           Nome
         </label>
         <input
-          className={PELE_CAMPO}
+          className="form__entrada"
           id={campo("nome")}
           name="nome"
           type="text"
@@ -189,20 +169,20 @@ export function FormularioContato() {
           aria-describedby={erro.nome ? erroId("nome") : undefined}
         />
         {erro.nome ? (
-          <p className="text-body-sm text-gold-lt" id={erroId("nome")}>
+          <p className="form__erro" id={erroId("nome")}>
             {erro.nome}
           </p>
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-body-sm text-bone" htmlFor={campo("telefone")}>
+      <div className="form__campo">
+        <label className="form__rotulo" htmlFor={campo("telefone")}>
           Telefone
         </label>
         {/* `inputMode="tel"` levanta o teclado numérico no celular sem exigir
             máscara — e máscara pediria dependência, que não entra. */}
         <input
-          className={PELE_CAMPO}
+          className="form__entrada"
           id={campo("telefone")}
           name="telefone"
           type="tel"
@@ -215,18 +195,18 @@ export function FormularioContato() {
           aria-describedby={erro.telefone ? erroId("telefone") : undefined}
         />
         {erro.telefone ? (
-          <p className="text-body-sm text-gold-lt" id={erroId("telefone")}>
+          <p className="form__erro" id={erroId("telefone")}>
             {erro.telefone}
           </p>
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-body-sm text-bone" htmlFor={campo("email")}>
+      <div className="form__campo">
+        <label className="form__rotulo" htmlFor={campo("email")}>
           E-mail
         </label>
         <input
-          className={PELE_CAMPO}
+          className="form__entrada"
           id={campo("email")}
           name="email"
           type="email"
@@ -238,7 +218,7 @@ export function FormularioContato() {
           aria-describedby={erro.email ? erroId("email") : undefined}
         />
         {erro.email ? (
-          <p className="text-body-sm text-gold-lt" id={erroId("email")}>
+          <p className="form__erro" id={erroId("email")}>
             {erro.email}
           </p>
         ) : null}
@@ -246,27 +226,27 @@ export function FormularioContato() {
 
       {/* Múltipla escolha, checkbox por baixo das pastilhas. */}
       <fieldset
+        className="form__grupo"
         aria-invalid={erro.tipoObra ? true : undefined}
         aria-describedby={erro.tipoObra ? erroId("tipoObra") : undefined}
       >
-        <legend className="text-body-sm text-bone">Tipo de obra</legend>
-        <p className="mt-1 text-caption text-ash">Pode marcar mais de um.</p>
-        <div className="mt-4 flex flex-wrap gap-element">
+        <legend className="form__rotulo">Tipo de obra</legend>
+        <p className="form__ajuda">Pode marcar mais de um.</p>
+        <div className="form__pastilhas">
           {opcoesTipoObra.map((op) => (
-            <label key={op} className="inline-flex">
+            <label className="form__pastilha" key={op}>
               <input
                 type="checkbox"
                 name="tipoObra"
                 value={op}
                 defaultChecked={v.tipoObra.includes(op)}
-                className="peer sr-only"
               />
-              <span className={PELE_PASTILHA}>{op}</span>
+              <span>{op}</span>
             </label>
           ))}
         </div>
         {erro.tipoObra ? (
-          <p className="mt-2 text-body-sm text-gold-lt" id={erroId("tipoObra")}>
+          <p className="form__erro" id={erroId("tipoObra")}>
             {erro.tipoObra}
           </p>
         ) : null}
@@ -274,37 +254,37 @@ export function FormularioContato() {
 
       {/* Escolha única, radio por baixo. */}
       <fieldset
+        className="form__grupo"
         aria-invalid={erro.estagio ? true : undefined}
         aria-describedby={erro.estagio ? erroId("estagio") : undefined}
       >
-        <legend className="text-body-sm text-bone">Estágio da obra</legend>
-        <div className="mt-4 flex flex-wrap gap-element">
+        <legend className="form__rotulo">Estágio da obra</legend>
+        <div className="form__pastilhas">
           {opcoesEstagio.map((op) => (
-            <label key={op} className="inline-flex">
+            <label className="form__pastilha" key={op}>
               <input
                 type="radio"
                 name="estagio"
                 value={op}
                 defaultChecked={v.estagio === op}
-                className="peer sr-only"
               />
-              <span className={PELE_PASTILHA}>{op}</span>
+              <span>{op}</span>
             </label>
           ))}
         </div>
         {erro.estagio ? (
-          <p className="mt-2 text-body-sm text-gold-lt" id={erroId("estagio")}>
+          <p className="form__erro" id={erroId("estagio")}>
             {erro.estagio}
           </p>
         ) : null}
       </fieldset>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-body-sm text-bone" htmlFor={campo("mensagem")}>
-          Mensagem <span className="text-ash">(opcional)</span>
+      <div className="form__campo">
+        <label className="form__rotulo" htmlFor={campo("mensagem")}>
+          Mensagem <span className="form__opcional">(opcional)</span>
         </label>
         <textarea
-          className={PELE_CAMPO}
+          className="form__entrada form__area"
           id={campo("mensagem")}
           name="mensagem"
           rows={4}
@@ -314,7 +294,7 @@ export function FormularioContato() {
           aria-describedby={erro.mensagem ? erroId("mensagem") : undefined}
         />
         {erro.mensagem ? (
-          <p className="text-body-sm text-gold-lt" id={erroId("mensagem")}>
+          <p className="form__erro" id={erroId("mensagem")}>
             {erro.mensagem}
           </p>
         ) : null}
@@ -325,15 +305,20 @@ export function FormularioContato() {
           enviar ("ao enviar você concorda") não é consentimento: não há ato
           próprio, e não dá para enviar sem concordar sem querer.
 
-          ⚠ NÃO HÁ LINK DE POLÍTICA DE PRIVACIDADE porque a rota não existe
-          neste site. No projeto de origem havia uma linha logo abaixo, fora do
-          rótulo, apontando para /politica-de-privacidade. Quando a nossa
-          existir, a linha volta AQUI — fora do <label>, nunca dentro: misturar
-          um link no texto que a pessoa assina é pôr um alvo de clique que
-          navega para fora dentro do alvo que marca a caixa, e quem erra o alvo
-          perde o formulário preenchido. */}
-      <div className="flex flex-col gap-2">
-        <label className="flex cursor-pointer items-start gap-3">
+          ══ O LINK DA POLÍTICA FICA FORA DA DECLARAÇÃO ══
+
+          O que está dentro do <label> é a DECLARAÇÃO que a pessoa assina;
+          misturar nela um link é misturar o que se aceita com onde se lê sobre
+          isso — e, na prática, é pôr um alvo de clique que navega para fora
+          dentro do alvo de clique que marca a caixa. Quem erra o alvo perde o
+          formulário preenchido.
+
+          A nota abaixo é a saída: mesmo bloco, fora do rótulo, alcançável pelo
+          Tab logo depois da caixa. Ela NÃO é decoração — sem ela o checkbox
+          pede autorização sem dizer para quê, e o consentimento deixa de ser
+          informado. */}
+      <div className="form__consentimento">
+        <label className="form__aceite">
           <input
             type="checkbox"
             name="consentimento"
@@ -341,19 +326,18 @@ export function FormularioContato() {
             defaultChecked={v.consentimento}
             aria-invalid={erro.consentimento ? true : undefined}
             aria-describedby={erro.consentimento ? erroId("consentimento") : undefined}
-            className="peer sr-only"
           />
-          <span
-            aria-hidden
-            className="mt-0.5 size-5 shrink-0 rounded-card border border-ash transition-colors peer-checked:border-gold peer-checked:bg-gold peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-lt"
-          />
-          <span className="max-w-[52ch] text-body-sm text-ash">{consentimento}</span>
+          <span>{consentimento}</span>
         </label>
         {erro.consentimento ? (
-          <p className="text-body-sm text-gold-lt" id={erroId("consentimento")}>
+          <p className="form__erro" id={erroId("consentimento")}>
             {erro.consentimento}
           </p>
         ) : null}
+        <p className="form__nota-politica">
+          Quais dados, por quanto tempo e como pedir para apagar:{" "}
+          <Link href="/privacidade">Política de Privacidade</Link>.
+        </p>
       </div>
 
       <button

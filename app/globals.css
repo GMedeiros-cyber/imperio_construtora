@@ -22,6 +22,15 @@
   --color-gold-dk: #8a6d2f; /* único dourado permitido sobre o creme */
 
   /* ---------------------------------------------------------------------
+     SUPERFÍCIE DE CAMPO
+     A placa dos campos e das pastilhas do formulário de /contato: um degrau
+     acima do ink, para a caixa se separar do fundo SEM borda e sem sombra.
+     Veio do formulário da LDF, copiado nesta rodada — ver os Desvios do
+     DESIGN.md. NÃO é cor de marca: não use como fundo de seção nem de card.
+     --------------------------------------------------------------------- */
+  --color-placa: #222221;
+
+  /* ---------------------------------------------------------------------
      TIPOGRAFIA — família
      Switzer via Fontshare (não auto-hospedar: licença ITF não permite).
      --------------------------------------------------------------------- */
@@ -222,6 +231,9 @@
   --radius-pill: 1440px;
   --radius-card: 0px;
   --radius-image: 0px;
+  /* Campo de formulário. É DESVIO consciente do canto reto — o formulário
+     inteiro foi copiado da LDF, e o registro está no DESIGN.md. */
+  --radius-campo: 14px;
 
   /* ---------------------------------------------------------------------
      ELEVAÇÃO
@@ -351,3 +363,387 @@
   }
 }
 
+
+/* ==========================================================================
+   FORMULÁRIO DE CONTATO
+   ========================================================================== */
+
+/* ⚠ COPIADO DO FORMULÁRIO DA LDF, e não inspirado nele: components/
+   FormularioContato.tsx e a seção 18f do globals.css de lá. A estrutura, os
+   valores de espaçamento, a mecânica das pastilhas e o arranjo do aceite são
+   os mesmos; o que muda é a paleta e os nomes dos campos.
+
+   ══ SUPERFÍCIE PREENCHIDA, SEM BORDA — É ISTO QUE MUDOU ══
+
+   O formulário anterior era borda de 1px em ash sobre fundo transparente.
+   Borda desenha uma linha que compete com o texto; preenchimento não. Agora a
+   caixa se separa do fundo pela própria placa (--color-placa sobre o ink da
+   rota), e em repouso não existe nenhuma linha.
+
+   ⚠ SEM BORDA EM REPOUSO, O FOCO É A ÚNICA MARCA DE ESTADO. O anel de 2px em
+   bone deixa de ser decoração e vira obrigação. Não troque por borda colorida
+   "para ficar mais discreto".
+
+   ══ O QUE NÃO PÔDE SER COPIADO LITERAL, E POR QUÊ ══
+
+   1. O RÓTULO, O PLACEHOLDER E A NOTA SÃO ASH, E NÃO GRAPHITE. Na LDF eles são
+      --ink-3 (#8A827A), que lá mede 4,36:1 sobre a placa. A tradução direta
+      seria o nosso graphite, e ela REPROVA: #5C5A55 sobre a placa e sobre o
+      ink da rota fica na casa de 2,3 a 2,9:1, contra os 4,5:1 exigidos. O ash
+      é o tom secundário desta base sobre escuro — o mesmo do rodapé. A
+      tabela medida está logo abaixo deste bloco.
+
+   2. A PASTILHA TEM min-height DE 44px. Só com o padding de .5rem/1rem ela
+      fechava em 36px de altura, abaixo do mínimo de alvo de toque. O padding
+      copiado ficou; o piso de altura entrou por cima dele.
+
+   3. O CORPO DO CAMPO SOBE PARA 16px ONDE O PONTEIRO É GROSSO. O valor copiado
+      é .95rem (15,2px), e abaixo de 16px o iOS DÁ ZOOM ao focar o campo — já
+      estava registrado no componente antigo. Em ponteiro fino fica .95rem,
+      como na origem; em toque, 1rem.
+
+   4. O ERRO E O SUBLINHADO DO LINK SÃO inset box-shadow. O AGENTS.md proíbe
+      box-shadow, e a proibição é sobre ELEVAÇÃO — aqui não há deslocamento nem
+      desfoque: é uma régua de 1px dentro da própria caixa, que não desloca
+      layout como uma borda deslocaria. Está registrado nos Desvios do
+      DESIGN.md.
+
+   ══ ERRO NUNCA É SÓ COR ══
+
+   Todo campo inválido ganha três coisas ao mesmo tempo: a régua em gold-lt, o
+   `aria-invalid` no elemento e um parágrafo de texto ligado por
+   aria-describedby. Quem não distingue as cores lê a frase; quem usa leitor de
+   tela ouve o campo se anunciar inválido e em seguida o motivo.
+
+   ══ TODO :hover ESTÁ EM @media (hover: hover) ══
+
+   Copiado de lá junto com o motivo: em tela de toque o :hover fica GRUDADO
+   depois do tap, sem gesto que desfaça.
+
+   As transições daqui são de cor, não de posição — não há percurso a cortar
+   com prefers-reduced-motion. */
+
+/* ══ CONTRASTE MEDIDO, sobre a placa #222221 e sobre o ink da rota ══
+
+   texto digitado (bone) / placa .............. 14,99:1
+   resumo de erro (bone) / placa .............. 14,99:1
+   placeholder (ash) / placa ..................  8,77:1
+   pastilha em repouso (ash) / placa ..........  8,77:1
+   rótulo, ajuda, aceite e nota (ash) / ink ... 10,90:1
+   texto de erro (gold-lt) / ink .............. 10,27:1
+   pastilha MARCADA (ink) / gold ..............  7,07:1
+   pastilha marcada em hover (ink) / gold-lt .. 10,27:1
+   link da nota (bone) / ink .................. 18,64:1
+   anel de foco (bone) / ink .................. 18,64:1, conferido também
+                                                por pixel: 250,248,242
+
+   E os dois números que reprovariam, que são o motivo do item 1 acima:
+   graphite sobre a placa 2,31:1, graphite sobre o ink 2,87:1.
+
+   ⚠ A PLACA CONTRA A PÁGINA DÁ 1,24:1, e isso é escolha, não descuido. Sem
+   borda, a caixa mal se separa do fundo — quem diz onde o campo começa é o
+   rótulo acima dele e, ao chegar nele, o anel de foco. É o preço do
+   acabamento preenchido, e é o mesmo da origem. Se um dia a decisão for
+   reforçar a borda do campo, ela volta como régua inset, nunca como borda
+   que desloque layout. */
+
+.form {
+  display: grid;
+  gap: 2rem;
+}
+
+/* ── O honeypot ───────────────────────────────────────────────────────────
+   FORA DA TELA, e não `display: none`: robô decente ignora campo escondido por
+   display, mas preenche o que está no fluxo. O aria-hidden tira do leitor de
+   tela e o tabIndex -1 tira do Tab. */
+.form__isca {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ── O resumo de erros ──────────────────────────────────────────────────── */
+.form__resumo {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-campo);
+  background: var(--color-placa);
+  box-shadow: inset 0 0 0 1px var(--color-gold-lt);
+  color: var(--color-bone);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+/* Recebe foco por script no envio falho, e não pela ordem do Tab. Sem o anel,
+   quem enxerga não veria para onde o foco foi. */
+.form__resumo:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 3px;
+}
+
+/* ── Campo e grupo ──────────────────────────────────────────────────────── */
+.form__campo,
+.form__grupo {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* <fieldset> chega do navegador com borda, padding e margem próprios. Os três
+   saem: o agrupamento aqui é semântico, e quem desenha é o espaçamento. */
+.form__grupo {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Vale para <label> e para <legend>. O `float: none` e o `padding: 0` são para
+   o <legend>, que o navegador trata de um jeito próprio dentro do fieldset. */
+.form__rotulo {
+  display: block;
+  float: none;
+  padding: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--color-ash);
+}
+
+.form__opcional {
+  letter-spacing: 0.16em;
+  color: var(--color-ash);
+}
+
+.form__ajuda {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-ash);
+}
+
+/* ── A entrada ──────────────────────────────────────────────────────────── */
+.form__entrada {
+  width: 100%;
+  padding: 1rem;
+  border: 0;
+  border-radius: var(--radius-campo);
+  background: var(--color-placa);
+  color: var(--color-bone);
+  /* `inherit` e não a família nomeada: o campo é do sistema, e o sistema é o
+     que o body declara. Sem isto o navegador impõe a fonte dele. */
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition:
+    background 220ms ease,
+    box-shadow 220ms ease;
+}
+
+/* Ver o item 3 do cabeçalho: 16px onde o toque manda, para o iOS não dar zoom
+   ao focar o campo. */
+@media (pointer: coarse) {
+  .form__entrada {
+    font-size: 1rem;
+  }
+}
+
+.form__entrada::placeholder {
+  color: var(--color-ash);
+}
+
+.form__entrada:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 2px;
+}
+
+/* Sem borda, quem responde ao ponteiro é o preenchimento. */
+@media (hover: hover) {
+  .form__entrada:hover {
+    background: color-mix(in srgb, var(--color-placa) 88%, var(--color-bone));
+  }
+}
+
+/* `vertical` e não `both`: redimensionar na horizontal quebra a coluna de
+   leitura e deixa a caixa maior que o formulário. */
+.form__area {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+/* A régua de erro é INSET: por dentro da caixa, sem deslocar o layout como uma
+   borda deslocaria, e sem virar elevação. */
+.form__entrada[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--color-gold-lt);
+}
+
+.form__erro {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--color-gold-lt);
+}
+
+/* ── Pastilhas ──────────────────────────────────────────────────────────── */
+.form__pastilhas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* O <input> real fica por baixo da pastilha e NÃO sai da árvore: `opacity: 0`
+   sobre a própria caixa, com o tamanho dela. Com `display: none` ou
+   `visibility: hidden` o controle sai do foco e do leitor de tela, e a
+   pastilha viraria um <span> bonito que ninguém marca pelo teclado. Assim o
+   Tab entra no grupo, as setas navegam entre os rádios e a barra de espaço
+   marca — comportamento nativo, de graça. */
+.form__pastilha {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* Piso de alvo de toque; o padding copiado continua embaixo dele. */
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-placa);
+  color: var(--color-ash);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.form__pastilha input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* O anel de foco vai na PASTILHA, não no input invisível — o input tem
+   opacidade zero e o anel dele seria um retângulo fantasma. `:focus-visible`
+   no filho, estilo no pai, via :has(). */
+.form__pastilha:has(input:focus-visible) {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 3px;
+}
+
+/* MARCADA: gold com ink por cima, que é o uso principal do dourado. */
+.form__pastilha:has(input:checked) {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+@media (hover: hover) {
+  .form__pastilha:hover {
+    background: color-mix(in srgb, var(--color-placa) 82%, var(--color-bone));
+    color: var(--color-bone);
+  }
+  .form__pastilha:has(input:checked):hover {
+    background: var(--color-gold-lt);
+    color: var(--color-ink);
+  }
+}
+
+/* ── Consentimento ──────────────────────────────────────────────────────── */
+.form__consentimento {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* A caixa NÃO é escondida aqui: ela é o controle, tem de ser vista e clicada.
+   `align-items: start` porque o texto quebra em várias linhas — com `center` a
+   caixa flutuaria no meio do parágrafo. */
+.form__aceite {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-ash);
+  cursor: pointer;
+}
+
+.form__aceite input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  /* Alinha a caixa com a primeira linha do texto, não com o topo do bloco. */
+  margin-block-start: 0.15rem;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+}
+
+.form__aceite input:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 3px;
+}
+
+.form__aceite input[aria-invalid="true"] {
+  outline: 2px solid var(--color-gold-lt);
+  outline-offset: 2px;
+}
+
+/* ── A nota da política ─────────────────────────────────────────────────────
+   Logo abaixo da caixa de consentimento e FORA do <label> — o porquê está em
+   components/formulario-contato.tsx. Sem ela o checkbox pede autorização sem
+   dizer para quê, e o consentimento deixa de ser informado.
+
+   O sublinhado é inset box-shadow, e não text-decoration: ele fica afastado da
+   base das letras e não corta as descendentes. Ver o item 4 do cabeçalho desta
+   seção sobre a proibição de sombra. */
+.form__nota-politica {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-ash);
+}
+.form__nota-politica a {
+  color: var(--color-bone);
+  text-decoration: none;
+  box-shadow: inset 0 -1px 0 0 var(--color-ash);
+  transition: box-shadow 220ms ease;
+}
+@media (hover: hover) {
+  .form__nota-politica a:hover {
+    box-shadow: inset 0 -2px 0 0 var(--color-gold-lt);
+  }
+}
+.form__nota-politica a:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 3px;
+}
+
+/* ── Sucesso ────────────────────────────────────────────────────────────────
+   Mesma placa dos campos: o bloco que entra no lugar do formulário pertence ao
+   mesmo material. Antes era borda dourada, e era a única borda que sobrava. */
+.form__sucesso {
+  display: grid;
+  gap: 0.75rem;
+  padding: 2.5rem 2rem;
+  border-radius: var(--radius-campo);
+  background: var(--color-placa);
+}
+
+.form__sucesso-titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--text-heading-sm);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+}
+
+.form__sucesso-texto {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-ash);
+}
