@@ -21,8 +21,9 @@ import { comoTrabalhamos, galeriaAutoria, modelos } from "@/lib/dados";
  *
  *   faixa 1  cabeçalho — eyebrow, manchete e subline num grid de 12
  *   faixa 2  as quatro formas, LARGURA CHEIA em quatro colunas
- *   faixa 3  a galeria: acordeão full-bleed a partir de 768px, lista vertical
- *            com a margem das outras faixas abaixo disso
+ *   faixa 3  a galeria: acordeão full-bleed a partir de 768px, carrossel
+ *            arrastável abaixo disso, com o primeiro card na margem das outras
+ *            faixas
  *
  * ══ O FUNDO É DELA, E É INK CHAPADO ══
  *
