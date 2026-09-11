@@ -203,11 +203,30 @@ export type ColunaParalaxe = {
      montadas por concatenação em tempo de execução elas não seriam geradas. */
   classeColuna: string;
   classeWrap: string;
-  /** Velocidade do deslocamento; vira yPercent = velocidade * -50. */
+  /** Velocidade do deslocamento; vira yPercent = velocidade * -50 no desktop
+   *  e * -12 abaixo de 768px, onde a coluna é 2,2x mais larga. */
   velocidade: number;
-  /** Colunas 5 e 6 somem no breakpoint de 479px. */
+  /** Some abaixo de 768px. Só o slot sem foto real: no mobile são 5 mídias. */
   escondeMobile?: boolean;
 };
+
+/* ── A vertente de duas colunas abaixo de 768px ──────────────────────────
+   Até 767px as colunas deixam de ser quatro de 77px e viram DUAS de ~44vw,
+   posicionadas em absoluto dentro da trilha (que passa a medir 400vw). Os
+   topos estão em vw, e não em rem, porque a altura de cada mídia vem da
+   proporção sobre a largura da coluna: em rem a composição se desmontava a
+   767px, onde a mídia mede o dobro da de 390px.
+
+   Medido antes, a 390px: 2,34% da tela em mídia, 25% das posições sem mídia
+   nenhuma, e os últimos 1.094px da trilha só com texto. A geometria de seis
+   colunas de 215px espremida em quatro de 77px limitava a cobertura a 9,9%
+   mesmo com tudo na tela ao mesmo tempo.
+
+   O -12 do yPercent (contra -50 do desktop) é o que mantém a mídia em cena:
+   com -50 as colunas rápidas saíam pelo topo em um quarto do percurso.
+
+   As classes continuam escritas por extenso em cada slot, e não montadas a
+   partir de constantes: o Tailwind lê o arquivo como texto. */
 
 export const colunasParalaxe: ColunaParalaxe[] = [
   {
@@ -216,7 +235,8 @@ export const colunasParalaxe: ColunaParalaxe[] = [
       src: "/faixa/obra-video-2.mp4",
       poster: "/faixa/obra-video-2-poster.jpg",
     },
-    classeColuna: "mt-[100vh] max-[480px]:mt-[50rem]",
+    classeColuna:
+      "mt-[100vh] max-[768px]:absolute max-[768px]:left-0 max-[768px]:top-[30vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/352]",
     velocidade: 10,
   },
@@ -226,36 +246,39 @@ export const colunasParalaxe: ColunaParalaxe[] = [
       src: "/faixa/obra-video-1.mp4",
       poster: "/faixa/obra-video-1-poster.jpg",
     },
-    classeColuna: "mt-[50vh] max-[480px]:mt-[25rem]",
+    classeColuna:
+      "mt-[50vh] max-[768px]:absolute max-[768px]:left-[calc(50%_+_8.5px)] max-[768px]:top-[60vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/435]",
     velocidade: 7,
   },
   {
     midia: { tipo: "imagem", src: "/faixa/casa-em-obra.jpg" },
-    classeColuna: "mt-[130vh] max-[480px]:mt-[25rem]",
+    classeColuna:
+      "mt-[130vh] max-[768px]:absolute max-[768px]:left-0 max-[768px]:top-[180vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/261]",
     velocidade: 12,
   },
   {
     midia: { tipo: "imagem", src: "/faixa/analia-franco.jpg" },
-    classeColuna: "mt-[80vh] max-[480px]:mt-[60rem]",
+    classeColuna:
+      "mt-[80vh] max-[768px]:absolute max-[768px]:left-[calc(50%_+_8.5px)] max-[768px]:top-[230vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/132]",
     velocidade: 5,
   },
   {
     /* Único slot ainda sem foto: placeholder graphite na proporção certa. */
     midia: { tipo: "imagem", src: "/faixa/placeholder-5.svg" },
-    classeColuna: "mt-[110vh] max-[480px]:mt-[100rem]",
+    classeColuna: "mt-[110vh]",
     classeWrap: "aspect-[213/266]",
     velocidade: 9,
     escondeMobile: true,
   },
   {
     midia: { tipo: "imagem", src: "/faixa/interior-obra.jpg" },
-    classeColuna: "mt-[80vh] max-[480px]:mt-[25rem]",
+    classeColuna:
+      "mt-[80vh] max-[768px]:absolute max-[768px]:left-0 max-[768px]:top-[330vw] max-[768px]:w-[calc(50%_-_8.5px)]",
     classeWrap: "aspect-[213/287]",
     velocidade: 6.5,
-    escondeMobile: true,
   },
 ];
 
