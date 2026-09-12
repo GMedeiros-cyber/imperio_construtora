@@ -725,12 +725,23 @@
   cursor: pointer;
 }
 
+/* ⚠ 1,5rem, E NÃO 1,15rem. A caixa media 18,4 x 18,4px — cinco milímetros no
+   celular, e é a única parte do controle que o dedo ENXERGA. O rótulo em volta
+   sempre foi clicável e continua sendo (o alvo real vai de 328 a 880px de
+   largura por 21 a 42px de altura, medido), mas alvo que se vê pequeno é alvo
+   que se erra: ninguém toca no meio de uma frase esperando marcar uma caixa.
+
+   24px é o mínimo de alvo do WCAG 2.2 (critério 2.5.8) e o maior tamanho que
+   ainda fica proporcional ao rótulo de 14px ao lado — acima disso a caixa
+   passa a dominar a linha. */
 .form__aceite input {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.5rem;
+  height: 1.5rem;
   margin: 0;
-  /* Alinha a caixa com a primeira linha do texto, não com o topo do bloco. */
-  margin-block-start: 0.15rem;
+  /* Alinha a caixa com a primeira linha do texto, não com o topo do bloco.
+     Caiu de 0,15 para 0,05rem junto com o tamanho: a caixa cresceu 5,6px e o
+     recuo antigo a jogaria abaixo da linha. */
+  margin-block-start: 0.05rem;
   accent-color: var(--color-gold);
   cursor: pointer;
 }
