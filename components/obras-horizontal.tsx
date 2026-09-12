@@ -239,7 +239,7 @@ function Painel({
         style={anima ? { x: xEsquerda } : undefined}
         className="header-wrap flex flex-col gap-6 min-[768px]:relative min-[768px]:z-[3] min-[768px]:[grid-area:1/2/2/6] min-[768px]:[pointer-events:none] min-[768px]:[mix-blend-mode:difference]"
       >
-        <p className="flex items-center gap-[.38rem] whitespace-nowrap text-eyebrow uppercase text-bone">
+        <p className="flex items-center gap-[.38rem] text-eyebrow uppercase text-bone">
           <span
             aria-hidden
             className="inline-block size-[.31rem] shrink-0 rounded-pill bg-bone"

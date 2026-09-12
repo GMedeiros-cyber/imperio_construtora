@@ -108,7 +108,17 @@ export function SiteFooter() {
        fica acima do topo do botão, com folga. Abaixo de 640px a barra empilha
        à esquerda e o crédito sai do caminho sozinho, então o pé volta a 64. */
     <footer className="bg-ink px-gutter pb-section pt-section text-bone max-[479px]:px-gutter-sm min-[640px]:pb-section-lg">
-      <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,26rem)_1fr] min-[900px]:gap-24">
+      {/* ⚠ A PRIMEIRA TRILHA É EM px, E NÃO EM rem, DE PROPÓSITO. Ela era
+          `minmax(0,26rem)`: sob zoom de texto a 200% os 416px viravam 832 e
+          comiam a coluna da navegação, que então não cabia. Medido antes, nas
+          três rotas que têm rodapé: 78px de rolagem horizontal a 992px e 3px a
+          1440px.
+
+          416px é o MESMO valor em repouso — nada muda em zoom normal. E é
+          medida de LAYOUT, não de tipo: a escala de espaçamento deste site já
+          é toda em px (--spacing-gutter: 32px), então a trilha em px é a
+          consistente. */}
+      <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,416px)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
         <div>
           {/* h-16 = 64px de altura, largura automática: o import estático
@@ -172,7 +182,7 @@ export function SiteFooter() {
             só deste <nav>, e as outras seções não se movem. */}
         <nav
           aria-label="Rodapé"
-          className="grid gap-8 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-3"
+          className="grid gap-8 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(5rem,1fr))]"
         >
           <div>
             <h3 className={ROTULO} id="rodape-menu">

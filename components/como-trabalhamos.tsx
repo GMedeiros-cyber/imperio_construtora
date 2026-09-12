@@ -75,7 +75,7 @@ export function ComoTrabalhamos() {
     >
       {/* ── FAIXA 1: cabeçalho ─────────────────────────────────────────── */}
       <div className="grid grid-cols-12 items-end gap-3 px-gutter-sm md:px-gutter">
-        <p className="col-span-full flex items-center gap-[.38rem] whitespace-nowrap text-eyebrow uppercase text-gold">
+        <p className="col-span-full flex items-center gap-[.38rem] text-eyebrow uppercase text-gold">
           <span
             aria-hidden
             className="inline-block size-[.31rem] shrink-0 rounded-pill bg-gold"

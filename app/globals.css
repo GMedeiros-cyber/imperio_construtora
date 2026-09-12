@@ -287,6 +287,26 @@
   h3,
   h4 {
     font-weight: var(--font-weight-light);
+
+    /* ══ REDE DE PROTEÇÃO DO ZOOM DE TEXTO ══
+
+       A escala de tipo é toda em px, então o zoom SÓ DE TEXTO do navegador não
+       a move — mas os espaçamentos em rem se movem, e a manchete passa a não
+       caber na coluna que sobrou. Medido a 200% (raiz em 32px), antes disto:
+
+         /  a 390px   rolagem horizontal de 127px, "Uma só responsabilidade
+                      técnica." cortada no meio da palavra
+         /  a 1440px  rolagem de 50px, nos títulos dos quatro modelos
+                      ("Gerenciamento open book")
+
+       `overflow-wrap: break-word` só age QUANDO A PALAVRA NÃO CABE — em zoom
+       normal nada muda, porque nada estoura. É por isso que ele entra e o
+       `hyphens: auto` não: aquele hifeniza sempre que acha proveitoso e
+       mudaria as quebras de linha do site inteiro em repouso.
+
+       O preço, quando age, é palavra partida sem hífen. Palavra partida se lê;
+       palavra cortada pela borda da tela, não. */
+    overflow-wrap: break-word;
   }
 
   /* Manchetes na serifada; h3 e h4 seguem na Switzer, por serem títulos de

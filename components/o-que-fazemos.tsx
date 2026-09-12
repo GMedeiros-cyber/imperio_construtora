@@ -131,7 +131,7 @@ export function OQueFazemos() {
         <div className="grid grid-cols-6 gap-16 max-[991px]:gap-10 max-[767px]:flex max-[767px]:flex-col">
           {/* Linha 1, colunas 1–4 */}
           <div className="col-start-1 col-end-5 row-start-1 row-end-2">
-            <p className="flex items-center gap-[0.38rem] overflow-hidden whitespace-nowrap text-eyebrow uppercase text-gold">
+            <p className="flex items-center gap-[0.38rem] overflow-hidden text-eyebrow uppercase text-gold">
               <span
                 aria-hidden
                 className="aspect-square size-[0.31rem] shrink-0 rounded-pill bg-gold"
@@ -164,7 +164,13 @@ export function OQueFazemos() {
                   Havia um max-[767px]:flex-col aqui que os empilhava; saiu a
                   pedido, para a linha ler como no Creative Giants também no
                   celular. Quem cede espaço é o gap, não o arranjo. */}
-              <div className="flex items-start justify-between gap-8 max-[767px]:gap-4 max-[479px]:gap-3">
+              {/* ⚠ `flex-wrap` É REDE DE ZOOM DE TEXTO. Os numerais usam
+                  `--text-numeral-*`, que são rem, e os vãos também: a 200% o
+                  "+10.000" sai de 32 para 64px e os três blocos deixam de
+                  caber lado a lado. Medido antes: 128px de rolagem horizontal
+                  na home a 768px, com a origem aqui. Em zoom normal os três
+                  cabem em todas as larguras e nada enrola. */}
+                <div className="flex flex-wrap items-start justify-between gap-8 max-[767px]:gap-4 max-[479px]:gap-3">
                 {oQueFazemos.numeros.map((numero, indice) => {
                   const Icone = ICONES[indice];
 

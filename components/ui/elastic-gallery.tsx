@@ -360,7 +360,13 @@ function CarrosselAutoria({ paineis }: { paineis: PainelAutoria[] }) {
           de Tab e da árvore de acessibilidade DE PROPÓSITO: é atalho de
           ponteiro. Pelo teclado a faixa já anda com as setas e cada card já
           é uma parada de Tab; cinco paradas a mais só alongariam o caminho. */}
-      <div aria-hidden className="mt-2 flex px-gutter-sm">
+      {/* ⚠ `flex-wrap` POR CAUSA DO ZOOM DE TEXTO. Cada traço é um botão de
+          `size-11`, que é rem — a 200% ele vira 88px, e cinco deles somam
+          440px numa tela de 390. Medido antes: 73px de rolagem horizontal na
+          home a 390px, com o quinto traço fora da tela. Enrolando, o indicador
+          vira duas fileiras e continua legível; em zoom normal ele nunca
+          quebra, porque 5 x 44 = 220px cabe até em 320. */}
+      <div aria-hidden className="mt-2 flex flex-wrap px-gutter-sm">
         {paineis.map((painel, i) => (
           <button
             key={painel.numero}
