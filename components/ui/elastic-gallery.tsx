@@ -391,7 +391,14 @@ function AcordeaoAutoria({ paineis }: { paineis: PainelAutoria[] }) {
   const reduzido = useMovimentoReduzido();
 
   return (
-    <ul className="hidden h-[600px] w-full gap-4 min-[768px]:flex">
+    /* ⚠ A CALHA LATERAL ESTAVA FALTANDO AQUI. A faixa era full-bleed, colada
+       nas duas bordas da tela, e a tira vertical do painel fechado tem `px-2`
+       — medido, o texto saía a 9,0px da borda esquerda em 768, 992, 1440 e
+       1920px, contra os 32px que toda outra seção do site respeita.
+
+       Full-bleed vale para FOTO. Texto encostado na borda é texto que a mão
+       cobre no toque e que o olho lê espremido. */
+    <ul className="hidden h-[600px] w-full gap-4 px-gutter min-[768px]:flex">
       {paineis.map((painel) => {
         const eAberto = painel.numero === aberto;
 
