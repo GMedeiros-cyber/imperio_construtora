@@ -78,31 +78,20 @@ function dataPorExtenso(iso: string) {
    o que tem teto é a COLUNA DE TEXTO, porque linha de 16px correndo 1920px dá
    duzentos e tantos caracteres e ninguém acha o começo da linha seguinte.
 
-   ══ O `pe-14` É A FAIXA DO BOTÃO FLUTUANTE DO WHATSAPP ══
+   ⚠ AQUI HAVIA UM `max-[680px]:pe-14`, E ELE SAIU. Era a faixa reservada ao
+   botão flutuante do WhatsApp, que é fixo no canto inferior direito e cobria
+   de 16 a 20 trechos de texto por largura no celular. O recuo resolvia e
+   COBRAVA CARO: a coluna caía de 328 para 272px a 360px, e o corpo de 18px de
+   ~41 para 33 caracteres por linha.
 
-   Ele é `fixed`, mede 56px e mora no canto inferior direito, a 16px da borda
-   abaixo de 480px e a 32px acima. Como é fixo e esta página tem 6.000px de
-   altura, TODA linha passa por baixo dele em algum ponto da rolagem. Medido
-   antes: 20 trechos de texto interceptados a 360px, 16 a 390px e 19 a 414px —
-   parágrafo do corpo, item de lista, título de seção e o e-mail de contato.
+   O botão agora some ao rolar para baixo (lib/use-esconder-ao-rolar.ts), então
+   a faixa deixou de ser necessária e a coluna voltou à largura inteira.
 
-   Enquanto a coluna é mais estreita que a tela, o `max-w-[68ch]` já a mantém
-   longe do canto: de 680px para cima a contagem era ZERO sem nada ser feito.
-   Abaixo disso a coluna ocupa a largura inteira, e aí só um recuo resolve —
-   56px, que é exatamente a largura do botão.
-
-   ⚠ O PREÇO É MEDIDA DE LINHA, e está medido: a 360px a coluna cai de 328 para
-   272px, e o corpo de 18px passa de ~40 para ~31 caracteres por linha. É a
-   troca: palavra escondida atrás de um botão é pior do que linha mais curta.
-
-   ⚠ O PAR USA O MESMO NÚMERO: `max-[680px]` é `width < 680` no Tailwind v4.
-
-   ⚠ O `overflow-wrap: break-word` É PAR DO RECUO, e não enfeite. Com a coluna
-   em 272px a 360px, o e-mail `contato@imperioconstrutora.com.br` — 33
-   caracteres sem espaço, ~290px a 18px — deixou de caber e passou a VAZAR da
-   coluna, indo parar de novo debaixo do botão. Medido: 2 trechos cobertos a
-   360px depois do recuo, e o e-mail era um deles. Quebrado, ele cabe. */
-const COLUNA = "max-w-[68ch] max-[680px]:pe-14 [overflow-wrap:break-word]";
+   O `overflow-wrap: break-word` FICA. Ele entrou por causa do recuo — o e-mail
+   `contato@imperioconstrutora.com.br` tem 33 caracteres sem espaço e ~290px a
+   18px, e vazava da coluna estreita —, mas continua valendo sem ele: a 320px a
+   coluna mede 288px e o e-mail ainda não cabe. */
+const COLUNA = "max-w-[68ch] [overflow-wrap:break-word]";
 
 const H2 = "mt-16 text-subheading text-ink md:text-heading-sm";
 const P = "mt-6 text-body-lg text-ink";

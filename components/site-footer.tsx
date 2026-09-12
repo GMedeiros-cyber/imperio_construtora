@@ -120,11 +120,11 @@ export function SiteFooter() {
           consistente. */}
       <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,416px)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
-        {/* O mesmo recuo de 56px da coluna da política, pelo mesmo motivo: até
-            680px esta coluna ocupa a tela inteira e o parágrafo "Construção,
-            reforma e gestão de obras…" passa por baixo do botão flutuante.
-            Acima disso a trilha de 416px já a mantém longe do canto. */}
-        <div className="max-[680px]:pe-14">
+        {/* Aqui havia um `max-[680px]:pe-14`, pela mesma razão que saiu da coluna
+            da política: o botão flutuante cobria este parágrafo no celular. Ele
+            some ao rolar agora, e o recuo saiu junto — ele custava 56px de
+            largura de leitura num bloco que já é estreito. */}
+        <div>
           {/* h-16 = 64px de altura, largura automática: o import estático
               carrega as dimensões reais e o Next mantém a proporção. */}
           <Image
@@ -186,11 +186,29 @@ export function SiteFooter() {
             só deste <nav>, e as outras seções não se movem. */}
         <nav
           aria-label="Rodapé"
-          /* `pe-14` aqui também: a última coluna da navegação encosta na
-             borda direita, e é onde os dois botões flutuantes moram. Medido
-             antes: o CNPJ coberto pelos dois a 768px. A navegação tem folga de
-             sobra — as três colunas só ficam 56px mais estreitas. */
-          className="grid gap-8 pe-14 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(4rem,1fr))]"
+          /* ⚠ ESTE `pe-14` FICA, e os outros dois saíram. A diferença é ONDE
+             o rodapé está: no FIM da rolagem, e é justamente lá que os dois
+             botões flutuantes voltam a aparecer sempre (ver
+             lib/use-esconder-ao-rolar.ts — quem chegou ao rodapé pode querer
+             agir). A última coluna da navegação encosta na borda direita, que
+             é onde eles moram; medido antes, o CNPJ ficava coberto pelos dois
+             a 768px.
+
+             ⚠ SÃO DOIS VALORES, E O SEGUNDO É PELO BOTÃO MENU. 56px limpam o
+             botão do WhatsApp, que mede 56. O MENU é mais largo e mora no
+             canto de CIMA — e no fim da rolagem, com o rodapé inteiro na tela,
+             a coluna "Legal" cai dentro da faixa dele. Medido a 768px: o MENU
+             ocupa 583→736 e o CNPJ 485→680, 97px de sobreposição; para limpar
+             são precisos 185px da borda, ou seja 153 de recuo. Os 160px do
+             `pe-40` cobrem a faixa inteira de 640 a 899px, onde a navegação
+             ocupa a largura toda.
+
+             De 900px para cima ela vai para a segunda trilha da grade e já
+             nasce longe do canto: ali os 56px bastam.
+
+             E não cobra largura de leitura: são três rótulos curtos numa
+             navegação com folga de sobra, não um parágrafo. */
+          className="grid gap-8 pe-14 min-[640px]:max-[900px]:pe-[160px] max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(4rem,1fr))]"
         >
           <div>
             <h3 className={ROTULO} id="rodape-menu">
@@ -281,16 +299,16 @@ export function SiteFooter() {
 
           O crédito lê como o resto da barra (caption, ash), e não como link
           das colunas: aqui a hierarquia é a do copyright ao lado. */}
-      {/* ⚠ O `pe-14` DESVIA DO BOTÃO FLUTUANTE DO WHATSAPP. Esta linha é a
-          última da página e encosta no canto inferior direito, que é onde o
-          botão mora — fixo, 56px, sempre por cima. Medido antes: ele cobria
-          "Desenvolvido por Tribus Labs" a 768, 1440 e 1920px e o CNPJ a 768px,
-          e o crédito é LINK, não só texto. 56px é a largura do botão.
+      {/* ⚠ ESTE `pe-14` TAMBÉM FICA. Esta é a última linha da página e encosta
+          no canto inferior direito — e o botão flutuante volta a aparecer
+          sempre no fim da rolagem, por decisão de desenho (ver
+          lib/use-esconder-ao-rolar.ts). Medido antes: ele cobria "Desenvolvido
+          por Tribus Labs" a 768, 1440 e 1920px, e o crédito é LINK, não só
+          texto. 56px é a largura do botão.
 
-          Sem `max-[...]` aqui: o crédito é empurrado para a direita pelo
-          `justify-between` em qualquer largura, então a faixa precisa ser
-          reservada em todas elas. O custo é zero — a linha tem espaço de
-          sobra. */}
+          Sem `max-[...]`: o crédito é empurrado para a direita pelo
+          `justify-between` em qualquer largura. O custo é zero — a linha tem
+          espaço de sobra. */}
       <div className="mt-16 flex flex-wrap items-center justify-between gap-x-12 gap-y-4 border-t border-bone/15 pt-8 pe-14 max-[640px]:grid max-[640px]:justify-items-start">
         <p className="text-caption text-ash">
           © {ano} Império Construtora

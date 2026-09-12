@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { whatsappUrl } from "@/lib/dados";
+import { useEsconderAoRolar } from "@/lib/use-esconder-ao-rolar";
 
 /* WhatsApp flutuante, fixo no canto inferior direito de todas as rotas.
 
@@ -110,16 +111,47 @@ const VISIVEL_POR_JS =
 /* Rota sem hero: CSS puro. O `:not([data-sob-menu])` é o que deixa o menu
    aberto vencer esta regra — sem ele, a especificidade do `#inicio` dentro do
    :has() ganharia de qualquer atributo. */
+/* ⚠ O `:not([data-oculto])` É O QUE DEIXA ESTE BOTÃO SUMIR AO ROLAR.
+
+   Esta regra é CSS puro e vale nas rotas SEM hero (/contato, /privacidade,
+   404), inclusive sem JavaScript — e é por isso que ela não pode depender de
+   `data-visivel`. Só que, exatamente por não depender, ela ganhava de qualquer
+   estado vindo do script: o botão ficava visível o tempo todo naquelas rotas e
+   o esconder ao rolar não tinha efeito nenhum lá.
+
+   Com a exclusão, o script marca `data-oculto` para esconder e a regra deixa
+   de casar. Sem JavaScript o atributo nunca aparece, e a rede de segurança
+   continua inteira: o botão fica sempre visível, como antes. */
+/* ⚠ AS QUATRO CLASSES SÃO ESCRITAS POR EXTENSO, E NÃO MONTADAS. O scanner do
+   Tailwind lê o ARQUIVO procurando nomes de classe inteiros; nome montado em
+   tempo de execução — por template literal, concatenação ou variável — ele não
+   enxerga, e a regra simplesmente não é gerada. Aconteceu nesta rodada: com o
+   seletor numa constante e interpolado aqui, o CSS não existia e o botão ficava
+   escondido o tempo todo em /contato e /privacidade. Não fatore. */
 const VISIVEL_SEM_HERO =
-  "[body:not(:has(#inicio))_&:not([data-sob-menu])]:visible " +
-  "[body:not(:has(#inicio))_&:not([data-sob-menu])]:opacity-100 " +
-  "[body:not(:has(#inicio))_&:not([data-sob-menu])]:translate-y-0 " +
-  "motion-safe:[body:not(:has(#inicio))_&:not([data-sob-menu])]:transition-[opacity,translate,background-color]";
+  "[body:not(:has(#inicio))_&:not([data-sob-menu]):not([data-oculto])]:visible " +
+  "[body:not(:has(#inicio))_&:not([data-sob-menu]):not([data-oculto])]:opacity-100 " +
+  "[body:not(:has(#inicio))_&:not([data-sob-menu]):not([data-oculto])]:translate-y-0 " +
+  "motion-safe:[body:not(:has(#inicio))_&:not([data-sob-menu]):not([data-oculto])]:transition-[opacity,translate,background-color]";
 
 export function WhatsappFlutuante() {
   const rota = usePathname();
   const [heroFora, setHeroFora] = useState(false);
   const [sobMenu, setSobMenu] = useState(false);
+
+  /* ══ O BOTÃO SOME AO ROLAR PARA BAIXO ══
+
+     Mesmo mecanismo do botão MENU, mesmo arquivo: lib/use-esconder-ao-rolar.ts,
+     onde estão os limiares, a histerese e o porquê. Medido antes: este botão
+     cobria 7 trechos de texto a 360px, 12 a 390 e 3 a 1440.
+
+     ⚠ A TRAVA É O FOCO POR TECLADO, e só. Diferente do MENU, aqui não há
+     overlay a considerar — com o menu aberto este botão já sai de cena pelo
+     `data-sob-menu`, que é outro caminho. Esconder é `visibility: hidden`, que
+     tira do ciclo de Tab; tirar do ciclo um elemento que está com o foco
+     jogaria o foco para o body no meio da navegação. */
+  const [temFoco, setTemFoco] = useState(false);
+  const rolagemPermite = useEsconderAoRolar(temFoco);
 
   /* ⚠ O RESET ACONTECE NA RENDERIZAÇÃO, E NÃO NO EFEITO. Efeito roda depois da
      pintura: zerar lá deixaria pelo menos um quadro pintado com o botão da
@@ -167,10 +199,13 @@ export function WhatsappFlutuante() {
   return (
     <a
       className={`${BOTAO} ${ESCONDIDO} ${VISIVEL_POR_JS} ${VISIVEL_SEM_HERO}`}
+      onFocus={() => setTemFoco(true)}
+      onBlur={() => setTemFoco(false)}
       /* Atributos sem valor: o CSS casa com a presença, e o React omite o
          atributo inteiro quando é `undefined`. */
-      data-visivel={heroFora && !sobMenu ? "" : undefined}
+      data-visivel={heroFora && !sobMenu && rolagemPermite ? "" : undefined}
       data-sob-menu={sobMenu ? "" : undefined}
+      data-oculto={rolagemPermite ? undefined : ""}
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"

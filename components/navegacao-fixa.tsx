@@ -22,7 +22,15 @@ import { MenuHero } from "@/components/menu-hero";
  */
 export function NavegacaoFixa() {
   return (
-    <div className="fixed right-0 top-0 z-50 p-8">
+    /* ⚠ `pointer-events-none` NO INVÓLUCRO, e `auto` no que é clicável.
+
+       Esta caixa mede 153x46 mais 32px de padding de cada lado, e ela
+       intercepta clique mesmo sem pintar nada. Enquanto o botão estava sempre
+       visível isso passava; agora ele SOME ao rolar para baixo, e um retângulo
+       invisível de 217x110 comendo toque no canto superior direito de toda
+       página seria defeito novo. O botão e o overlay devolvem o `auto` para si
+       mesmos — ver components/menu-hero.tsx. */
+    <div className="pointer-events-none fixed right-0 top-0 z-50 p-8">
       <MenuHero />
     </div>
   );

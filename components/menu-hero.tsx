@@ -9,7 +9,9 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { hero, menuHero } from "@/lib/dados";
 import { IconeContato } from "@/components/icones-contato";
 import { ROTA_CONTATO } from "@/lib/rotas";
+import { useEsconderAoRolar } from "@/lib/use-esconder-ao-rolar";
 import { useMovimentoReduzido } from "@/lib/use-movimento-reduzido";
+import { cn } from "@/lib/utils";
 
 /* ⚠ AS ÂNCORAS SÃO RESOLVIDAS AQUI, NA VIEW, e não no dado.
    `menuHero.itens` guarda âncoras cruas da home ("#obras"), e o menu agora
@@ -41,6 +43,21 @@ const FOCAVEIS = [
 export function MenuHero() {
   const [aberto, setAberto] = useState(false);
   const reduzido = useMovimentoReduzido();
+
+  /* ══ O BOTÃO SOME AO ROLAR PARA BAIXO ══
+
+     Ele é `fixed` e a home tem ~9.000px: parado no canto, TODA linha da página
+     passa por baixo dele. Medido antes: 18 trechos de texto cobertos a 360px,
+     15 a 390, 11 a 768. O porquê do mecanismo, os limiares e a histerese estão
+     em lib/use-esconder-ao-rolar.ts.
+
+     ⚠ AS DUAS TRAVAS. Com o overlay ABERTO o botão fica — ele é o "FECHAR", e
+     sumir com ele deixaria a pessoa presa no menu. Com o botão EM FOCO por
+     teclado ele também fica: esconder é `visibility: hidden`, que tira o
+     elemento do ciclo de Tab, e tirar do ciclo um elemento que está com o foco
+     jogaria o foco para o body no meio da navegação. */
+  const [temFoco, setTemFoco] = useState(false);
+  const visivel = useEsconderAoRolar(aberto || temFoco);
   const idOverlay = useId();
   const naHome = usePathname() === "/";
 
@@ -264,7 +281,21 @@ export function MenuHero() {
            fotos das obras e da galeria). Quem identifica o botão é o rótulo.
            Não devolva a borda nem acrescente sombra para "resolver" — está
            reportado e é decisão do cliente. */
-        className="relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone max-[768px]:h-11 max-[768px]:gap-2 max-[768px]:px-4 max-[768px]:py-0 max-[768px]:text-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt"
+        onFocus={() => setTemFoco(true)}
+        onBlur={() => setTemFoco(false)}
+        /* ⚠ `visibility`, E NÃO SÓ `opacity`. Opacidade zero deixa o elemento
+           focável e clicável: o Tab pararia num botão que ninguém vê e o toque
+           acertaria um alvo invisível. `invisible` tira das duas coisas.
+
+           A `visibility` entra na lista de transições de propósito — sem ela o
+           elemento sumiria de uma vez e o fade não apareceria. Sob
+           `prefers-reduced-motion` não há transição nenhuma e a troca é
+           instantânea, que é a escolha registrada no hook. */
+        className={cn(
+          "pointer-events-auto relative z-10 flex shrink-0 cursor-pointer items-center gap-3 rounded-pill bg-ink px-[30px] py-[15px] text-menu uppercase tracking-[0.1em] text-bone max-[768px]:h-11 max-[768px]:gap-2 max-[768px]:px-4 max-[768px]:py-0 max-[768px]:text-[12px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-lt",
+          "motion-safe:transition-[opacity,visibility,translate] motion-safe:duration-200 motion-safe:ease-out",
+          visivel ? "visible translate-y-0 opacity-100" : "invisible opacity-0 motion-safe:-translate-y-3",
+        )}
       >
         <span
           ref={textos}
@@ -286,7 +317,7 @@ export function MenuHero() {
       <div
         ref={nav}
         id={idOverlay}
-        className="invisible fixed inset-0 z-[9] hidden h-screen w-full opacity-0 max-[768px]:h-[100svh]"
+        className="pointer-events-auto invisible fixed inset-0 z-[9] hidden h-screen w-full opacity-0 max-[768px]:h-[100svh]"
       >
         {/* Os painéis ficam fora do bloco que rola: dentro dele, um inset-0
             cobriria só a primeira tela do conteúdo rolado. */}
