@@ -190,7 +190,7 @@ export function SiteFooter() {
              borda direita, e é onde os dois botões flutuantes moram. Medido
              antes: o CNPJ coberto pelos dois a 768px. A navegação tem folga de
              sobra — as três colunas só ficam 56px mais estreitas. */
-          className="grid gap-8 pe-14 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(5rem,1fr))]"
+          className="grid gap-8 pe-14 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(4rem,1fr))]"
         >
           <div>
             <h3 className={ROTULO} id="rodape-menu">
