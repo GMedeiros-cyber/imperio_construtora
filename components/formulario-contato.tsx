@@ -107,7 +107,7 @@ import {
 
    ⚠ TODO — DESFAZER QUANDO O WEBHOOK EXISTIR. No dia em que a
    LEAD_WEBHOOK_URL for preenchida, daqui saem o `aoEnviar`, o `estadoZap`, o
-   `urlBloqueada`, o `urlAberta` e o `onSubmit` do <form>. O formulário volta a
+   `urlBloqueada`, o `urlAberta`, o `enviando` e o `onSubmit` do <form>. O formulário volta a
    ser `<form action={acao}>` puro, e o `redirect()` da action cai junto por não
    ter mais como ser alcançado. O texto de sucesso do webhook já está escrito
    aqui embaixo, esperando. */
@@ -163,6 +163,19 @@ export function FormularioContato() {
      wa.me com a mensagem vazia, que é pior do que não ter link. */
   const [urlAberta, setUrlAberta] = useState<string | null>(null);
 
+  /* ⚠ TRAVA DE REENTRADA — É REF, E NÃO ESTADO, E ISSO É O PONTO.
+
+     Medido antes: três cliques rápidos no botão produziam TRÊS envios. O
+     `disabled={pendente}` não segura nada nesse intervalo porque `pendente` é
+     estado do React — ele só vale no render seguinte, e os três cliques cabem
+     antes dele. Uma ref muda no mesmo instante em que é escrita, então o
+     segundo clique já encontra a porta fechada.
+
+     Ela é solta em todo desfecho que deixa o formulário na tela (erro de
+     validação, pop-up bloqueado): nesses casos a pessoa PRECISA conseguir
+     apertar de novo. No sucesso o formulário sai da tela e não há o que soltar. */
+  const enviando = useRef(false);
+
   /* Quem manda na tela: o caminho do WhatsApp, quando houve tentativa; a
      action, senão. */
   const visivel = estadoZap ?? estado;
@@ -184,6 +197,9 @@ export function FormularioContato() {
      redireciona para o mesmo lugar. */
   function aoEnviar(evento: React.FormEvent<HTMLFormElement>) {
     evento.preventDefault();
+
+    if (enviando.current) return;
+    enviando.current = true;
 
     const dados = new FormData(evento.currentTarget);
     const ler = (c: string) => {
@@ -212,6 +228,7 @@ export function FormularioContato() {
     const resumoAgora = resumoDeErros(erros);
     if (resumoAgora) {
       setEstadoZap({ estado: "erro", erros, resumo: resumoAgora, valores });
+      enviando.current = false;
       return;
     }
 
@@ -236,6 +253,7 @@ export function FormularioContato() {
       /* SEM sucesso. O formulário fica na tela, com os valores intactos: a
          pessoa clica no link, ou aperta Enviar de novo — o segundo toque
          costuma passar, porque aí o navegador tem um gesto recente. */
+      enviando.current = false;
       return;
     }
 
