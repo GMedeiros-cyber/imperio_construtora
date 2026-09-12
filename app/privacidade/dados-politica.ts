@@ -12,76 +12,94 @@
    conteúdo do site, este objeto é candidato natural a mudar de casa — e aí a
    página continua lendo de uma fonte só, que é o que importa.
 
-   ══⚠══ TODO NENHUM DESTES CAMPOS PODE IR AO AR COMO "(em definição)" ══⚠══
+   ══ NÃO HÁ MAIS MARCADOR DE PENDÊNCIA AQUI, E ISSO É NOVO ══
 
-   O marcador é honesto enquanto o documento não é publicado: dado cadastral
-   inventado em documento jurídico é problema de verdade, e um CNPJ plausível
-   porém falso é pior que um campo vazio. Mas uma política de privacidade NO AR
+   Este arquivo tinha um `PENDENTE = "(em definição)"` e sete campos usando
+   ele. Foram ao ar assim, e não deviam: uma política de privacidade publicada
    sem identificar o controlador não cumpre o art. 9º da LGPD — a identificação
-   do controlador é justamente o que dá endereço à reclamação de quem quiser
-   reclamar.
+   é justamente o que dá endereço à reclamação de quem quiser reclamar. Medido
+   no HTML servido antes desta rodada: 14 ocorrências de "(em definição)".
 
-   Ou os campos são preenchidos antes de publicar, ou a rota não sobe. */
+   Razão social, endereço e CEP chegaram do cartão CNPJ; o encarregado virou
+   uma declaração de canal (art. 41); e os dois prazos de retenção deixaram de
+   existir junto com o armazenamento — o formulário não guarda mais nada, ele
+   abre o WhatsApp.
 
-import { telefone } from "@/lib/dados";
+   ⚠ SE VOLTAR A HAVER CAMPO PENDENTE, o marcador volta com ele. A regra que
+   fica é a de antes: dado cadastral inventado em documento jurídico é problema
+   de verdade, e um CNPJ plausível porém falso é pior que um campo vazio. Ou o
+   campo é preenchido antes de publicar, ou a rota não sobe. */
 
-/** Marcador literal dos campos que dependem do cliente. Não substituir por
-    texto plausível: ou vem o dado real, ou fica isto. */
-export const PENDENTE = "(em definição)";
+import { creditos, telefone } from "@/lib/dados";
 
 export const controlador = {
-  /* Como a empresa está registrada na Receita — não é o nome fantasia. */
-  razaoSocial: PENDENTE,
+  /* Como a empresa está registrada na Receita — não é o nome fantasia, e por
+     isso vem SEM ACENTO e em caixa alta: é a grafia do cartão CNPJ. */
+  razaoSocial: "IMPERIO CONSTRUTORA LTDA",
   nomeFantasia: "Império Construtora",
-  /* Informado pelo cliente em 2026-09-11. É o único campo cadastral que existe
-     de verdade até agora — os outros três continuam PENDENTE, e enquanto
-     estiverem a rota não cumpre o art. 9º (ver o aviso no topo do arquivo). */
   cnpj: "69.064.563/0001-40",
-  /* Endereço completo do estabelecimento. Hoje o site só afirma a praça,
-     "Guarulhos, SP", que não basta para identificar o controlador. */
-  endereco: PENDENTE,
+  /* Logradouro e bairro. Município, UF e CEP são campos à parte porque a
+     página os monta em ordem própria — juntar tudo numa string só duplicaria
+     "Guarulhos, SP", que já é dito pelo `municipio`. */
+  endereco: "R. Visconde de Cairu, 623 — Lote 15B, Quadra 8, Jardim Paulista",
+  cep: "07083-120",
   municipio: "Guarulhos, SP",
   email: "contato@imperioconstrutora.com.br",
   /* Lido de lib/dados.ts, a fonte única do número — não copiar para cá.
      Aqui ele é TEXTO PURO, sem link: canal de contato do titular num documento
      jurídico não precisa de WhatsApp, e o protocolo tel é proibido no site. */
   telefone: telefone.exibicao,
-  /* Encarregado pelo tratamento de dados (art. 41 da LGPD): a pessoa ou canal
-     que atende titular e autoridade. Pode ser o próprio e-mail acima, mas é
-     decisão do cliente — e precisa estar declarada. */
-  encarregado: PENDENTE,
+  /* ══ ENCARREGADO (art. 41 da LGPD) ══
+
+     NÃO HÁ PESSOA NOMEADA, e isso é decisão registrada, não omissão. O art. 41
+     manda o controlador INDICAR um encarregado e o §1º manda DIVULGAR a
+     identidade e a informação de contato dele; a prática aceita um canal de
+     atendimento no lugar de um nome próprio, e a ANPD trata o que não pode
+     faltar como sendo a DECLARAÇÃO de que o encarregado existe e o ENDEREÇO
+     por onde se fala com ele.
+
+     É por isso que este campo guarda a designação e o texto da página diz a
+     frase inteira: "a Império indica um encarregado (…) e o canal dele é o
+     e-mail acima". Trocar quem atende não muda o endereço. */
+  encarregado: "o canal de atendimento da empresa",
 } as const;
 
-export const retencao = {
-  /* Quanto tempo o pedido de quem NÃO fechou contrato fica guardado, contado
-     do último contato. Decisão comercial do cliente. */
-  pedidoSemContrato: PENDENTE,
-  /* Quanto tempo o registro de quem VIROU CLIENTE fica guardado. Na LDF o
-     número era o prazo da garantia dos móveis — o raciocínio de amarrar a
-     retenção ao período em que a empresa ainda pode ser acionada vale aqui
-     também, mas o prazo da construção civil é outro e a escolha é do cliente,
-     com o advogado dele. */
-  cliente: PENDENTE,
-} as const;
+/* ══ RETENÇÃO — O SITE NÃO GUARDA NADA, E ESSE É O ESTADO ATUAL ══
+
+   As duas pendências que moravam aqui (`pedidoSemContrato` e `cliente`)
+   SAÍRAM, e não por terem sido respondidas: elas deixaram de existir. O
+   formulário não armazena mais nada em lugar nenhum — ele monta uma mensagem e
+   abre a conversa no WhatsApp da empresa, e quem envia é a pessoa. O que
+   sobra depois disso é uma conversa de WhatsApp, guardada pela empresa no
+   aparelho dela e pela Meta na infraestrutura dela.
+
+   ⚠ NÃO INVENTE PRAZO AQUI. Prazo de retenção de conversa de WhatsApp é
+   decisão de rotina da empresa, não do site, e um número escrito nesta página
+   seria uma promessa que o código não tem como cumprir.
+
+   ⚠ QUANDO A LEAD_WEBHOOK_URL FOR PREENCHIDA, isto volta: passa a existir um
+   sistema que RECEBE e GUARDA o pedido, e aí a pergunta "por quanto tempo"
+   tem dono de novo. Os dois campos antigos voltam com ela, no mesmo commit,
+   junto com a seção "Com quem a gente compartilha". */
 
 export const destino = {
-  /* Para onde o formulário entrega o pedido. Hoje a variável LEAD_WEBHOOK_URL
-     está vazia em todo o repositório: nada é entregue e nada fica armazenado —
-     a página de contato manda a pessoa escrever para o e-mail.
-
-     ⚠ NO DIA EM QUE HOUVER UM DESTINO, a seção "Com quem a gente compartilha"
-     muda no MESMO commit: passa a existir um intermediário a declarar, e quem
-     o hospeda decide se ele é operador no sentido do art. 5º, VII. */
-  sistema: PENDENTE,
+  /* Para onde o pedido vai HOJE: a conversa do WhatsApp da própria Império.
+     Não há intermediário, não há banco de dados e não há e-mail automático. */
+  sistema: "o WhatsApp da própria Império",
   /* Quem desenvolve e mantém o site. Importa juridicamente: se o pedido
      trafega ou fica armazenado do lado de quem mantém, essa parte é OPERADORA
-     e precisa ser nomeada. */
-  desenvolvedor: PENDENTE,
+     e precisa ser nomeada. Aqui não trafega — não há para onde —, e é por isso
+     que o texto da página diz isso com essas palavras.
+
+     Lido de `creditos` em lib/dados.ts, a mesma fonte do crédito do rodapé:
+     dois lugares dizendo nomes diferentes é o tipo de divergência que ninguém
+     revisa. */
+  desenvolvedor: creditos.autor,
 } as const;
 
 /* Data desta versão, em ISO. É a data em que o texto foi escrito — não é
    marcador pendente. Toda alteração de conteúdo sobe esta data junto. */
-export const atualizadaEm = "2026-09-10";
+export const atualizadaEm = "2026-09-12";
 
 /* ── Terceiros que o navegador contacta, MEDIDOS, não deduzidos ────────────
 

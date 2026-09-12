@@ -6,7 +6,6 @@ import {
   atualizadaEm,
   controlador,
   destino,
-  retencao,
 } from "./dados-politica";
 
 export const metadata: Metadata = {
@@ -107,11 +106,6 @@ const LINK =
   "underline decoration-ash underline-offset-4 transition-colors hover:decoration-gold-dk hover:text-gold-dk " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dk";
 
-/* O marcador aparece muitas vezes e precisa ser LEGÍVEL como pendência, não
-   como texto comum — quem revisar o documento tem de bater o olho e achar. */
-function Pendente({ valor }: { valor: string }) {
-  return <span className="text-graphite">{valor}</span>;
-}
 
 export default function PaginaPrivacidade() {
   const email = controlador.email;
@@ -163,18 +157,12 @@ export default function PaginaPrivacidade() {
             <address className="mt-6 flex flex-col gap-1 text-body-lg not-italic text-ink">
               <span>
                 {controlador.nomeFantasia} — razão social{" "}
-                <Pendente valor={controlador.razaoSocial} />
+                {controlador.razaoSocial}
               </span>
+              <span>CNPJ {controlador.cnpj}</span>
               <span>
-                CNPJ <Pendente valor={controlador.cnpj} />
-              </span>
-              <span>
-                Endereço <Pendente valor={controlador.endereco} />, em{" "}
-                {controlador.municipio}
-              </span>
-              <span className="mt-4">
-                Encarregado pelo tratamento de dados{" "}
-                <Pendente valor={controlador.encarregado} />
+                {controlador.endereco} — {controlador.municipio}, CEP{" "}
+                {controlador.cep}
               </span>
               <a href={`mailto:${email}`} className={`mt-4 ${LINK}`}>
                 {email}
@@ -182,6 +170,23 @@ export default function PaginaPrivacidade() {
               {/* Texto puro, sem link — ver o comentário em dados-politica.ts. */}
               <span>{controlador.telefone}</span>
             </address>
+
+            {/* ══ A DECLARAÇÃO DO ENCARREGADO (art. 41) ══
+
+                Parágrafo, e não uma linha solta no <address>. O art. 41 manda
+                INDICAR um encarregado e o §1º manda DIVULGAR a identidade e o
+                contato dele — uma linha "Encarregado: (canal)" cumpre a
+                segunda metade e deixa a primeira implícita. Aqui a frase diz
+                as duas coisas: que ele existe, e por onde se fala com ele. */}
+            <p className={P}>
+              A Império indica um{" "}
+              <strong className="font-normal text-ink">encarregado</strong> pelo
+              tratamento de dados, na forma do art. 41 da LGPD:{" "}
+              {controlador.encarregado}, no mesmo e-mail acima. É por ali que
+              você exerce os seus direitos e que a Autoridade Nacional de
+              Proteção de Dados se comunica. Não há pessoa nomeada, e isso é
+              escolha: se quem atende mudar, o endereço continua o mesmo.
+            </p>
             <p className={P_SECUNDARIO}>
               Qualquer pedido sobre os seus dados — ver, corrigir, apagar,
               revogar — vai para esse e-mail. Não existe formulário separado nem
@@ -192,18 +197,29 @@ export default function PaginaPrivacidade() {
           <section id="dados">
             <h2 className={H2}>Que dados a gente coleta</h2>
             <p className={P}>
-              Só o que o formulário de contato pede, e nada além. Quando você
-              envia um pedido, chegam até a Império:
+              Só o que o formulário de contato pede, e nada além. O que você
+              escreve nele vira uma mensagem de WhatsApp, já pronta, que você
+              envia — ou não. O que chega à Império é o conteúdo dessa mensagem:
             </p>
             <ul className={UL}>
               <li>seu nome;</li>
               <li>seu telefone;</li>
               <li>seu e-mail;</li>
-              <li>o tipo de obra que você marcou — pode ser mais de um;</li>
-              <li>o estágio em que a obra está;</li>
-              <li>a mensagem, quando você escreve uma — o campo é opcional;</li>
-              <li>a data e a hora do envio.</li>
+              <li>
+                o tipo de obra que você marcou, se marcou — o campo é opcional e
+                aceita mais de um;
+              </li>
+              <li>o estágio em que a obra está, se você disse;</li>
+              <li>a mensagem, quando você escreve uma — o campo é opcional.</li>
             </ul>
+            <p className={P}>
+              <strong className="font-normal text-ink">
+                Enquanto você não enviar a mensagem, nada sai do seu aparelho.
+              </strong>{" "}
+              O formulário não guarda rascunho, não avisa ninguém e não deixa
+              registro deste lado: fechar a aba do WhatsApp antes de enviar
+              desfaz o pedido inteiro.
+            </p>
             <p className={P}>
               Não pedimos CPF, RG, dado de pagamento nem o endereço da obra. Se
               algum desses for necessário mais adiante, será pedido diretamente a
@@ -280,17 +296,19 @@ export default function PaginaPrivacidade() {
             </p>
             <ul className={UL}>
               <li>
-                <strong className="font-normal">
-                  O sistema que recebe o pedido.
-                </strong>{" "}
-                <Pendente valor={destino.sistema} />. Hoje o formulário não
-                entrega o pedido a sistema nenhum: enquanto esse destino não
-                existir, a página de contato pede que você escreva direto para o
-                e-mail da empresa, e a conversa acontece por e-mail.
+                <strong className="font-normal">O WhatsApp.</strong> O
+                formulário não entrega o pedido a sistema nenhum: ele abre uma
+                conversa em {destino.sistema}, com a mensagem já escrita, e quem
+                aperta enviar é você. A partir daí o pedido é uma conversa de
+                WhatsApp, e a Meta — dona do aplicativo — trata essa mensagem
+                segundo a política dela, como em qualquer conversa que você tenha
+                por lá. Este site não participa desse trecho e não guarda cópia.
               </li>
               <li>
                 <strong className="font-normal">Quem desenvolve o site.</strong>{" "}
-                <Pendente valor={destino.desenvolvedor} />.
+                {destino.desenvolvedor}. Como não existe destino intermediário
+                nem armazenamento deste lado, o seu pedido não passa por quem
+                mantém o site — não há por onde.
               </li>
               <li>
                 <strong className="font-normal">Hospedagem.</strong> As páginas e
@@ -316,26 +334,27 @@ export default function PaginaPrivacidade() {
 
           <section id="prazo">
             <h2 className={H2}>Por quanto tempo a gente guarda</h2>
-            <ul className={UL}>
-              <li>
-                <strong className="font-normal">
-                  Se você pediu orçamento e não fechou:
-                </strong>{" "}
-                <Pendente valor={retencao.pedidoSemContrato} />, contados do
-                último contato entre nós. Depois disso o dado é eliminado.
-              </li>
-              <li>
-                <strong className="font-normal">Se você virou cliente:</strong>{" "}
-                <Pendente valor={retencao.cliente} />, contados da entrega da
-                obra.
-              </li>
-            </ul>
             <p className={P}>
-              O prazo de cliente não é um número redondo escolhido por
-              comodidade: durante todo o período em que a empresa ainda pode ser
-              acionada por uma obra, ela precisa conseguir dizer de quem era essa
-              obra, o que foi executado e quando. Guardar menos que esse período
-              seria não ter como responder por ele.
+              <strong className="font-normal text-ink">
+                Este site não guarda nada.
+              </strong>{" "}
+              Não há banco de dados, não há planilha e não há caixa de entrada
+              automática: o formulário monta uma mensagem e some do caminho. Não
+              existe prazo de retenção a cumprir aqui porque não existe nada
+              retido aqui.
+            </p>
+            <p className={P}>
+              O que passa a existir, depois que você envia, é uma conversa de
+              WhatsApp — e ela fica onde ficam as suas conversas: no aparelho de
+              quem atende, no seu, e na infraestrutura da Meta. Quanto tempo a
+              Império mantém essa conversa é rotina interna da empresa, e não
+              uma promessa que este site tenha como cumprir; por isso não há
+              número escrito nesta página.
+            </p>
+            <p className={P}>
+              Para apagar o que você mandou, o caminho é o mesmo de qualquer
+              conversa: peça pelo e-mail acima, e a Império apaga do lado dela.
+              A sua cópia está no seu aparelho e só você a apaga.
             </p>
           </section>
 
@@ -411,13 +430,27 @@ export default function PaginaPrivacidade() {
             </p>
             <p className={P}>
               <strong className="font-normal">
-                Uma requisição sai daqui para fora, e ela precisa ser dita:
+                Duas coisas saem daqui para fora, e as duas precisam ser ditas.
+              </strong>
+            </p>
+            <p className={P}>
+              <strong className="font-normal">As fontes tipográficas.</strong>{" "}
+              As duas fontes do site são carregadas da Fontshare quando a página
+              abre. Isso não grava cookie, mas faz com que a Fontshare receba o
+              seu endereço IP e o seu navegador, como acontece em qualquer
+              arquivo que o site busca fora do próprio domínio. A licença dessas
+              fontes não permite que a gente as hospede aqui. Vale em toda
+              página, mesmo sem você preencher nada.
+            </p>
+            <p className={P}>
+              <strong className="font-normal">
+                O envio do formulário, quando você aperta o botão.
               </strong>{" "}
-              as duas fontes tipográficas do site são carregadas da Fontshare
-              quando a página abre. Isso não grava cookie, mas faz com que a
-              Fontshare receba o seu endereço IP e o seu navegador, como acontece
-              em qualquer arquivo que o site busca fora do próprio domínio. A
-              licença dessas fontes não permite que a gente as hospede aqui.
+              Aí o navegador abre o WhatsApp com a mensagem pronta, e é o
+              WhatsApp que passa a valer dali em diante — inclusive os cookies
+              dele, que são dele e não deste site. Antes de você apertar, nada
+              sai: o formulário não conversa com servidor nenhum enquanto você
+              digita.
             </p>
             <p className={P}>
               É por isso que você não vê banner de cookies. Não existe um porque
