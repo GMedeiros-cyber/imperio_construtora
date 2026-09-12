@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import {
   motion,
   useMotionValueEvent,
@@ -264,16 +263,21 @@ function Painel({
            810 pixels fantasma com o clipe, zero sem ele. */
         className="flex flex-col items-center min-[768px]:relative min-[768px]:[grid-area:1/5/2/9]"
       >
-        <a
-          href={obrasScroll.verTodasHref}
-          data-cursor={obrasScroll.cursor}
-          aria-label={`${obra.titulo} — ${obrasScroll.cursor}`}
-          /* aspect-square NO INVÓLUCRO, não só na <img>: com h-full a moldura
-             herdava a altura da linha do grid (444x566 medidos) e o
-             object-cover recortava a foto. Quem manda na altura é a largura
-             da coluna, e o teto de 52rem só entra em telas muito largas. */
-          className="projects-scroll_link-wrap relative block aspect-square max-h-[52rem] w-full"
-        >
+        {/* ⚠ ERA UM <a href="#obras">, E O DESTINO NÃO EXISTIA. Não há id="obras"
+            em lugar nenhum do site e não há página de listagem de obras: as
+            três fotos cobravam o toque e não levavam a lugar nenhum. Viraram
+            imagem — sem cursor de ponteiro, sem parada de Tab e sem rótulo
+            prometendo "Ver obra".
+
+            A descrição da obra continua inteira ao lado, e é ela que informa;
+            a foto ilustra. Quando existir página por obra, o <a> volta COM o
+            destino, e aí ele também ganha anel de foco.
+
+            aspect-square NO INVÓLUCRO, não só na <img>: com h-full a moldura
+            herdava a altura da linha do grid (444x566 medidos) e o
+            object-cover recortava a foto. Quem manda na altura é a largura da
+            coluna, e o teto de 52rem só entra em telas muito largas. */}
+        <div className="projects-scroll_link-wrap relative block aspect-square max-h-[52rem] w-full">
           <Image
             src={obra.imagem}
             alt={obra.imagemAlt}
@@ -282,7 +286,7 @@ function Painel({
             sizes="(min-width: 768px) 34vw, 100vw"
             className="aspect-square size-full object-cover"
           />
-        </a>
+        </div>
       </motion.div>
 
       {/* ── DIREITA: tags e descrição ─────────────────────────────────── */}
@@ -335,25 +339,16 @@ function ProgressoObras({
             <motion.div style={{ width: largura }} className="h-[.06rem] bg-bone" />
           </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-body-sm text-bone">
-              [ {atual} / {total} ]
-            </p>
+          {/* ⚠ AQUI HAVIA O LINK "Ver todas as obras", E ELE SAIU. O href era
+              "#obras" e esse id não existe em lugar nenhum do site: o link
+              mudava a URL e deixava a página parada. Não há página de listagem
+              de obras para apontar, e um link que promete uma lista e não
+              entrega nada é pior do que a ausência dele.
 
-            <a
-              href={obrasScroll.verTodasHref}
-              /* py-3.5 e não py-1: o alvo de toque tem de medir 44px, e o
-                 conteúdo (texto de 14px com leading-none e seta de 16px) dá
-                 16px — 16 + 2 x 14 = 44. A margem negativa devolve os 20px
-                 extras ao fluxo, então a linha continua com 24px e o texto
-                 não sai do lugar em relação ao trilho nem ao contador. A área
-                 clicável avança 10px para cima, ainda 6px abaixo do trilho. */
-              className="-my-2.5 flex items-center gap-2 py-3.5 text-body-sm leading-none text-bone transition-colors hover:text-gold-lt"
-            >
-              {obrasScroll.verTodas}
-              <ArrowUpRight aria-hidden className="size-4 shrink-0" strokeWidth={1} />
-            </a>
-          </div>
+              Sobra o contador, sozinho na linha. Ele não vira `justify-between`
+              com um filho só — ficaria colado à esquerda do trilho de qualquer
+              jeito, que é onde ele já estava. */}
+          <p className="text-body-sm text-bone">{obrasScroll.contador(atual, total)}</p>
         </div>
       </div>
     </div>

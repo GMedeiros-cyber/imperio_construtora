@@ -198,13 +198,29 @@ export const obrasPaineis: ObraPainel[] = [
   },
 ];
 
-/* Rodapé da seção: trilho de progresso, contador e a saída para a lista
-   completa. O total sai do tamanho do array, não de um número escrito à mão. */
+/* ⚠ ESTE OBJETO FOI ESVAZIADO, E O QUE SAIU DELE PRECISA FICAR REGISTRADO.
+
+   Ele tinha três campos, e os três apontavam para lugar nenhum:
+
+     verTodas / verTodasHref  o link "Ver todas as obras", cujo href era
+                              "#obras" — e NÃO EXISTE id="obras" no site. A
+                              página de listagem nunca foi feita.
+     cursor                   o rótulo "Ver obra" de um cursor customizado que
+                              também não existe: o `data-cursor` não era lido
+                              por componente nenhum.
+
+   Eram QUATRO links mortos na home: as três fotos de obra e o link do rodapé
+   da seção. As fotos deixaram de ser <a> e o link saiu — elemento clicável que
+   não leva a lugar nenhum é pior do que elemento não clicável, porque cobra o
+   toque e não devolve nada.
+
+   ⚠ SE UM DIA HOUVER UMA PÁGINA DE OBRAS, o link volta COM O DESTINO JUNTO, e
+   não antes. */
+
+/* Rodapé da seção: trilho de progresso e contador. O total sai do tamanho do
+   array, não de um número escrito à mão. */
 export const obrasScroll = {
-  verTodas: "Ver todas as obras",
-  verTodasHref: "#obras",
-  /* Rótulo do link de cada foto, lido pelo cursor customizado. */
-  cursor: "Ver obra",
+  contador: (atual: number, total: number) => `[ ${atual} / ${total} ]`,
 } as const;
 
 /* ── 5b. Faixa de paralaxe ──────────────────────────────────────────── */
