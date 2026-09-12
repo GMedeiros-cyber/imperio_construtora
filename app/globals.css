@@ -790,3 +790,97 @@
   line-height: 1.5;
   color: var(--color-ash);
 }
+
+/* A volta para a aba do WhatsApp, quando ela abriu atrás da janela ou foi
+   fechada sem querer. É LINK DE TEXTO, e não pastilha: a ação principal já
+   aconteceu — a conversa está aberta —, e uma pastilha aqui competiria com o
+   título dizendo que ainda falta fazer algo grande.
+   Alvo de 44px pela altura mínima, que é o de toque. */
+.form__sucesso-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: var(--text-body-sm);
+  color: var(--color-bone);
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-ash);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-skip-ink: auto;
+  transition: text-decoration-color 220ms ease;
+}
+@media (hover: hover) {
+  .form__sucesso-link:hover {
+    text-decoration-color: var(--color-gold-lt);
+    text-decoration-thickness: 2px;
+  }
+}
+.form__sucesso-link:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 3px;
+}
+
+/* ── O pop-up do WhatsApp foi bloqueado ─────────────────────────────────────
+
+   Mesma placa do resumo de erro, e pelo mesmo motivo: é notícia ruim que a
+   pessoa precisa saber AGORA — ela acha que enviou e não enviou. O que muda é
+   que este traz uma saída clicável em vez de só nomear o problema.
+
+   A RÉGUA É `--color-erro` SOBRE A PLACA, e isso foi medido: #D1614A sobre
+   #222221 dá 4,18:1, acima dos 3:1 que objeto gráfico exige. Sobre o ink do
+   fundo da página ela daria 5,20:1 — mas a régua encosta na placa, e é contra
+   ela que o olho compara.
+
+   ⚠ A RÉGUA É À ESQUERDA, E NÃO UMA BORDA INTEIRA. Borda em volta de um bloco
+   retangular é card, e card neste site tem canto reto e nenhuma borda. Uma
+   régua lateral é sinal de bloco citado, não moldura. */
+.form__bloqueado {
+  margin-block-end: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-campo);
+  border-inline-start: 2px solid var(--color-erro);
+  background: var(--color-placa);
+}
+
+.form__bloqueado-titulo {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-body);
+  line-height: 1.4;
+  color: var(--color-bone);
+}
+
+.form__bloqueado-texto {
+  margin: 0 0 1rem;
+  max-width: 46ch;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-ash);
+}
+
+/* Aqui a pastilha SE JUSTIFICA, ao contrário do link do sucesso: a conversa
+   NÃO abriu, e este link é a única saída do bloco. Ele é o mesmo par do botão
+   de envio — gold com texto ink, medido em 7,07:1 —, para não haver dúvida de
+   que é a coisa a apertar. */
+.form__bloqueado-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-gold);
+  color: var(--color-ink);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 220ms ease;
+}
+@media (hover: hover) {
+  .form__bloqueado-link:hover {
+    background: var(--color-gold-lt);
+  }
+}
+.form__bloqueado-link:focus-visible {
+  outline: 2px solid var(--color-bone);
+  outline-offset: 2px;
+}

@@ -34,15 +34,24 @@ export const telefone = {
    onde ela veio, o que ajuda quem atende.
 
    ⚠ ESTE TEXTO É SÓ DOS LINKS DIRETOS — rodapé, menu, canais de /contato e
-   botão flutuante. O formulário de /contato NÃO passa por aqui: ele entrega
-   pela Server Action e não compõe mensagem de WhatsApp nenhuma (ver a seção
-   da ENTREGA em app/contato/actions.ts). Se um dia ele voltar a compor, a
-   mensagem dele é OUTRA, com os dados de quem preencheu — não esta, e nunca
-   as duas concatenadas. */
+   botão flutuante. O FORMULÁRIO de /contato tem mensagem PRÓPRIA, montada com
+   os dados de quem preencheu: `mensagemWhatsApp`, em app/contato/estado.ts.
+   São duas mensagens diferentes para o mesmo número, e nunca as duas
+   concatenadas — quem chega pelo link direto não preencheu nada, e quem chega
+   pelo formulário já disse tudo. */
 export const whatsappMensagem =
   "Olá! Vi o site da Império Construtora e tenho interesse em conhecer o trabalho de vocês. Podemos conversar sobre a minha obra?";
 
-export const whatsappUrl = `https://wa.me/${telefone.e164.replace(/\D/g, "")}?text=${encodeURIComponent(whatsappMensagem)}`;
+/* A BASE, SEM `?text=`. Existe porque agora há DOIS textos para o mesmo
+   número: o genérico acima e o do formulário. Quem precisa de um texto próprio
+   parte daqui; quem quer o genérico usa o `whatsappUrl` logo abaixo.
+
+   ⚠ NÃO ESCREVA O NÚMERO EM OUTRO LUGAR. Esta é a única expressão que deriva
+   a URL do `telefone.e164` — trocar o telefone troca tudo o que aponta para o
+   WhatsApp, inclusive o formulário. */
+export const whatsappBase = `https://wa.me/${telefone.e164.replace(/\D/g, "")}`;
+
+export const whatsappUrl = `${whatsappBase}?text=${encodeURIComponent(whatsappMensagem)}`;
 
 /* ── 1. Hero ─────────────────────────────────────────────────────────── */
 

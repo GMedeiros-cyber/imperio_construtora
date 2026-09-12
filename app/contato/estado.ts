@@ -13,6 +13,11 @@
    consolidar o conteúdo do site, estas duas listas são candidatas naturais a
    mudar de casa — o resto deste arquivo, não. */
 
+/* A base do wa.me, derivada do `telefone` — a fonte única do número. Vem de
+   lá e não é reescrita aqui: trocar o telefone da empresa troca o destino do
+   formulário junto. */
+import { whatsappBase } from "@/lib/dados";
+
 /* ⚠ "OUTRO" É PASTILHA, E NÃO ABRE CAMPO DE TEXTO. A decisão:
 
    1. O campo livre já existe, e fica a menos de 200px abaixo destes grupos:
@@ -193,6 +198,52 @@ export function resumoDeErros(erros: EstadoContato["erros"]): string | null {
   return quantos === 1
     ? "Falta corrigir um campo antes de enviar."
     : `Faltam corrigir ${quantos} campos antes de enviar.`;
+}
+
+/* ══ A MENSAGEM QUE CHEGA NO WHATSAPP ═══════════════════════════════════════
+
+   MORA AQUI, E NÃO NO COMPONENTE. Os dois caminhos do formulário terminam no
+   MESMO wa.me, e cada um monta o texto de um lado da fronteira: com JS, o
+   componente abre a conversa; sem JS, a Server Action redireciona. Duas cópias
+   desta função é como o pedido passaria a chegar diferente conforme o
+   visitante tem script ou não — e ninguém perceberia, porque as duas
+   continuariam funcionando. É a mesma razão que mantém `validar()` aqui.
+
+   ⚠ NÃO A COPIE PARA O COMPONENTE NEM PARA A ACTION. Se precisar mudar o
+   formato, muda aqui e os dois lados mudam juntos.
+
+   Os asteriscos são o negrito do aplicativo.
+
+   ⚠ TIPO DE OBRA E ESTÁGIO SÃO OPCIONAIS NESTE SITE — e é onde ele difere da
+   LDF, de onde o desenho veio. Lá os dois são obrigatórios e entram sempre;
+   aqui, vazio SOME da mensagem, como já acontecia com a mensagem livre. Um
+   rótulo órfão ("Tipo de obra:" sem nada depois) é pior do que a ausência da
+   linha: quem lê no celular acha que o dado se perdeu. */
+export function mensagemWhatsApp(v: ValoresContato) {
+  const linhas = [
+    "*Novo pedido de obra — site Império*",
+    "",
+    `*Nome:* ${v.nome}`,
+    `*Telefone:* ${v.telefone}`,
+    `*E-mail:* ${v.email}`,
+  ];
+
+  if (v.tipoObra.length > 0) linhas.push(`*Tipo de obra:* ${v.tipoObra.join(", ")}`);
+  if (v.estagio) linhas.push(`*Estágio da obra:* ${v.estagio}`);
+  if (v.mensagem) linhas.push("", "*Mensagem:*", v.mensagem);
+
+  /* `String.fromCharCode(10)` e não "\n" literal: a quebra de linha precisa
+     sobreviver inteira até o encodeURIComponent, e é o que garante que ela é
+     um LF só, sem CR pendurado por editor nenhum. */
+  return linhas.join(String.fromCharCode(10));
+}
+
+/* O ENDEREÇO COMPLETO, com a mensagem já codificada. Também mora aqui, e pelo
+   mesmo motivo da função acima: se um lado montar a URL e o outro montar de
+   novo, basta um esquecer o `encodeURIComponent` para a mensagem chegar
+   truncada no primeiro "&" — e só num dos dois caminhos. */
+export function urlDoPedido(v: ValoresContato) {
+  return `${whatsappBase}?text=${encodeURIComponent(mensagemWhatsApp(v))}`;
 }
 
 export const ESTADO_INICIAL: EstadoContato = {
