@@ -650,10 +650,6 @@
 /* GRUPO INVÁLIDO: cada pastilha ganha a borda de erro, e o motivo aparece no
    .form__erro do fim do grupo. O erro de grupo é "nenhuma marcada", então
    borda de erro e preenchimento de seleção nunca aparecem na mesma pastilha. */
-.form__grupo[aria-invalid="true"] .form__pastilha {
-  border-color: var(--color-erro);
-}
-
 .form__pastilha input {
   position: absolute;
   inset: 0;

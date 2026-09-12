@@ -5,6 +5,7 @@ import {
   opcoesEstagio,
   opcoesTipoObra,
   resumoDeErros,
+  saneia,
   soDigitos,
   validar,
   type EstadoContato,
@@ -49,17 +50,23 @@ export async function enviarContato(
   _anterior: EstadoContato,
   dados: FormData,
 ): Promise<EstadoContato> {
-  const valores: ValoresContato = {
-    nome: texto(dados, "nome"),
-    telefone: texto(dados, "telefone"),
-    email: texto(dados, "email"),
-    tipoObra: dados
-      .getAll("tipoObra")
-      .filter((v): v is string => typeof v === "string"),
-    estagio: texto(dados, "estagio"),
-    mensagem: texto(dados, "mensagem"),
-    consentimento: dados.get("consentimento") === "sim",
-  };
+  /* `saneia` joga fora valor de tipo/estágio que não esteja na lista, em
+     silêncio — os dois são opcionais, então "não reconheci" e "não respondeu"
+     dão no mesmo. Ver o comentário dele em ./estado.ts. */
+  const valores: ValoresContato = saneia(
+    {
+      nome: texto(dados, "nome"),
+      telefone: texto(dados, "telefone"),
+      email: texto(dados, "email"),
+      tipoObra: dados
+        .getAll("tipoObra")
+        .filter((v): v is string => typeof v === "string"),
+      estagio: texto(dados, "estagio"),
+      mensagem: texto(dados, "mensagem"),
+      consentimento: dados.get("consentimento") === "sim",
+    },
+    { tipos: opcoesTipoObra, estagios: opcoesEstagio },
+  );
 
   /* ══ ANTISPAM, ANTES DE QUALQUER OUTRA COISA ══
 
@@ -94,11 +101,14 @@ export async function enviarContato(
     return { estado: "sucesso", erros: {}, resumo: null, valores: ESTADO_INICIAL.valores };
   }
 
-  /* ══ VALIDAÇÃO ══ Ver ./estado.ts. */
-  const erros = validar(valores, {
-    tipos: opcoesTipoObra,
-    estagios: opcoesEstagio,
-  });
+  /* ══ VALIDAÇÃO ══ Ver ./estado.ts. Obrigatórios: nome, telefone, e-mail e
+     consentimento. Tipo de obra e Estágio são opcionais e não passam por aqui.
+
+     ⚠ A VALIDAÇÃO DO SERVIDOR TAMBÉM PAROU DE EXIGIR OS DOIS. Tirar só do
+     cliente deixaria o servidor derrubando envio válido — e como o formulário
+     tem `noValidate`, nem no navegador isso apareceria: o erro só surgiria
+     depois do POST, sem nada na tela explicando qual campo faltou. */
+  const erros = validar(valores);
 
   const resumo = resumoDeErros(erros);
   if (resumo) {
@@ -152,9 +162,20 @@ export async function enviarContato(
     const resposta = await fetch(destino, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      /* ⚠ CAMPO OPCIONAL VAZIO NÃO VAI NO CORPO. Com Tipo de obra e Estágio
+         opcionais, mandar `"tipoObra": []` e `"estagio": ""` obriga quem
+         monta o e-mail do outro lado a testar array vazio e string vazia — e
+         quem esquecer de testar imprime um rótulo órfão, "Tipo de obra:", sem
+         nada depois. Chave ausente é o único formato que nenhum template
+         renderiza por acidente. O mesmo vale para a mensagem. */
       body: JSON.stringify({
-        ...valores,
+        nome: valores.nome,
         telefone: soDigitos(valores.telefone),
+        email: valores.email,
+        ...(valores.tipoObra.length > 0 ? { tipoObra: valores.tipoObra } : {}),
+        ...(valores.estagio ? { estagio: valores.estagio } : {}),
+        ...(valores.mensagem ? { mensagem: valores.mensagem } : {}),
+        consentimento: valores.consentimento,
         recebidoEm: new Date().toISOString(),
         origem: "site/contato",
       }),

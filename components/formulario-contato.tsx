@@ -15,6 +15,13 @@ import {
 
 /* O formulário de /contato. Seis campos, um consentimento e um botão.
 
+   ══ O QUE É OBRIGATÓRIO ══
+
+   Nome, telefone, e-mail e o consentimento. Tipo de obra, Estágio da obra e
+   Mensagem são opcionais, e os três dizem isso no rótulo. Sobram DOIS meios de
+   contato exigidos — o formulário nunca fica sem como responder a quem
+   escreveu.
+
    ══ ELE É CÓPIA DO FORMULÁRIO DA LDF ══
 
    components/FormularioContato.tsx de lá, com as classes .form__* que moram na
@@ -224,13 +231,15 @@ export function FormularioContato() {
         ) : null}
       </div>
 
-      {/* Múltipla escolha, checkbox por baixo das pastilhas. */}
-      <fieldset
-        className="form__grupo"
-        aria-invalid={erro.tipoObra ? true : undefined}
-        aria-describedby={erro.tipoObra ? erroId("tipoObra") : undefined}
-      >
-        <legend className="form__rotulo">Tipo de obra</legend>
+      {/* Múltipla escolha, checkbox por baixo das pastilhas.
+
+          ⚠ SEM aria-invalid E SEM BLOCO DE ERRO: o grupo é OPCIONAL. Não há
+          estado inválido para anunciar — valor fora da lista é descartado em
+          silêncio pelo `saneia()` do servidor, não devolvido como erro. */}
+      <fieldset className="form__grupo">
+        <legend className="form__rotulo">
+          Tipo de obra <span className="form__opcional">(opcional)</span>
+        </legend>
         <p className="form__ajuda">Pode marcar mais de um.</p>
         <div className="form__pastilhas">
           {opcoesTipoObra.map((op) => (
@@ -245,20 +254,13 @@ export function FormularioContato() {
             </label>
           ))}
         </div>
-        {erro.tipoObra ? (
-          <p className="form__erro" id={erroId("tipoObra")}>
-            {erro.tipoObra}
-          </p>
-        ) : null}
       </fieldset>
 
-      {/* Escolha única, radio por baixo. */}
-      <fieldset
-        className="form__grupo"
-        aria-invalid={erro.estagio ? true : undefined}
-        aria-describedby={erro.estagio ? erroId("estagio") : undefined}
-      >
-        <legend className="form__rotulo">Estágio da obra</legend>
+      {/* Escolha única, radio por baixo. Opcional, como o de cima. */}
+      <fieldset className="form__grupo">
+        <legend className="form__rotulo">
+          Estágio da obra <span className="form__opcional">(opcional)</span>
+        </legend>
         <div className="form__pastilhas">
           {opcoesEstagio.map((op) => (
             <label className="form__pastilha" key={op}>
@@ -272,11 +274,6 @@ export function FormularioContato() {
             </label>
           ))}
         </div>
-        {erro.estagio ? (
-          <p className="form__erro" id={erroId("estagio")}>
-            {erro.estagio}
-          </p>
-        ) : null}
       </fieldset>
 
       <div className="form__campo">
