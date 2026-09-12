@@ -263,7 +263,17 @@ export function SiteFooter() {
 
           O crédito lê como o resto da barra (caption, ash), e não como link
           das colunas: aqui a hierarquia é a do copyright ao lado. */}
-      <div className="mt-16 flex flex-wrap items-center justify-between gap-x-12 gap-y-4 border-t border-bone/15 pt-8 max-[640px]:grid max-[640px]:justify-items-start">
+      {/* ⚠ O `pe-14` DESVIA DO BOTÃO FLUTUANTE DO WHATSAPP. Esta linha é a
+          última da página e encosta no canto inferior direito, que é onde o
+          botão mora — fixo, 56px, sempre por cima. Medido antes: ele cobria
+          "Desenvolvido por Tribus Labs" a 768, 1440 e 1920px e o CNPJ a 768px,
+          e o crédito é LINK, não só texto. 56px é a largura do botão.
+
+          Sem `max-[...]` aqui: o crédito é empurrado para a direita pelo
+          `justify-between` em qualquer largura, então a faixa precisa ser
+          reservada em todas elas. O custo é zero — a linha tem espaço de
+          sobra. */}
+      <div className="mt-16 flex flex-wrap items-center justify-between gap-x-12 gap-y-4 border-t border-bone/15 pt-8 pe-14 max-[640px]:grid max-[640px]:justify-items-start">
         <p className="text-caption text-ash">
           © {ano} Império Construtora
         </p>
