@@ -1074,3 +1074,49 @@ A coluna dos erros faz parte do teste: **manifest com erro de parse é
 descartado, e aí o atalho passa a abrir na URL corrente** — que é exatamente a
 falha que se queria descartar. O `scope` não é declarado de propósito: o padrão
 é o diretório do `start_url`, que aqui é `/` e cobre o site inteiro.
+
+### 14. "Outro" nas pastilhas, e a órfã que não é culpa dela
+
+**O desvio:** "Tipo de obra" e "Estágio da obra" viraram OPCIONAIS e ganharam
+"Outro" como última pastilha. Sete e cinco opções agora.
+
+**"Outro" é pastilha, não abre campo de texto.** O campo livre já existe a
+menos de 200px dali — "Mensagem (opcional)" —, e um segundo campo livre é a
+mesma pergunta feita duas vezes. Com os grupos opcionais, "Outro" também
+deixou de ser o jeito de responder fora da lista: para isso basta não marcar
+nada. O que ele carrega é um SINAL — "olhei a sua lista e nenhuma serve" — e
+sinal cabe inteiro numa pastilha. O custo, registrado: quem marca "Outro" e não
+escreve na mensagem manda um pedido que não diz o tipo.
+
+**⚠ A ÚLTIMA LINHA FICA COM UMA PASTILHA SOZINHA, E NÃO HÁ CSS QUE RESOLVA.**
+Medido, linhas terminadas com uma só pastilha, somando os dois grupos:
+
+| tratamento | 360 | 390 | 414 | 768 | 992 | 1440 | 1920 | total |
+|---|---|---|---|---|---|---|---|---|
+| **como está** | 1 | 1 | 2 | 1 | 1 | 1 | 0 | **7** |
+| `flex-grow: 1` | 1 | 1 | 2 | 1 | 1 | 1 | 0 | 7 |
+| `min-width: 7rem` | 2 | 1 | 1 | 1 | 2 | 1 | 1 | 9 |
+| `min 7rem` + cresce até 20rem | 2 | 1 | 1 | 1 | 2 | 1 | 1 | 9 |
+| `min-width: 9rem` | 2 | 2 | 2 | 1 | 2 | 1 | 0 | 10 |
+
+Três coisas que esses números dizem:
+
+1. **Não é culpa do "Outro".** Com SEIS pastilhas a órfã já aparecia a 360, 390
+   e 1440px. A sétima mudou onde ela cai, não se ela existe.
+2. **`flex-grow` não muda a contagem**, só a aparência: ele não altera a
+   quebra, só estica quem já quebrou.
+3. **`min-width` piora.** Uniformizar a largura faz caber menos por linha.
+
+A causa está nas medidas: "Outro" tem 68px e é a mais estreita do conjunto
+(a seguinte é "Clínica", 75px), e as linhas anteriores fecham cheias — a 768px
+a primeira linha soma 701px de 704 disponíveis. Sete itens de largura variável
+não empacotam sem sobra.
+
+**O que ficou: nada de CSS novo.** A única escolha real era se a solitária
+parece acidente ou intenção, e esticar cobra caro onde a faixa é larga: a
+768px o `flex-grow` transforma "Outro" numa barra de 704px, e mesmo com teto de
+22rem vira 352px para uma palavra — mais chamativo que a pastilha solta.
+Acrescentar CSS que não conserta o que foi medido é pior que não acrescentar.
+
+Alvo de toque da nova pastilha: 68,3x44px nas quatro larguras verificadas,
+herdado do `min-height: 2.75rem` do `.form__pastilha`. Overflow zero nas sete.

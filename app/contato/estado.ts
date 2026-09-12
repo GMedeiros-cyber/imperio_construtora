@@ -13,6 +13,27 @@
    consolidar o conteúdo do site, estas duas listas são candidatas naturais a
    mudar de casa — o resto deste arquivo, não. */
 
+/* ⚠ "OUTRO" É PASTILHA, E NÃO ABRE CAMPO DE TEXTO. A decisão:
+
+   1. O campo livre já existe, e fica a menos de 200px abaixo destes grupos:
+      "Mensagem (opcional)", cuja função inteira é receber o que a lista não
+      cobre. Um segundo campo livre ali é a MESMA pergunta feita duas vezes, e
+      a pessoa tem de escolher em qual das duas escrever.
+   2. Os dois grupos agora são opcionais, e isso muda o que "Outro" carrega.
+      Ele não é mais o jeito de responder algo fora da lista — para isso basta
+      não marcar nada. O que ele diz é: "olhei a sua lista e nenhuma serve".
+      Isso é um SINAL, não um dado, e um sinal cabe inteiro numa pastilha.
+   3. O campo condicional custa mais do que parece: precisaria aparecer sem
+      JavaScript (o formulário funciona sem), o que pede :has() no CSS; um
+      nome novo no FormData; um teto de tamanho próprio; e a regra de ignorar
+      o texto quando "Outro" está desmarcado, porque campo escondido continua
+      sendo enviado.
+
+   O que se perde: quem marca "Outro" e não escreve nada na mensagem manda um
+   pedido que não diz o tipo. Com um campo rotulado "Qual?" ali, provavelmente
+   escreveria. É o custo, e está aqui escrito para quem quiser reverter.
+
+   "Outro" é o ÚLTIMO da lista nos dois — é a saída, e saída não vem no meio. */
 export const opcoesTipoObra = [
   "Varejo e franquias",
   "Escritório",
@@ -20,6 +41,7 @@ export const opcoesTipoObra = [
   "Restaurante",
   "Residencial",
   "Galpão e logística",
+  "Outro",
 ] as const;
 
 export const opcoesEstagio = [
@@ -27,6 +49,7 @@ export const opcoesEstagio = [
   "Projeto pronto",
   "Obra em andamento",
   "Só quero orçamento",
+  "Outro",
 ] as const;
 
 export const consentimento =
