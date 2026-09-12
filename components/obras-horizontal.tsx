@@ -292,7 +292,55 @@ function Painel({
       {/* ── DIREITA: tags e descrição ─────────────────────────────────── */}
       <motion.div
         style={anima ? { x: xDireita } : undefined}
-        className="flex flex-col items-start gap-6 min-[768px]:justify-end min-[768px]:pl-16 min-[768px]:[grid-area:1/9/2/12]"
+        /* ══ A COLUNA DA DIREITA DEIXOU DE SER UMA FITA ══
+
+           Media na POSIÇÃO DE LEITURA de cada painel (painel alinhado à
+           viewport, não em trânsito), com as caixas de linha reais:
+
+             largura   antes                       depois
+             768px     ~12 caracteres, 11 linhas   ~54, 2 linhas
+             992px     ~18 caracteres,  6 linhas   ~54, 2 linhas
+             1280px    ~24 caracteres,  4 linhas   ~43, 2 linhas
+             1440px    ~27 caracteres,  4 linhas   ~47, 2 linhas
+             1920px    ~45 caracteres,  3 linhas   ~54, 2 linhas
+
+           Ela ocupava TRÊS colunas de doze (grid-area 1/9/2/12) e ainda
+           descontava 64px de `pl-16`. Sobravam 99px de texto a 768px — um
+           parágrafo de 18px caindo em onze linhas de uma palavra.
+
+           ⚠ O PAR É `max-[1280px]` COM `min-[1280px]`, O MESMO NÚMERO NOS DOIS.
+           No Tailwind v4 o `max-*` é EXCLUSIVO — `max-[1279px]` vira
+           `width < 1279` e deixa a largura 1279 sem regra nenhuma. Medido: a
+           1279px o bloco caía em `grid-area: auto` e o texto voltava a 90px de
+           largura, em doze linhas. É o mesmo furo que o `max-[767px]` já custou
+           uma rodada neste projeto.
+
+           ⚠ DE 768 A 1279px ELA DESCE PARA A SEGUNDA LINHA DO GRID, e não é
+           capricho: abaixo disso as três colunas do desenho (título, foto,
+           texto) não cabem lado a lado. A conta é fechada — com quatro colunas
+           de doze e 32px de recuo, o texto mede `(largura − 196) / 3 + 4`, e
+           isso só passa de 380px (os ~45 caracteres) a partir de 1330px. Embaixo,
+           o texto usa a largura inteira do painel e para no `max-w-[50ch]`.
+
+           ⚠ DE 1280px PARA CIMA ELA CONTINUA NA PRIMEIRA LINHA, ao lado da
+           foto — é o desenho editorial da seção, e ele só se sustenta com
+           largura. Ganhou a coluna 12, que estava vazia, e o recuo caiu de 64
+           para 32px. A 1280px dá 43 caracteres: dois caracteres abaixo da faixa
+           confortável, e aceito porque estes parágrafos têm cerca de cem
+           caracteres no total — em duas linhas, não é medida de leitura longa.
+
+           O `max-w-[50ch]` do parágrafo continua sendo o teto em todas elas: a
+           coluna dá espaço, a medida de linha é que decide onde parar. */
+        className={[
+          "flex flex-col items-start gap-6",
+          /* `justify-end` só a partir de 1280: na linha 2 ele empurraria o
+             bloco para o fundo de uma linha esticada até a altura da tela,
+             abrindo um vão de 300px entre a foto e as tags. Lado a lado com a
+             foto, ele continua sendo o que alinha a base das três colunas. */
+          "min-[1280px]:justify-end",
+          "min-[768px]:max-[1280px]:[grid-area:2/2/3/13] min-[768px]:max-[1280px]:pt-12",
+          "min-[1280px]:pl-8 min-[1280px]:[grid-area:1/9/2/13]",
+        ].join(" ")}
       >
         {/* Tags empilhadas e sublinhadas, não pills com borda: é o
             .tag.is-text do original. */}
