@@ -399,19 +399,10 @@ export const colunasParalaxe: ColunaParalaxe[] = [
 
 /* ── 6 e 7. Cards de obra ────────────────────────────────────────────── */
 
-export type Obra = {
-  titulo: string;
-  descricao: string;
-  imagem?: string;
-  alt?: string;
-  /** Card de acento: superfície ink, texto gold, sem imagem. Um por página. */
-  acento?: boolean;
-};
-
-/* Os arrays obrasEntregues e participacaoTecnica saíram junto com as seções
-   que os liam. O tipo Obra fica: components/obras-grid.tsx ainda o importa.
-   Esse componente ficou órfão na mesma rodada — só era usado pelas duas
-   seções removidas — mas não é meu para apagar. */
+/* VAZIO, E DE PROPOSITO. Os arrays obrasEntregues e participacaoTecnica saíram
+   junto com as seções que os liam, e o tipo `Obra` foi embora nesta rodada com
+   o último arquivo que o importava — components/obras-grid.tsx, que era órfão
+   desde então. As obras que a home mostra usam `ObraPainel`, logo acima. */
 
 /* ── 8. Como trabalhamos ─────────────────────────────────────────────── */
 
@@ -510,23 +501,11 @@ export const secaoClientes = {
   statement: "Marcas que confiaram na Império",
 } as const;
 
-/* ⚠ ÓRFÃO. Era a lista tipográfica de nomes que a faixa de logos substituiu.
-   Fica porque cobre onze clientes e as logos só cobrem oito — três marcas
-   (Boali, Authentic Feet, Riformato) existem aqui e não têm arquivo. Antes de
-   apagar, decida se elas entram na faixa. */
-export const clientes: string[] = [
-  "PETZ",
-  "Artwalk",
-  "Boali",
-  "Magicfeet",
-  "Authentic Feet",
-  "Adidas",
-  "Líquido",
-  "OFOS",
-  "Leovit",
-  "Transportadora Videira",
-  "Riformato Construtora",
-];
+/* A lista tipográfica de nomes `clientes` SAIU nesta rodada. Ela sobrevivia com
+   a justificativa de cobrir onze marcas contra as oito da faixa de logos — e
+   isso deixou de ser verdade: lib/logos.ts tem DEZ arquivos, e a única marca
+   que estava só na lista era a Riformato Construtora, que já aparece pelo nome
+   na galeria de autoria do "Como trabalhamos". Nada se perdeu. */
 
 /* ── 9b. Chamada final ───────────────────────────────────────────────── */
 
@@ -548,18 +527,10 @@ export const chamadaFinal = {
 
 /* ── 10. Contato ─────────────────────────────────────────────────────── */
 
-export const contato = {
-  eyebrow: "CONTATO",
-  statement: "Conte para nós sobre a sua próxima obra.",
-  /* O e-mail ainda é o literal — este objeto não é lido por ninguém desde que
-     o bloco virou a rota /contato, que tem a própria lista de canais. */
-  linhas: [
-    { rotulo: "Telefone", valor: telefone.exibicao },
-    { rotulo: "E-mail", valor: "(em definição)" },
-    { rotulo: "Local", valor: "São Paulo, SP" },
-  ],
-  botao: "Falar com a Império",
-} as const;
+/* O objeto `contato` SAIU nesta rodada. Ele não era lido por ninguém desde que
+   o bloco virou a rota /contato, que monta a própria lista de canais em
+   app/contato/page.tsx — e ainda guardava um `E-mail: "(em definição)"` que já
+   não correspondia a nada. */
 
 /* ── 11. Rodapé ──────────────────────────────────────────────────────── */
 
@@ -570,37 +541,8 @@ export const creditos = {
   url: "https://www.instagram.com/tribus__labs/",
 } as const;
 
-export type ItemRodape = { texto: string; href?: string };
-export type ColunaRodape = { titulo: string; itens: ItemRodape[] };
-
-export const rodape: ColunaRodape[] = [
-  {
-    titulo: "NAVEGAÇÃO",
-    itens: [
-      { texto: "Início", href: "#inicio" },
-      /* ⚠ #obras-em-destaque, e nao #obras. O id da secao e esse; enquanto o
-       dado dizia "#obras" o item existia no menu e nao levava a lugar nenhum
-       — a URL mudava e a pagina ficava em y=0. Conferido contra os ids reais
-       da home: inicio, obras-em-destaque, sobre, como-trabalhamos. */
-    { texto: "Obras", href: "#obras-em-destaque" },
-      { texto: "Contato", href: "/contato" },
-    ],
-  },
-  {
-    titulo: "SERVIÇOS",
-    itens: [
-      { texto: "Construção" },
-      { texto: "Reformas" },
-      { texto: "Gestão de obras" },
-      { texto: "Acabamentos" },
-    ],
-  },
-  {
-    titulo: "CONTATO",
-    itens: [
-      { texto: telefone.exibicao, href: whatsappUrl },
-      { texto: "contato@imperioconstrutora.com.br", href: "mailto:contato@imperioconstrutora.com.br" },
-      { texto: "Guarulhos, SP" },
-    ],
-  },
-];
+/* Os tipos ItemRodape e ColunaRodape e o array `rodape` SAÍRAM nesta rodada.
+   O components/site-footer.tsx monta as colunas a partir de `menuHero.itens`,
+   `sociaisHero`, `telefone` e `creditos` — nunca leu este array, e ele já
+   divergia do que está na tela (tinha uma coluna "SERVIÇOS" que o rodapé não
+   mostra). */
