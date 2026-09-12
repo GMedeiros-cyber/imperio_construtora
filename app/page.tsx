@@ -49,59 +49,75 @@ export default function Home() {
           página inteira. Ver components/navegacao-fixa.tsx. */}
       <NavegacaoFixa />
 
-      <Hero />
+      {/* ══ O <main> COMEÇA AQUI, E A NAVEGAÇÃO E O RODAPÉ FICAM DE FORA ══
 
-      {/* ══ O ARCO ESCURO ══
+          A home era a única rota sem marco de conteúdo principal: /contato,
+          /privacidade e a 404 já tinham o seu. Sem ele, quem navega por leitor
+          de tela não tem para onde pular — o atalho de marcos não oferece
+          destino nenhum nesta página, que é justamente a mais longa do site.
 
-          UM fundo só cobre as duas seções, e é por isso que ele mora aqui e não
-          dentro de nenhuma delas. O gradiente sai do ink logo abaixo da hero,
-          atravessa o carrossel de marcas aquecendo, floresce no dourado #6B6144
-          a 82% da altura e VOLTA ao ink antes do fim.
+          ⚠ A NAVEGAÇÃO FIXA E O RODAPÉ SÃO IRMÃOS DO <main>, NÃO FILHOS. Os
+          dois se repetem em toda rota e são chrome, não conteúdo desta página;
+          dentro do <main> eles passariam a ser anunciados como parte dele.
 
-          ⚠ O RETORNO AO PRETO É O PONTO. Enquanto o dourado terminava na borda,
-          a seção de obras precisava de uma rampa para recebê-lo — e essa rampa
-          virava uma faixa dourada no começo dela, com um risco visível na
-          emenda. Com o arco fechando em ink, a borda é preto contra preto e não
-          há o que emendar. Nenhuma das duas seções tem fundo próprio.
+          É só um invólucro semântico: nenhum estilo, nenhum overflow e nenhum
+          transform, então o `sticky` do carrossel de obras e o pin da faixa de
+          paralaxe continuam ancorados onde estavam. */}
+      <main>
+        <Hero />
 
-          ⚠ AS PARADAS CODIFICAM A PROPORÇÃO ENTRE OS DOIS BLOCOS: o carrossel
-          ocupa os primeiros ~32%, e é lá que o #16130E cai — o valor em que o
-          "O que fazemos" começava quando tinha fundo próprio. Mudou a altura de
-          um dos dois, remeça o contraste do eyebrow dourado e do texto miúdo,
-          que dependem de onde cada parada cai. Ver o cabeçalho do
-          o-que-fazemos. */}
-      <div className="relative isolate">
-        <FundoGradiente className="absolute inset-0 -z-10" />
-        <Clientes />
-        <OQueFazemos />
-      </div>
-      <ObrasHorizontal />
-      <FaixaParalaxe />
-      {/* ══ O FIM DA PÁGINA É PRETO CHAPADO, SEM ARCO ══
+        {/* ══ O ARCO ESCURO ══
 
-          Aqui existia um SEGUNDO arco dourado, espelho do de cima, envolvendo
-          ComoTrabalhamos e ChamadaFinal num invólucro com <FundoGradiente>. Ele
-          SAIU: sobrou UM bloom só na página, o de cima. Dois florescimentos de
-          dourado davam à página duas vezes o mesmo gesto, e o de baixo era o
-          mais fraco dos dois — a chamada final é uma FAIXA com foto de fundo,
-          que cobria o gradiente inteiro no trecho onde ele deveria fechar, e o
-          pico precisava ser empurrado para o miolo do ComoTrabalhamos para não
-          virar uma tira dourada solta acima da faixa.
+            UM fundo só cobre as duas seções, e é por isso que ele mora aqui e não
+            dentro de nenhuma delas. O gradiente sai do ink logo abaixo da hero,
+            atravessa o carrossel de marcas aquecendo, floresce no dourado #6B6144
+            a 82% da altura e VOLTA ao ink antes do fim.
 
-          No lugar dele, ink chapado: o mesmo #0A0A0A da faixa de paralaxe segue
-          sem interrupção pelo ComoTrabalhamos, passa por baixo da barra do CTA e
-          entra no rodapé, que também é bg-ink. Quatro seções, uma cor — não há
-          emenda para ninguém ver.
+            ⚠ O RETORNO AO PRETO É O PONTO. Enquanto o dourado terminava na borda,
+            a seção de obras precisava de uma rampa para recebê-lo — e essa rampa
+            virava uma faixa dourada no começo dela, com um risco visível na
+            emenda. Com o arco fechando em ink, a borda é preto contra preto e não
+            há o que emendar. Nenhuma das duas seções tem fundo próprio.
 
-          ⚠ CADA SEÇÃO CARREGA O PRÓPRIO bg-ink AGORA. Sem o invólucro não há
-          quem pinte o fundo por elas: tirar o bg-ink de qualquer uma reabre o
-          creme do body no meio do bloco escuro.
+            ⚠ AS PARADAS CODIFICAM A PROPORÇÃO ENTRE OS DOIS BLOCOS: o carrossel
+            ocupa os primeiros ~32%, e é lá que o #16130E cai — o valor em que o
+            "O que fazemos" começava quando tinha fundo próprio. Mudou a altura de
+            um dos dois, remeça o contraste do eyebrow dourado e do texto miúdo,
+            que dependem de onde cada parada cai. Ver o cabeçalho do
+            o-que-fazemos. */}
+        <div className="relative isolate">
+          <FundoGradiente className="absolute inset-0 -z-10" />
+          <Clientes />
+          <OQueFazemos />
+        </div>
+        <ObrasHorizontal />
+        <FaixaParalaxe />
+        {/* ══ O FIM DA PÁGINA É PRETO CHAPADO, SEM ARCO ══
 
-          ⚠ O TEXTO DAS DUAS JÁ ESTAVA INVERTIDO (bone, ash, gold) e continua —
-          o ink chapado é mais escuro que a base do bloom que saiu, então o
-          contraste só subiu. Medido: nada abaixo de 4,5:1. */}
-      <ComoTrabalhamos />
-      <ChamadaFinal />
+            Aqui existia um SEGUNDO arco dourado, espelho do de cima, envolvendo
+            ComoTrabalhamos e ChamadaFinal num invólucro com <FundoGradiente>. Ele
+            SAIU: sobrou UM bloom só na página, o de cima. Dois florescimentos de
+            dourado davam à página duas vezes o mesmo gesto, e o de baixo era o
+            mais fraco dos dois — a chamada final é uma FAIXA com foto de fundo,
+            que cobria o gradiente inteiro no trecho onde ele deveria fechar, e o
+            pico precisava ser empurrado para o miolo do ComoTrabalhamos para não
+            virar uma tira dourada solta acima da faixa.
+
+            No lugar dele, ink chapado: o mesmo #0A0A0A da faixa de paralaxe segue
+            sem interrupção pelo ComoTrabalhamos, passa por baixo da barra do CTA e
+            entra no rodapé, que também é bg-ink. Quatro seções, uma cor — não há
+            emenda para ninguém ver.
+
+            ⚠ CADA SEÇÃO CARREGA O PRÓPRIO bg-ink AGORA. Sem o invólucro não há
+            quem pinte o fundo por elas: tirar o bg-ink de qualquer uma reabre o
+            creme do body no meio do bloco escuro.
+
+            ⚠ O TEXTO DAS DUAS JÁ ESTAVA INVERTIDO (bone, ash, gold) e continua —
+            o ink chapado é mais escuro que a base do bloom que saiu, então o
+            contraste só subiu. Medido: nada abaixo de 4,5:1. */}
+        <ComoTrabalhamos />
+        <ChamadaFinal />
+      </main>
 
       <SiteFooter />
     </>
