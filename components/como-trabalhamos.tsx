@@ -71,7 +71,20 @@ export function ComoTrabalhamos() {
   return (
     <section
       id="como-trabalhamos"
-      className="flex flex-col gap-section bg-ink py-section"
+      /* ⚠ O RESPIRO DE BAIXO É MAIOR QUE O DE CIMA, E É DE PROPÓSITO.
+
+         Abaixo desta seção vem a chamada final, que é uma FAIXA COM FOTO — e
+         esta seção termina numa galeria de fotos. Com os 64px iguais dos dois
+         lados, era foto, um vão curto, e foto de novo, as duas sobre o mesmo
+         ink: os dois blocos colavam e liam como um só.
+
+         O `section-lg` (112px) é o maior degrau da escala de espaçamento do
+         site, e já é o que o rodapé usa embaixo. Nenhum token novo.
+
+         ⚠ O RESPIRO ENTRA AQUI, COMO PADDING, E NÃO COMO MARGIN NA CHAMADA
+         FINAL. As duas seções são `bg-ink` mas o `body` é bone: uma margem
+         entre elas abriria uma tira creme no meio do bloco escuro. */
+      className="flex flex-col gap-section bg-ink pt-section pb-section-lg"
     >
       {/* ── FAIXA 1: cabeçalho ─────────────────────────────────────────── */}
       <div className="grid grid-cols-12 items-end gap-3 px-gutter-sm md:px-gutter">
