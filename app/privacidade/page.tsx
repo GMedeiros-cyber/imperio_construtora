@@ -95,8 +95,14 @@ function dataPorExtenso(iso: string) {
    272px, e o corpo de 18px passa de ~40 para ~31 caracteres por linha. É a
    troca: palavra escondida atrás de um botão é pior do que linha mais curta.
 
-   ⚠ O PAR USA O MESMO NÚMERO: `max-[680px]` é `width < 680` no Tailwind v4. */
-const COLUNA = "max-w-[68ch] max-[680px]:pe-14";
+   ⚠ O PAR USA O MESMO NÚMERO: `max-[680px]` é `width < 680` no Tailwind v4.
+
+   ⚠ O `overflow-wrap: break-word` É PAR DO RECUO, e não enfeite. Com a coluna
+   em 272px a 360px, o e-mail `contato@imperioconstrutora.com.br` — 33
+   caracteres sem espaço, ~290px a 18px — deixou de caber e passou a VAZAR da
+   coluna, indo parar de novo debaixo do botão. Medido: 2 trechos cobertos a
+   360px depois do recuo, e o e-mail era um deles. Quebrado, ele cabe. */
+const COLUNA = "max-w-[68ch] max-[680px]:pe-14 [overflow-wrap:break-word]";
 
 const H2 = "mt-16 text-subheading text-ink md:text-heading-sm";
 const P = "mt-6 text-body-lg text-ink";

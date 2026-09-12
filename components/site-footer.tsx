@@ -120,7 +120,11 @@ export function SiteFooter() {
           consistente. */}
       <div className="grid gap-12 min-[900px]:grid-cols-[minmax(0,416px)_1fr] min-[900px]:gap-24">
         {/* ── Identificação ────────────────────────────────────────────── */}
-        <div>
+        {/* O mesmo recuo de 56px da coluna da política, pelo mesmo motivo: até
+            680px esta coluna ocupa a tela inteira e o parágrafo "Construção,
+            reforma e gestão de obras…" passa por baixo do botão flutuante.
+            Acima disso a trilha de 416px já a mantém longe do canto. */}
+        <div className="max-[680px]:pe-14">
           {/* h-16 = 64px de altura, largura automática: o import estático
               carrega as dimensões reais e o Next mantém a proporção. */}
           <Image
@@ -182,7 +186,11 @@ export function SiteFooter() {
             só deste <nav>, e as outras seções não se movem. */}
         <nav
           aria-label="Rodapé"
-          className="grid gap-8 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(5rem,1fr))]"
+          /* `pe-14` aqui também: a última coluna da navegação encosta na
+             borda direita, e é onde os dois botões flutuantes moram. Medido
+             antes: o CNPJ coberto pelos dois a 768px. A navegação tem folga de
+             sobra — as três colunas só ficam 56px mais estreitas. */
+          className="grid gap-8 pe-14 max-[640px]:grid-cols-1 max-[768px]:max-w-[calc(100%-9rem)] min-[640px]:grid-cols-[repeat(auto-fit,minmax(5rem,1fr))]"
         >
           <div>
             <h3 className={ROTULO} id="rodape-menu">
